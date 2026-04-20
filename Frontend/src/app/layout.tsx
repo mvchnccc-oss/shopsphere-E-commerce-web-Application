@@ -1,3 +1,4 @@
+import Navbar from "@/components/navbar";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -24,9 +25,10 @@ export default function RootLayout({
           {/* Navbar */}
 
           {/* Main App */}
-          <div className="container max-w-7xl mx-auto min-h-screen">
+          <div className=" min-h-screen">
+            <Navbar />
+            <div className="container max-w-7xl mx-auto">{children}</div>
             <Toaster />
-            {children}
           </div>
           {/* Footer */}
         </Providers>
