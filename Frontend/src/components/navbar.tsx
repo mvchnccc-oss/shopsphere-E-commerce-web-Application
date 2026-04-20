@@ -17,7 +17,7 @@ export default function Navbar() {
   const { status } = useSession();
 
   return (
-    <div className="bg-accent p-3 flex items-center gap-4">
+    <div className="bg-accent p-5 flex items-center gap-4">
       <Link
         href="/"
         className="text-emerald-600 dark:text-emerald-400 font-extrabold text-2xl flex items-center gap-0.5"
