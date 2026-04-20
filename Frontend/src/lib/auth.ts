@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "ShopMart",
+      name: "shopsphere",
       credentials: {
         email: { placeholder: "ahmed@gmail.com", type: "email" },
         password: { label: "enter your password", type: "password" },
@@ -19,27 +19,34 @@ export const authOptions: NextAuthOptions = {
               password: data?.password,
             }),
             headers: { "Content-Type": "application/json" },
-          }
+          },
         );
 
         const payload = await response.json();
 
         if (response.ok) {
+          // Decode JWT to extract user email (sub field)
+          const base64Payload = payload.token.split(".")[1];
+          const decoded = JSON.parse(atob(base64Payload));
+
           return {
-            id: payload.user.email,
-            user: payload.user,
+            id: decoded.sub, 
+            user: {
+              email: decoded.sub,
+              name: data?.email?.split("@")[0] ?? "", 
+              role: decoded.role ?? "user",
+            },
             token: payload.token,
           };
         } else {
-          // Error message is forwarded to signIn result.error on the client
           throw new Error(payload.message || "Invalid credentials");
         }
       },
     }),
   ],
   pages: {
-    signIn: "/auth/login",   // correct path
-    error: "/auth/login",    // correct path
+    signIn: "/auth/login", // correct path
+    error: "/auth/login", // correct path
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
