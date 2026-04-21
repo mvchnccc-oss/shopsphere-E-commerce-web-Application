@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import PasswordInput from "../_components/password-input";
-import { div } from "framer-motion/client";
 
 export default function RegisterPage() {
   const router = useRouter();
