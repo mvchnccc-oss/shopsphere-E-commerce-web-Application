@@ -31,7 +31,7 @@ export default function ProductCard({ product: prod }: { product: Product }) {
                         </div>
                     ) : (
                         <Image
-                            src={imageSrc[0]}
+                            src={imageSrc}
                             width={300}
                             height={300}
                             alt={prod.title}
