@@ -10,11 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HeartIcon, ShoppingBagIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Navbar() {
   const { status } = useSession();
+
+  async function handleLogout() {
+    await signOut();
+  }
 
   return (
     <div className="bg-accent p-5 flex items-center gap-4">
@@ -60,11 +64,15 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-32">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem variant="destructive">Logout</DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
