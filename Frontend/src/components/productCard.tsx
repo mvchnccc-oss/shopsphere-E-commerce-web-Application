@@ -15,7 +15,7 @@ export default function ProductCard({ product: prod }: { product: Product }) {
   return (
     <>
       <div className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:-translate-y-1">
-        <Link href={`/products/${prod._id}`}>
+        <Link href={`/products/${prod.id}`}>
           <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
             {imageError || !prod.images[0] ? (
               <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100">
