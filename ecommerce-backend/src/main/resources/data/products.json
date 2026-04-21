@@ -9,7 +9,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -31,7 +31,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -53,7 +53,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -74,7 +74,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -96,7 +96,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -118,7 +118,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -140,7 +140,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -162,7 +162,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -184,7 +184,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -953,7 +953,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -973,7 +973,7 @@
             "id": 16,
             "name": "Ebert - Moore",
             "slug": "ebert-moore",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:57:28.000Z",
             "updatedAt": "2026-03-03T19:57:28.000Z"
         },
@@ -993,12 +993,12 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
         "images": [
-            "https://placeimg.com/640/480/any"
+            "https://placeimg.dev/640/480/any"
         ],
         "creationAt": "2026-03-03T20:54:56.000Z",
         "updatedAt": "2026-03-03T20:54:56.000Z"
@@ -1013,7 +1013,7 @@
             "id": 27,
             "name": "Human",
             "slug": "human",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:24:27.000Z",
             "updatedAt": "2026-03-03T21:24:27.000Z"
         },
@@ -1033,7 +1033,7 @@
             "id": 29,
             "name": "Regional",
             "slug": "regional",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:25:00.000Z",
             "updatedAt": "2026-03-03T21:25:00.000Z"
         },
@@ -1053,7 +1053,7 @@
             "id": 30,
             "name": "Legacy",
             "slug": "legacy",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:28:39.000Z",
             "updatedAt": "2026-03-03T21:28:39.000Z"
         },
@@ -1073,7 +1073,7 @@
             "id": 27,
             "name": "Human",
             "slug": "human",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:24:27.000Z",
             "updatedAt": "2026-03-03T21:24:27.000Z"
         },
@@ -1093,7 +1093,7 @@
             "id": 29,
             "name": "Regional",
             "slug": "regional",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:25:00.000Z",
             "updatedAt": "2026-03-03T21:25:00.000Z"
         },
@@ -1113,7 +1113,7 @@
             "id": 30,
             "name": "Legacy",
             "slug": "legacy",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:28:39.000Z",
             "updatedAt": "2026-03-03T21:28:39.000Z"
         },
@@ -1133,7 +1133,7 @@
             "id": 27,
             "name": "Human",
             "slug": "human",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:24:27.000Z",
             "updatedAt": "2026-03-03T21:24:27.000Z"
         },
@@ -1153,7 +1153,7 @@
             "id": 30,
             "name": "Legacy",
             "slug": "legacy",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:28:39.000Z",
             "updatedAt": "2026-03-03T21:28:39.000Z"
         },
@@ -1173,7 +1173,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1193,7 +1193,7 @@
             "id": 31,
             "name": "Global",
             "slug": "global",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:35:38.000Z",
             "updatedAt": "2026-03-03T21:35:38.000Z"
         },
@@ -1213,7 +1213,7 @@
             "id": 29,
             "name": "Regional",
             "slug": "regional",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:25:00.000Z",
             "updatedAt": "2026-03-03T21:25:00.000Z"
         },
@@ -1233,7 +1233,7 @@
             "id": 29,
             "name": "Regional",
             "slug": "regional",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:25:00.000Z",
             "updatedAt": "2026-03-03T21:25:00.000Z"
         },
@@ -1253,7 +1253,7 @@
             "id": 29,
             "name": "Regional",
             "slug": "regional",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:25:00.000Z",
             "updatedAt": "2026-03-03T21:25:00.000Z"
         },
@@ -1273,7 +1273,7 @@
             "id": 32,
             "name": "District",
             "slug": "district",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:37:42.000Z",
             "updatedAt": "2026-03-03T21:37:42.000Z"
         },
@@ -1293,7 +1293,7 @@
             "id": 40,
             "name": "Forward",
             "slug": "forward",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:44:23.000Z",
             "updatedAt": "2026-03-03T21:44:23.000Z"
         },
@@ -1313,7 +1313,7 @@
             "id": 41,
             "name": "Central3",
             "slug": "central3",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:44:54.000Z",
             "updatedAt": "2026-03-03T21:44:54.000Z"
         },
@@ -1331,9 +1331,9 @@
         "description": "Lead",
         "category": {
             "id": 43,
-            "name": "http://placeimg.com/640/480/animals3",
+            "name": "http://placeimg.dev/640/480/animals3",
             "slug": "http-placeimg-com-640-480-animals3",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:47:20.000Z",
             "updatedAt": "2026-03-03T21:47:20.000Z"
         },
@@ -1353,7 +1353,7 @@
             "id": 48,
             "name": "Extended",
             "slug": "extended",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:56:46.000Z",
             "updatedAt": "2026-03-03T21:56:46.000Z"
         },
@@ -1413,7 +1413,7 @@
             "id": 40,
             "name": "Forward",
             "slug": "forward",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:44:23.000Z",
             "updatedAt": "2026-03-03T21:44:23.000Z"
         },
@@ -1433,7 +1433,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1453,7 +1453,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1473,7 +1473,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1493,7 +1493,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1513,7 +1513,7 @@
             "id": 58,
             "name": "Watch",
             "slug": "watch",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T22:59:44.000Z",
             "updatedAt": "2026-03-03T22:59:44.000Z"
         },
@@ -1533,7 +1533,7 @@
             "id": 58,
             "name": "Watch",
             "slug": "watch",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T22:59:44.000Z",
             "updatedAt": "2026-03-03T22:59:44.000Z"
         },
@@ -1593,7 +1593,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1613,7 +1613,7 @@
             "id": 31,
             "name": "Global",
             "slug": "global",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:35:38.000Z",
             "updatedAt": "2026-03-03T21:35:38.000Z"
         },
@@ -1653,7 +1653,7 @@
             "id": 24,
             "name": "National",
             "slug": "national",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:19:31.000Z",
             "updatedAt": "2026-03-03T21:19:31.000Z"
         },
@@ -1714,7 +1714,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1834,7 +1834,7 @@
             "id": 13,
             "name": "Schmidt and Sons",
             "slug": "schmidt-and-sons",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:45.000Z",
             "updatedAt": "2026-03-03T19:56:45.000Z"
         },
@@ -1854,7 +1854,7 @@
             "id": 19,
             "name": "Chief",
             "slug": "chief",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:16:02.000Z",
             "updatedAt": "2026-03-03T21:16:02.000Z"
         },
@@ -1874,7 +1874,7 @@
             "id": 12,
             "name": "Goldner Inc",
             "slug": "goldner-inc",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:39.000Z",
             "updatedAt": "2026-03-03T19:56:39.000Z"
         },
@@ -1894,7 +1894,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -1914,7 +1914,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -2095,7 +2095,7 @@
             "id": 55,
             "name": "T-shirt",
             "slug": "t-shirt",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T22:31:39.000Z",
             "updatedAt": "2026-03-03T22:31:39.000Z"
         },
@@ -2115,7 +2115,7 @@
             "id": 21,
             "name": "Product",
             "slug": "product",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:18:17.000Z",
             "updatedAt": "2026-03-03T21:18:17.000Z"
         },
@@ -2135,7 +2135,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -2196,7 +2196,7 @@
             "id": 13,
             "name": "Schmidt and Sons",
             "slug": "schmidt-and-sons",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:45.000Z",
             "updatedAt": "2026-03-03T19:56:45.000Z"
         },
@@ -2497,7 +2497,7 @@
             "id": 55,
             "name": "T-shirt",
             "slug": "t-shirt",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T22:31:39.000Z",
             "updatedAt": "2026-03-03T22:31:39.000Z"
         },
@@ -2537,7 +2537,7 @@
             "id": 13,
             "name": "Schmidt and Sons",
             "slug": "schmidt-and-sons",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:45.000Z",
             "updatedAt": "2026-03-03T19:56:45.000Z"
         },
@@ -2617,7 +2617,7 @@
             "id": 31,
             "name": "Global",
             "slug": "global",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:35:38.000Z",
             "updatedAt": "2026-03-03T21:35:38.000Z"
         },
@@ -2657,7 +2657,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -2677,7 +2677,7 @@
             "id": 13,
             "name": "Schmidt and Sons",
             "slug": "schmidt-and-sons",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:45.000Z",
             "updatedAt": "2026-03-03T19:56:45.000Z"
         },
@@ -2717,7 +2717,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -2877,7 +2877,7 @@
             "id": 19,
             "name": "Chief",
             "slug": "chief",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:16:02.000Z",
             "updatedAt": "2026-03-03T21:16:02.000Z"
         },
@@ -2897,7 +2897,7 @@
             "id": 13,
             "name": "Schmidt and Sons",
             "slug": "schmidt-and-sons",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:45.000Z",
             "updatedAt": "2026-03-03T19:56:45.000Z"
         },
@@ -2917,7 +2917,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
@@ -2957,7 +2957,7 @@
             "id": 14,
             "name": "Purdy Group",
             "slug": "purdy-group",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T19:56:56.000Z",
             "updatedAt": "2026-03-03T19:56:56.000Z"
         },
@@ -2997,7 +2997,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
@@ -3037,7 +3037,7 @@
             "id": 49,
             "name": "Business-focused",
             "slug": "business-focused",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:57:22.000Z",
             "updatedAt": "2026-03-03T21:57:22.000Z"
         },
@@ -3081,9 +3081,7 @@
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T17:23:39.000Z"
         },
-        "images": [
-            "www.string.com"
-        ],
+        "images": [],
         "creationAt": "2026-03-04T05:01:33.000Z",
         "updatedAt": "2026-03-04T05:01:33.000Z"
     },
@@ -3097,7 +3095,7 @@
             "id": 69,
             "name": "nuevo nombre de la categoria",
             "slug": "nuevo-nombre-de-la-categoria",
-            "image": "http://placeimg.com/640/480/any",
+            "image": "http://placeimg.dev/640/480/any",
             "creationAt": "2026-03-04T00:04:07.000Z",
             "updatedAt": "2026-03-04T00:05:52.000Z"
         },
@@ -3117,7 +3115,7 @@
             "id": 1,
             "name": "Nueva Categ",
             "slug": "nueva-categ",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T17:23:39.000Z",
             "updatedAt": "2026-03-03T22:34:08.000Z"
         },
@@ -3157,7 +3155,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
@@ -3217,7 +3215,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
@@ -3242,7 +3240,7 @@
             "updatedAt": "2026-03-03T17:23:39.000Z"
         },
         "images": [
-            "https://placeimg.com"
+            "https://placeimg.dev"
         ],
         "creationAt": "2026-03-04T05:17:06.000Z",
         "updatedAt": "2026-03-04T05:17:06.000Z"
@@ -3262,7 +3260,7 @@
             "updatedAt": "2026-03-03T17:23:39.000Z"
         },
         "images": [
-            "https://placeimg.com"
+            "https://placeimg.dev"
         ],
         "creationAt": "2026-03-04T05:17:06.000Z",
         "updatedAt": "2026-03-04T05:17:06.000Z"
@@ -3277,7 +3275,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
@@ -3337,7 +3335,7 @@
             "id": 39,
             "name": "Investor",
             "slug": "investor",
-            "image": "https://placeimg.com/640/480/any",
+            "image": "https://placeimg.dev/640/480/any",
             "creationAt": "2026-03-03T21:42:46.000Z",
             "updatedAt": "2026-03-03T21:42:46.000Z"
         },
