@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import AddToCartButton from "@/components/cart/add-button";
 import type { Product } from "@/lib/interfaces/products.interface";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,9 +61,7 @@ export default function ProductCard({ product: prod }: { product: Product }) {
           </div>
         </Link>
         <div className="w-full mt-auto px-3 pb-3 flex items-center gap-2">
-          <Button className="w-full px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors">
-            Add to Cart
-          </Button>
+          <AddToCartButton id={prod.id} title={prod.title} price={prod.price} />
         </div>
       </div>
     </>

@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
+import AddToCartButton from "@/components/cart/add-button";
 import { getProductById } from "@/lib/actions/products.actions";
 import { Product } from "@/lib/interfaces/products.interface";
-import { ShoppingCartIcon } from "lucide-react";
 import ProductCarousel from "./_components/product-carousal";
 
 export default async function page({ params }: { params: Promise<{ productid: number }> }) {
@@ -20,10 +19,7 @@ export default async function page({ params }: { params: Promise<{ productid: nu
           <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
             E£{product.price}
           </span>
-          <Button className="w-full gap-2">
-            <ShoppingCartIcon className="size-4" />
-            Add to Cart
-          </Button>
+          <AddToCartButton id={product.id} title={product.title} price={product.price} dark />
         </div>
       </div>
     </div>
