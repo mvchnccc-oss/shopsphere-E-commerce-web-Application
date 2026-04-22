@@ -16,6 +16,7 @@ export async function getAllProducts(): Promise<Products> {
     return [];
   }
 }
+
 export async function getProductById(id:number) {
  try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${id}`);
@@ -29,19 +30,13 @@ export async function getProductById(id:number) {
   } catch (error) {
    console.log(error);
   }
-
 }
 
 export async function getProductsByCategory(categoryId: number): Promise<Products> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products?category=${categoryId}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products for category: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data ?? [];
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`);
+    const data: Products = await response.json();
+    return data.filter((p) => p.category?.id === categoryId) ?? [];
   } catch (error) {
     console.error("[getProductsByCategory]", error);
     return [];
