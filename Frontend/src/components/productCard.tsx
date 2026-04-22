@@ -41,7 +41,7 @@ export default function ProductCard({ product: prod }: { product: Product }) {
                 height={300}
                 alt={prod.title}
                 onError={handleImageError}
-                className="object-contain w-full h-full p-2 transition-transform duration-300 group-hover:scale-105"
+                className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
               />
             )}
           </div>

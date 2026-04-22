@@ -8,6 +8,8 @@ export interface Product {
   images: string[];
   category: {
     name: string;
+    id: number;
+    image?: string;
   };
   brand?: {
     name: string;
