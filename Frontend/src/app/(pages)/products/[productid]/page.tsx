@@ -1,11 +1,10 @@
-import ProductCarousel from "@/components/ProductCarousel";
 import { Button } from "@/components/ui/button";
 import { getProductById } from "@/lib/actions/products.actions";
 import { Product } from "@/lib/interfaces/products.interface";
 import { ShoppingCartIcon } from "lucide-react";
-import { Params } from "next/dist/server/request/params";
+import ProductCarousel from "./_components/product-carousal";
 
-export default async function page({ params }: { params: Params }) {
+export default async function page({ params }: { params: Promise<{ productid: number }> }) {
   const { productid } = await params;
   const product: Product = await getProductById(productid);
 

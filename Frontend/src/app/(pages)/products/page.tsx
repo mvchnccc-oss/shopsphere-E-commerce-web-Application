@@ -1,12 +1,8 @@
-import ProductSearch from "@/components/productsearch";
 import { getAllProducts } from "@/lib/actions/products.actions";
+import ProductContainer from "./_components/product-container";
 
 export default async function Allproducts() {
   const products = await getAllProducts();
 
-  return (
-    <div className="py-7">
-      <ProductSearch products={products} />
-    </div>
-  );
+  return <ProductContainer products={products} />;
 }

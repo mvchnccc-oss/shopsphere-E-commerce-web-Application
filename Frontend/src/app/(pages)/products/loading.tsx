@@ -1,4 +1,3 @@
-import ProductCardSkeleton from "@/components/productCardSkeleton";
 import {
   Carousel,
   CarouselContent,
@@ -7,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProductCardSkeleton from "./_components/product-card/skeleton";
 
 export default function ProductsLoading() {
   return (
