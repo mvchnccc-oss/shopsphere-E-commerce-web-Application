@@ -1,8 +1,8 @@
+import CategoryImage from '@/components/CategoryImage';
 import { getAllCategories } from '@/lib/actions/category.action';
 import { categories } from '@/lib/interfaces/categories.interface';
-import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+
 
 export default async function page() {
   const categories: categories = await getAllCategories();
@@ -11,7 +11,7 @@ export default async function page() {
 
     <div className="py-10 px-4">
       <h2 className="text-2xl font-bold mb-6">Categories</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {categories.map((cat) => (
           <Link
             key={cat.id}
@@ -36,12 +36,7 @@ export default async function page() {
                 <span className="text-xs text-gray-500">No Image</span>
               </div> :
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-muted">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                <CategoryImage src={cat.image} alt={cat.name} />
               </div>
             }
 

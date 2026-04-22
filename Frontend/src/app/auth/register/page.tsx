@@ -15,7 +15,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
-import { registerAction, type ActionResult } from "@/actions/auth.actions";
+import { registerAction, type ActionResult } from "@/lib/actions/auth.actions";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon, UserIcon, UserPlusIcon } from "lucide-react";
