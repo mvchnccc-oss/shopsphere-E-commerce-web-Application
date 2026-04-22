@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/interfaces/products.interface";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "./ui/button";
 
 export default function ProductCard({ product: prod }: { product: Product }) {
   const [imageError, setImageError] = useState(false);
