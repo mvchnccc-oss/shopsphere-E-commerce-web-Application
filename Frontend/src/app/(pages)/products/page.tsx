@@ -5,10 +5,8 @@ export default async function Allproducts() {
   const products = await getAllProducts();
 
   return (
-    <>
-      <div className="py-7">
-        <ProductSearch products={products} />
-      </div>
-    </>
+    <div className="py-7">
+      <ProductSearch products={products} />
+    </div>
   );
 }
