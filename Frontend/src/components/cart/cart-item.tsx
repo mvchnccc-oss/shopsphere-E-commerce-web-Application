@@ -36,7 +36,7 @@ export default function CartItem({ product, onClick, dark }: CardItemProps) {
           )}
         </div>
         <div className="flex flex-col gap-2 flex-1 p-2">
-          <span className="text-sm">{product.title}</span>
+          <span className="text-sm line-clamp-1">{product.title}</span>
           <div className="flex justify-between items-center text-sm text-muted-foreground">
             <span>
               Unit <strong>EGP {product.price}</strong>

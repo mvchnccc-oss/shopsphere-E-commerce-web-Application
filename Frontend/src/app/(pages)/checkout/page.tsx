@@ -1,29 +1,60 @@
 "use client";
 import React, { useState } from 'react';
-import { Truck, Check, ChevronLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Truck, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/components/cart/context';
+// --- إضافات اللوجيك ---
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+
+const checkoutSchema = z.object({
+    firstName: z.string().min(2, "First name is to short"),
+    lastName: z.string().min(2, "Last name is to short"),
+    email: z.string().email("Invalid email"),
+    address: z.string().min(5, "Please enter detailed address "),
+    city: z.string().min(2, "Required"),
+});
+
+type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { cartProducts } = useCart();
     const productsArray = cartProducts ? Object.values(cartProducts) : [];
+    
+
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CheckoutFormData>({
+        resolver: zodResolver(checkoutSchema),
+    });
+
+    const onSubmit = (data: CheckoutFormData) => {
+        console.log("Form Data:", data);
+        setIsSubmitted(true);
+    };
+
 
     let runningSubtotal = 0;
+    const [promoCode, setPromoCode] = useState('');
+    const [appliedDiscount, setAppliedDiscount] = useState(0);
 
-    const handleOrder = () => {
-        setIsSubmitted(true);
+    const handleApplyPromo = () => {
+        if (promoCode.toUpperCase() === 'SAVE10') {
+            setAppliedDiscount(0.10);
+        } else {
+            setAppliedDiscount(0);
+        }
     };
 
     return (
         <div className="max-w-4xl mx-auto my-6 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden font-sans">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_380px]">
 
-                {/* Left Side: Delivery Details */}
-                <div className="p-8 border-r border-gray-100">
+                <form onSubmit={handleSubmit(onSubmit)} className="p-8 border-r border-gray-100">
                     <Link href="/cart">
-                        <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-black mb-8 transition-colors">
+                        <button type="button" className="flex items-center gap-2 text-sm text-gray-500 hover:text-black mb-8 transition-colors">
                             <ChevronLeft size={16} /> Back to cart
                         </button>
                     </Link>
@@ -34,27 +65,53 @@ const CheckoutPage = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[12px] font-medium text-gray-500">First name</label>
-                                <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="John" />
+                                <input 
+                                    {...register("firstName")}
+                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
+                                    placeholder="John" 
+                                />
+                                {errors.firstName && <p className="text-red-500 text-[10px]">{errors.firstName.message}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[12px] font-medium text-gray-500">Last name</label>
-                                <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="Smith" />
+                                <input 
+                                    {...register("lastName")}
+                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
+                                    placeholder="Smith" 
+                                />
+                                {errors.lastName && <p className="text-red-500 text-[10px]">{errors.lastName.message}</p>}
                             </div>
                         </div>
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">Email address</label>
-                            <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" type="email" placeholder="john@example.com" />
+                            <input 
+                                {...register("email")}
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
+                                type="email" 
+                                placeholder="john@example.com" 
+                            />
+                            {errors.email && <p className="text-red-500 text-[10px]">{errors.email.message}</p>}
                         </div>
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">Street address</label>
-                            <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="123 Main Street, Apt 5" />
+                            <input 
+                                {...register("address")}
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
+                                placeholder="123 Main Street, Apt 5" 
+                            />
+                            {errors.address && <p className="text-red-500 text-[10px]">{errors.address.message}</p>}
                         </div>
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">City</label>
-                            <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="New York" />
+                            <input 
+                                {...register("city")}
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.city ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
+                                placeholder="New York" 
+                            />
+                            {errors.city && <p className="text-red-500 text-[10px]">{errors.city.message}</p>}
                         </div>
                     </div>
 
@@ -73,60 +130,60 @@ const CheckoutPage = () => {
                     </div>
 
                     <button
-                        onClick={handleOrder}
-                        disabled={isSubmitted || productsArray.length === 0}
+                        type="submit"
+                        disabled={isSubmitting || isSubmitted || productsArray.length === 0}
                         className={`w-full mt-8 p-3.5 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${isSubmitted ? 'bg-[#085041]' : 'bg-[#0F6E56] hover:bg-[#085041] active:scale-[0.98] disabled:bg-gray-300'}`}
                     >
                         {isSubmitted ? (
                             <><CheckCircle2 size={18} /> Order Placed Successfully!</>
+                        ) : isSubmitting ? (
+                            "Processing..."
                         ) : (
                             `Confirm Order`
                         )}
                     </button>
-                </div>
+                </form>
 
-                {/* Right Side: Order Summary */}
+       
                 <div className="p-8 bg-gray-50">
                     <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-6">Order Summary</p>
-
                     <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 pt-2">
-                        {productsArray.length > 0 ? (
-                            productsArray.map((product: any, index: number) => {
-                                const productTotal = (product.price || 0) * (product.quantity || 0);
-                                runningSubtotal += productTotal;
-
-                                return (
-                                    <div key={product.id || index} className="flex items-center gap-4">
-                                        <div className="w-14 h-14 bg-white border border-gray-100 rounded-lg flex items-center justify-center relative flex-shrink-0 text-2xl">
-                                            {product.image ? (
-                                                <Image 
-                                                    src={product.image} 
-                                                    alt={product.title}
-                                                    width={40}
-                                                    height={40}
-                                                    className="object-contain"
-                                                />
-                                            ) : "📦"}
-                                            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">
-                                                {product.quantity}
-                                            </span>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="text-sm text-emerald-600 font-medium line-clamp-1">{product.title}</p>
-                                            <p className="text-xs text-gray-500">Unit: {product.price?.toLocaleString()} EGP</p>
-                                        </div>
-                                        <span className="text-sm font-medium text-emerald-700 whitespace-nowrap">
-                                            {productTotal.toLocaleString()} EGP
+                        {productsArray.map((product: any, index: number) => {
+                            const productTotal = (product.price || 0) * (product.quantity || 0);
+                            runningSubtotal += productTotal;
+                            return (
+                                <div key={product.id || index} className="flex items-center gap-4">
+                                    <div className="w-14 h-14 bg-white border border-gray-100 rounded-lg flex items-center justify-center relative shrink-0">
+                                        {product.image && <Image src={product.image} alt={product.title} width={40} height={40} className="object-contain" />}
+                                        <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">
+                                            {product.quantity}
                                         </span>
                                     </div>
-                                );
-                            })
-                        ) : (
-                            <p className="text-sm text-gray-400 text-center py-4">Your cart is empty</p>
-                        )}
+                                    <div className="flex-1">
+                                        <p className="text-sm text-emerald-600 font-medium line-clamp-1">{product.title}</p>
+                                        <p className="text-xs text-gray-500">Unit: {product.price?.toLocaleString()} EGP</p>
+                                    </div>
+                                    <span className="text-sm font-medium text-emerald-700 whitespace-nowrap">
+                                        {productTotal.toLocaleString()} EGP
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <div className="h-px bg-gray-200 mb-6"></div>
+                    <div className="flex gap-2 mb-6">
+                        <input
+                            type="text"
+                            placeholder="Promo code"
+                            value={promoCode}
+                            onChange={(e) => setPromoCode(e.target.value)}
+                            className="flex-1 px-3 py-2 border text-emerald-800 placeholder:text-emerald-800 font-semibold text-sm border-gray-200 rounded-lg focus:outline-none focus:border-[#1D9E75]"
+                        />
+                        <button type="button" onClick={handleApplyPromo} className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-emerald-800 font-bold hover:bg-gray-50 transition-colors">
+                            Apply
+                        </button>
+                    </div>
 
                     <div className="space-y-2 mb-6">
                         <div className="flex justify-between text-sm text-gray-500">
@@ -137,9 +194,17 @@ const CheckoutPage = () => {
                             <span>Shipping</span>
                             <span className="text-[#1D9E75] font-medium">Free</span>
                         </div>
+                        {appliedDiscount > 0 && (
+                            <div className="flex justify-between text-sm text-[#0F6E56]">
+                                <span>Discount (10%)</span>
+                                <span>- {(runningSubtotal * appliedDiscount).toLocaleString()} EGP</span>
+                            </div>
+                        )}
                         <div className="flex justify-between text-base font-medium pt-3 border-t border-gray-200 mt-2">
                             <span>Total</span>
-                            <span className="text-gray-900 font-bold">Total: {runningSubtotal.toLocaleString()} EGP</span>
+                            <span className="text-gray-900 font-bold">
+                                {(runningSubtotal - (runningSubtotal * appliedDiscount)).toLocaleString()} EGP
+                            </span>
                         </div>
                     </div>
                 </div>
