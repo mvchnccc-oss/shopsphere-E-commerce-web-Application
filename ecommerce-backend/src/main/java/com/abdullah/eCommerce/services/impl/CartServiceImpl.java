@@ -12,6 +12,7 @@ import com.abdullah.eCommerce.repositories.CartRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.CartService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,14 +44,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void update(int productId, int quantity) {
         var product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         Cart cart = getCart();
-
+        System.out.println(quantity);
         if (quantity == 0) {
             cartItemRepository.deleteByProductIdAndCartId(productId, cart.getId());
+            System.out.println("deleted");
             return;
         }
 
