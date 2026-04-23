@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CreditCardIcon, ShoppingCart, ShoppingCartIcon } from "lucide-react";
@@ -36,14 +36,12 @@ export default function CartNavbarDropdown() {
           )}
           {count !== 0 && (
             <>
-              <DropdownMenuItem>
+              <div className="flex p-1.5 gap-2">
                 <Link href="/checkout" className="w-full">
                   <Button className="flex justify-center items-center w-full gap-2">
                     <CreditCardIcon /> Checkout
                   </Button>
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
                 <Link href="/cart" className="w-full">
                   <Button
                     variant="secondary"
@@ -52,7 +50,8 @@ export default function CartNavbarDropdown() {
                     <ShoppingCart /> Cart
                   </Button>
                 </Link>
-              </DropdownMenuItem>
+              </div>
+              <DropdownMenuSeparator />
               {Object.entries(cartProducts).map(([id, product]) => (
                 <CartItem
                   key={id}
