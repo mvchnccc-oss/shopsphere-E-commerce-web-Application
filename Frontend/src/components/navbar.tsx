@@ -9,11 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HeartIcon, MenuIcon, ShoppingBagIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { MenuIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import CartNavbarDropdown from "./cart/navbar-dropdown";
 
 export default function Navbar() {
   const { status } = useSession();
@@ -72,9 +73,7 @@ export default function Navbar() {
           )}
           {status === "authenticated" && (
             <>
-              <Button variant="ghost" size="icon">
-                <ShoppingCartIcon />
-              </Button>
+              <CartNavbarDropdown />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full ml-1">
@@ -113,7 +112,9 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Dropdown */}
-      <div className={`sm:hidden overflow-hidden transition-all duration-500 ease-in-out ${toggler ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}>
+      <div
+        className={`sm:hidden overflow-hidden transition-all duration-500 ease-in-out ${toggler ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}
+      >
         <div className="flex flex-col gap-3">
           {links.map((link) => (
             <Link
@@ -138,10 +139,7 @@ export default function Navbar() {
             )}
             {status === "authenticated" && (
               <>
-
-                <Button variant="ghost" size="icon">
-                  <ShoppingCartIcon />
-                </Button>
+                <CartNavbarDropdown />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full ml-1">
@@ -156,12 +154,20 @@ export default function Navbar() {
                   <DropdownMenuContent className="w-32">
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
-                        <Link href="/profile" onClick={() => setToggler(false)}>Profile</Link>
+                        <Link href="/profile" onClick={() => setToggler(false)}>
+                          Profile
+                        </Link>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                      <DropdownMenuItem variant="destructive" onClick={() => { handleLogout(); setToggler(false); }}>
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => {
+                          handleLogout();
+                          setToggler(false);
+                        }}
+                      >
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuGroup>

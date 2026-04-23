@@ -57,6 +57,7 @@ export default function AddToCartButton({ id, title, price, dark }: AddToCartBut
           <input
             className={` ${dark ? "text-white" : "text-black"} w-5 text-center outline-0 border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
             type="number"
+            min={1}
             value={cartProducts[id].quantity}
             onChange={(e) => updateQuanitity(Number(e.target.value) || 0)}
           />
