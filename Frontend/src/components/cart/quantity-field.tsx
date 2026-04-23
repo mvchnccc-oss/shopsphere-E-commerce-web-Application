@@ -3,22 +3,15 @@ import { Button } from "../ui/button";
 import { useCart } from "./context";
 
 export default function QuantityField({ id, dark }: { id: string; dark?: boolean }) {
-  const { cartProducts, updateCart } = useCart();
+  const { cartProducts, updateCartItem } = useCart();
 
   function deleteProduct() {
-    updateCart((cart) => {
-      const copy = { ...cart };
-      delete copy[id];
-
-      return copy;
-    });
+    updateCartItem(id, 0);
   }
 
   function updateQuanitity(value: number) {
     if (value < 1) return;
-
-    const product = cartProducts[id];
-    updateCart((cart) => ({ ...cart, [id]: { ...product, quantity: value } }));
+    updateCartItem(id, value);
   }
 
   return (
