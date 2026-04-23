@@ -19,7 +19,13 @@ export default async function page({ params }: { params: Promise<{ productid: nu
           <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
             E£{product.price}
           </span>
-          <AddToCartButton id={product.id} title={product.title} price={product.price} dark />
+          <AddToCartButton
+            id={product.id}
+            title={product.title}
+            price={product.price}
+            image={product.images[0]}
+            dark
+          />
         </div>
       </div>
     </div>

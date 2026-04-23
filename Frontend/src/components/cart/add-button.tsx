@@ -9,10 +9,11 @@ interface AddToCartButtonProps {
   id: string;
   title: string;
   price: number;
+  image: string;
   dark?: boolean;
 }
 
-export default function AddToCartButton({ id, title, price, dark }: AddToCartButtonProps) {
+export default function AddToCartButton({ id, title, price, image, dark }: AddToCartButtonProps) {
   const { cartProducts, updateCart } = useCart();
   const router = useRouter();
   const session = useSession();
@@ -23,7 +24,7 @@ export default function AddToCartButton({ id, title, price, dark }: AddToCartBut
       return;
     }
 
-    updateCart((cart) => ({ ...cart, [id]: { title, price, quantity: 1 } }));
+    updateCart((cart) => ({ ...cart, [id]: { title, price, image, quantity: 1 } }));
   }
 
   if (id in cartProducts) return <QuantityField id={id} dark={dark} />;

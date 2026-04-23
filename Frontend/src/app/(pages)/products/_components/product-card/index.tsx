@@ -61,7 +61,12 @@ export default function ProductCard({ product: prod }: { product: Product }) {
           </div>
         </Link>
         <div className="w-full mt-auto px-3 pb-3 flex items-center gap-2">
-          <AddToCartButton id={prod.id} title={prod.title} price={prod.price} />
+          <AddToCartButton
+            id={prod.id}
+            title={prod.title}
+            price={prod.price}
+            image={prod.images[0]}
+          />
         </div>
       </div>
     </>
