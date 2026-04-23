@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const basePrice = 59.99;
+    
 
     const handleOrder = () => {
         setIsSubmitted(true);
