@@ -18,7 +18,7 @@ export default function CartNavbarDropdown() {
       <DropdownMenuTrigger asChild>
         <Button className="relative" variant="ghost" size="icon">
           <ShoppingCartIcon />
-          <span className="absolute -right-1 -bottom-2 text-[10px] bg-rose-500 pt-px pr-px rounded-full min-w-4">
+          <span className="absolute -right-1 bottom-4 text-[10px] bg-rose-500 pt-px pr-px rounded-full min-w-4">
             {count}
           </span>
         </Button>
