@@ -12,22 +12,22 @@ import com.abdullah.eCommerce.repositories.CartRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.CartService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
-
 
     @Override
     public Cart getCart() {
@@ -36,53 +36,48 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(
                         () -> new UsernameNotFoundException(email)
                 );
-        Cart cart = cartRepository.findByUser(user)
+
+        return cartRepository.findByUser(user)
                 .orElseThrow(
                         () -> new CartNotFoundException(user.getId())
                 );
-        return cart;
     }
 
     @Override
-    public Cart addProductToCart(Integer productId) {
-        Product product = productRepository.findById(productId)
+    @Transactional
+    public void update(int productId, int quantity) {
+        var product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+
         Cart cart = getCart();
-        CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, cart.getId())
-                .map(current -> {
-                    current.setQuantity(current.getQuantity() + 1);
-                    return current;
-                }).orElse(
-                         CartItem.builder()
-                                .cart(cart)
-                                .product(product)
-                                .quantity(1)
-                                .build()
-                );
-        cartItemRepository.save(cartItem);
-
-        calculateTotalPrice(cart);
-        return cartRepository.save(cart);
-    }
-
-    @Override
-    public void deleteProductFromCard(Integer productId) {
-        Cart cart = getCart();
-        cartItemRepository.findByProductIdAndCartId(productId, cart.getId())
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-        List<CartItem> items = cart.getItems();
-        items.removeIf(item -> item.getProduct().getId().equals(productId));
-        cart.setItems(items);
-        cartRepository.save(cart);
-    }
-
-    private void calculateTotalPrice(Cart cart){
-        Long totalPrice = 0L;
-        List<CartItem> items = cart.getItems();
-        for (CartItem item: items){
-            totalPrice += item.getProduct().getPrice() * item.getQuantity();
+        System.out.println(quantity);
+        if (quantity == 0) {
+            cartItemRepository.deleteByProductIdAndCartId(productId, cart.getId());
+            System.out.println("deleted");
+            return;
         }
-        cart.setTotalPrice(totalPrice);
-        cartRepository.save(cart);
+
+        Optional<CartItem> cartItem = cartItemRepository
+                    .findByProductIdAndCartId(productId, cart.getId());
+
+        if (cartItem.isEmpty()) {
+            CartItem item = CartItem.builder().
+                    product(product)
+                    .cart(cart)
+                    .quantity(quantity)
+                    .build();
+
+            cartItemRepository.save(item);
+            return;
+        }
+
+        cartItem.get().setQuantity(quantity);
+        cartItemRepository.save(cartItem.get());
+    }
+
+    @Override
+    public void clear() {
+        Cart cart = getCart();
+        cartItemRepository.deleteByCartId(cart.getId());
     }
 }

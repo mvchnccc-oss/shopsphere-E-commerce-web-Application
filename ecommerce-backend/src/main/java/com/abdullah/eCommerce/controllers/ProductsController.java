@@ -29,10 +29,13 @@ public class ProductsController {
                     ).toList()
             );
         }
+
+        var products = productService.getProducts().stream().map(
+                productMapper::toProductDto
+        ).toList();
+
         return ResponseEntity.ok(
-                productService.getProducts().stream().map(
-                        productMapper::toProductDto
-                ).toList()
+                products
         );
     }
 
