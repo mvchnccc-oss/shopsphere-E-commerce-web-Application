@@ -4,7 +4,6 @@ import { Truck, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/components/cart/context';
-// --- إضافات اللوجيك ---
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
