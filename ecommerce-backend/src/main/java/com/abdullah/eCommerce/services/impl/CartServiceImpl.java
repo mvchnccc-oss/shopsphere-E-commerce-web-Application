@@ -74,4 +74,10 @@ public class CartServiceImpl implements CartService {
         cartItem.get().setQuantity(quantity);
         cartItemRepository.save(cartItem.get());
     }
+
+    @Override
+    public void clear() {
+        Cart cart = getCart();
+        cartItemRepository.deleteByCartId(cart.getId());
+    }
 }
