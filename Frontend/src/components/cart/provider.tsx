@@ -44,5 +44,14 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return <CartContext value={{ cartProducts, updateCartItem }}>{children}</CartContext>;
+  async function addCartItem(id: string, data: CartProduct) {
+    const success = await updateCartItemAction(id, data.quantity);
+    if (!success) return;
+
+    setCartProducts((cart) => ({ ...cart, [id]: { ...data } }));
+  }
+
+  return (
+    <CartContext value={{ cartProducts, updateCartItem, addCartItem }}>{children}</CartContext>
+  );
 }
