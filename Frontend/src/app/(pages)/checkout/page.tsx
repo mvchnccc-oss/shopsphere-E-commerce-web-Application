@@ -1,15 +1,19 @@
 "use client";
 import React, { useState } from 'react';
-import { Truck, Check, ChevronLeft, ShieldCheck, CheckCircle2, ImageIcon } from 'lucide-react';
+import { Truck, Check, ChevronLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useCart } from '@/components/cart/context';
 
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
-    
+    const { cartProducts } = useCart();
+    const productsArray = cartProducts ? Object.values(cartProducts) : [];
+
+    let runningSubtotal = 0;
 
     const handleOrder = () => {
         setIsSubmitted(true);
-        // Submition logic
     };
 
     return (
@@ -48,11 +52,9 @@ const CheckoutPage = () => {
                             <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="123 Main Street, Apt 5" />
                         </div>
 
-                        <div className="">
-                            <div className="space-y-1">
-                                <label className="text-[12px] font-medium text-gray-500">City</label>
-                                <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="New York" />
-                            </div>
+                        <div className="space-y-1">
+                            <label className="text-[12px] font-medium text-gray-500">City</label>
+                            <input className="w-full p-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1D9E75]" placeholder="New York" />
                         </div>
                     </div>
 
@@ -72,13 +74,13 @@ const CheckoutPage = () => {
 
                     <button
                         onClick={handleOrder}
-                        disabled={isSubmitted}
-                        className={`w-full mt-8 p-3.5 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${isSubmitted ? 'bg-[#085041]' : 'bg-[#0F6E56] hover:bg-[#085041] active:scale-[0.98]'}`}
+                        disabled={isSubmitted || productsArray.length === 0}
+                        className={`w-full mt-8 p-3.5 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${isSubmitted ? 'bg-[#085041]' : 'bg-[#0F6E56] hover:bg-[#085041] active:scale-[0.98] disabled:bg-gray-300'}`}
                     >
                         {isSubmitted ? (
                             <><CheckCircle2 size={18} /> Order Placed Successfully!</>
                         ) : (
-                            `Confirm Order — Total Price`
+                            `Confirm Order`
                         )}
                     </button>
                 </div>
@@ -87,35 +89,41 @@ const CheckoutPage = () => {
                 <div className="p-8 bg-gray-50">
                     <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-6">Order Summary</p>
 
-                    <div className="space-y-4 mb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-[#E1F5EE] rounded-lg flex items-center justify-center text-2xl relative">
-                                
-                                <ImageIcon/>
-                                
-                                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">1</span>
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm text-emerald-600 font-medium">Title</p>
-                                <p className="text-xs text-gray-500 line-clamp-1">Discription</p>
-                            </div>
-                            <span className="text-sm font-medium text-emerald-700">Price EGP</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 bg-[#E1F5EE] rounded-lg flex items-center justify-center text-2xl relative">
-                                
-                                <ImageIcon/>
-                                
-                                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">1</span>
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-emerald-600">Title</p>
-                                <p className="text-xs text-gray-500 line-clamp-1">Discription</p>
-                            </div>
-                            <span className="text-sm font-medium text-emerald-700">Price EGP</span>
-                        </div>
-                        
+                    <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 pt-2">
+                        {productsArray.length > 0 ? (
+                            productsArray.map((product: any, index: number) => {
+                                const productTotal = (product.price || 0) * (product.quantity || 0);
+                                runningSubtotal += productTotal;
+
+                                return (
+                                    <div key={product.id || index} className="flex items-center gap-4">
+                                        <div className="w-14 h-14 bg-white border border-gray-100 rounded-lg flex items-center justify-center relative flex-shrink-0 text-2xl">
+                                            {product.image ? (
+                                                <Image 
+                                                    src={product.image} 
+                                                    alt={product.title}
+                                                    width={40}
+                                                    height={40}
+                                                    className="object-contain"
+                                                />
+                                            ) : "📦"}
+                                            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">
+                                                {product.quantity}
+                                            </span>
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm text-emerald-600 font-medium line-clamp-1">{product.title}</p>
+                                            <p className="text-xs text-gray-500">Unit: {product.price?.toLocaleString()} EGP</p>
+                                        </div>
+                                        <span className="text-sm font-medium text-emerald-700 whitespace-nowrap">
+                                            {productTotal.toLocaleString()} EGP
+                                        </span>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p className="text-sm text-gray-400 text-center py-4">Your cart is empty</p>
+                        )}
                     </div>
 
                     <div className="h-px bg-gray-200 mb-6"></div>
@@ -123,7 +131,7 @@ const CheckoutPage = () => {
                     <div className="space-y-2 mb-6">
                         <div className="flex justify-between text-sm text-gray-500">
                             <span>Subtotal</span>
-                            <span className="text-gray-800">SubTotal EGP</span>
+                            <span className="text-gray-800">{runningSubtotal.toLocaleString()} EGP</span>
                         </div>
                         <div className="flex justify-between text-sm text-gray-500">
                             <span>Shipping</span>
@@ -131,19 +139,7 @@ const CheckoutPage = () => {
                         </div>
                         <div className="flex justify-between text-base font-medium pt-3 border-t border-gray-200 mt-2">
                             <span>Total</span>
-                            <span className="text-gray-900">Total EGP </span>
-                        </div>
-                    </div>
-
-                    <div className="space-y-3 pt-6 border-t border-gray-200">
-                        <div className="flex items-center gap-2 text-[12px] text-gray-500">
-                            <Check size={14} className="text-[#1D9E75]" /> Free returns within 14 days
-                        </div>
-                        <div className="flex items-center gap-2 text-[12px] text-gray-500">
-                            <Check size={14} className="text-[#1D9E75]" /> Quality guarantee
-                        </div>
-                        <div className="flex items-center gap-2 text-[12px] text-gray-500">
-                            <ShieldCheck size={14} className="text-[#1D9E75]" /> Secure checkout
+                            <span className="text-gray-900 font-bold">Total: {runningSubtotal.toLocaleString()} EGP</span>
                         </div>
                     </div>
                 </div>
