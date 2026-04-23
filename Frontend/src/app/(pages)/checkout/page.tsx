@@ -78,7 +78,7 @@ const CheckoutPage = () => {
                         {isSubmitted ? (
                             <><CheckCircle2 size={18} /> Order Placed Successfully!</>
                         ) : (
-                            `Confirm Order — $${basePrice}`
+                            `Confirm Order — Total Price`
                         )}
                     </button>
                 </div>
