@@ -21,14 +21,26 @@ export default function QuantityField({ id, dark }: { id: string; dark?: boolean
 
   return (
     <div className="flex items-center justify-between w-full">
-      <Button variant="destructive" size="icon" onClick={deleteProduct}>
+      <Button
+        variant="destructive"
+        size="icon"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteProduct();
+        }}
+      >
         <Trash2Icon />
       </Button>
       <div className="flex">
         <Button
           className="bg-black"
           size="icon-sm"
-          onClick={() => updateQuanitity(cartProducts[id].quantity - 1)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateQuanitity(cartProducts[id].quantity - 1);
+          }}
           disabled={cartProducts[id].quantity === 1}
         >
           <MinusIcon />
@@ -43,7 +55,11 @@ export default function QuantityField({ id, dark }: { id: string; dark?: boolean
         <Button
           className="bg-black"
           size="icon-sm"
-          onClick={() => updateQuanitity(cartProducts[id].quantity + 1)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateQuanitity(cartProducts[id].quantity + 1);
+          }}
         >
           <PlusIcon />
         </Button>
