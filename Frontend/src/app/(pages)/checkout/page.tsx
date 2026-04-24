@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PostOrdersAction } from '@/lib/actions/orders.action';
+import { useRouter } from 'next/navigation';
 
 
 const checkoutSchema = z.object({
@@ -23,12 +24,16 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { cartProducts } = useCart();
-    const productsArray = cartProducts ? Object.values(cartProducts) : [];
 
+
+
+    const productsArray = cartProducts ? Object.values(cartProducts) : [];
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CheckoutFormData>({
         resolver: zodResolver(checkoutSchema),
     });
+    const router = useRouter();
+
     const onSubmit = async (data: CheckoutFormData) => {
         try {
 
@@ -36,6 +41,7 @@ const CheckoutPage = () => {
 
             if (result.success) {
                 setIsSubmitted(true);
+                router.push('/orders');
             } else {
                 alert("Failed");
             }
