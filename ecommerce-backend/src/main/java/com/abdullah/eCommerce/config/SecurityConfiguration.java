@@ -27,14 +27,13 @@ public class SecurityConfiguration {
     private CorsConfigurationSource corsConfigurationSource;
 
     @Bean
-    public AuthenticationFilter authenticationFilter(AuthenticationService authenticationService){
+    public AuthenticationFilter authenticationFilter(AuthenticationService authenticationService) {
         return new AuthenticationFilter(authenticationService);
     }
 
 
-
     @Bean
-    public ProductUserDetailsService productUserDetailsService(UserRepository userRepository){
+    public ProductUserDetailsService productUserDetailsService(UserRepository userRepository) {
         ProductUserDetailsService productUserDetailsService = new ProductUserDetailsService(userRepository);
         String email = "abdullah@gmail.com";
         userRepository.findByEmail(email).orElseGet(() -> {
@@ -50,15 +49,17 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter filter){
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter filter) {
         http.authorizeHttpRequests(
-                auth ->
-                        auth
-                                .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/v1/products/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/v1/categories/**").permitAll()
-                                .anyRequest().authenticated()
-        )
+                        auth ->
+                                auth
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                                        .requestMatchers("/v3/**").permitAll()
+                                        .anyRequest().authenticated()
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -68,12 +69,12 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
