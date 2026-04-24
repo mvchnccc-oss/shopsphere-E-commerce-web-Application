@@ -58,8 +58,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-  
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -71,17 +69,22 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <Carousel opts={{ align: "start" }} className="w-full">
-          <CarouselContent className="-ml-4">
-            {featured.map((product) => (
-              <CarouselItem key={product.id} className="pl-4 basis-1/1 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                <ProductCard product={product} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-2" />
-          <CarouselNext className="right-2" />
-        </Carousel>
+        <div className="relative px-10">
+          <Carousel opts={{ align: "start", loop: true }} className="w-full">
+            <CarouselContent className="-ml-4">
+              {featured.map((product) => (
+                <CarouselItem
+                  key={product.id}
+                  className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                >
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
       </section>
 
     </main>
