@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class OrderItemDto {
-    private int id;
     private int productId;
     private int quantity;
     private int pricePerUnit;
