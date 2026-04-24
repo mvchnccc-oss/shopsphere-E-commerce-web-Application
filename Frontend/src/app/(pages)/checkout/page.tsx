@@ -7,6 +7,7 @@ import { useCart } from '@/components/cart/context';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { PostOrdersAction } from '@/lib/actions/orders.action';
 
 
 const checkoutSchema = z.object({
@@ -23,15 +24,24 @@ const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { cartProducts } = useCart();
     const productsArray = cartProducts ? Object.values(cartProducts) : [];
-    
+
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CheckoutFormData>({
         resolver: zodResolver(checkoutSchema),
     });
+    const onSubmit = async (data: CheckoutFormData) => {
+        try {
 
-    const onSubmit = (data: CheckoutFormData) => {
-        console.log("Form Data:", data);
-        setIsSubmitted(true);
+            const result = await PostOrdersAction();
+
+            if (result.success) {
+                setIsSubmitted(true);
+            } else {
+                alert("Failed");
+            }
+        } catch (error) {
+            console.error("Order Error:", error);
+        }
     };
 
 
@@ -64,19 +74,19 @@ const CheckoutPage = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[12px] font-medium text-gray-500">First name</label>
-                                <input 
+                                <input
                                     {...register("firstName")}
-                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
-                                    placeholder="John" 
+                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                    placeholder="John"
                                 />
                                 {errors.firstName && <p className="text-red-500 text-[10px]">{errors.firstName.message}</p>}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[12px] font-medium text-gray-500">Last name</label>
-                                <input 
+                                <input
                                     {...register("lastName")}
-                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
-                                    placeholder="Smith" 
+                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                    placeholder="Smith"
                                 />
                                 {errors.lastName && <p className="text-red-500 text-[10px]">{errors.lastName.message}</p>}
                             </div>
@@ -84,31 +94,31 @@ const CheckoutPage = () => {
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">Email address</label>
-                            <input 
+                            <input
                                 {...register("email")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
-                                type="email" 
-                                placeholder="john@example.com" 
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                type="email"
+                                placeholder="john@example.com"
                             />
                             {errors.email && <p className="text-red-500 text-[10px]">{errors.email.message}</p>}
                         </div>
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">Street address</label>
-                            <input 
+                            <input
                                 {...register("address")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
-                                placeholder="123 Main Street, Apt 5" 
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                placeholder="123 Main Street, Apt 5"
                             />
                             {errors.address && <p className="text-red-500 text-[10px]">{errors.address.message}</p>}
                         </div>
 
                         <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">City</label>
-                            <input 
+                            <input
                                 {...register("city")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.city ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`} 
-                                placeholder="New York" 
+                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.city ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                placeholder="New York"
                             />
                             {errors.city && <p className="text-red-500 text-[10px]">{errors.city.message}</p>}
                         </div>
@@ -127,23 +137,25 @@ const CheckoutPage = () => {
                         </div>
                         <Truck size={20} className="text-[#1D9E75]" />
                     </div>
-
                     <button
-                        type="submit"
-                        disabled={isSubmitting || isSubmitted || productsArray.length === 0}
-                        className={`w-full mt-8 p-3.5 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${isSubmitted ? 'bg-[#085041]' : 'bg-[#0F6E56] hover:bg-[#085041] active:scale-[0.98] disabled:bg-gray-300'}`}
+                        type="submit" disabled={isSubmitting || isSubmitted || productsArray.length === 0}
+                        className={`w-full mt-8 p-3.5 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all 
+        ${isSubmitted ? 'bg-[#085041]' : 'bg-[#0F6E56] hover:bg-[#085041] active:scale-[0.98] disabled:bg-gray-300'}`}
                     >
-                        {isSubmitted ? (
+                        {isSubmitting ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Processing...
+                            </>
+                        ) : isSubmitted ? (
                             <><CheckCircle2 size={18} /> Order Placed Successfully!</>
-                        ) : isSubmitting ? (
-                            "Processing..."
                         ) : (
                             `Confirm Order`
                         )}
                     </button>
                 </form>
 
-       
+
                 <div className="p-8 bg-gray-50">
                     <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-6">Order Summary</p>
                     <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 pt-2">
