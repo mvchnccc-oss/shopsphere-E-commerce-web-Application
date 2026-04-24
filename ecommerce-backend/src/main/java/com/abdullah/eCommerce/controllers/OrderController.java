@@ -1,12 +1,11 @@
 package com.abdullah.eCommerce.controllers;
 
+import com.abdullah.eCommerce.domain.dtos.CheckoutRequestDto;
 import com.abdullah.eCommerce.domain.dtos.OrderDto;
 import com.abdullah.eCommerce.services.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public int placeOrder() {
-        return orderService.placeOrderFromCart();
+    public int placeOrder(@Valid @RequestBody CheckoutRequestDto body) {
+        return orderService.placeOrderFromCart(body);
     }
 }

@@ -29,6 +29,9 @@ public class Order {
     @OneToMany(mappedBy = "order", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OrderAddress orderAddress;
+
     @PrePersist
     public void onCreate() {
         orderedAt = Instant.now();

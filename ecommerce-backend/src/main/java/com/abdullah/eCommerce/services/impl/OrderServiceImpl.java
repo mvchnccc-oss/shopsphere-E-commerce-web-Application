@@ -1,9 +1,7 @@
 package com.abdullah.eCommerce.services.impl;
 
-import com.abdullah.eCommerce.domain.Cart;
-import com.abdullah.eCommerce.domain.Order;
-import com.abdullah.eCommerce.domain.OrderItem;
-import com.abdullah.eCommerce.domain.User;
+import com.abdullah.eCommerce.domain.*;
+import com.abdullah.eCommerce.domain.dtos.CheckoutRequestDto;
 import com.abdullah.eCommerce.domain.dtos.OrderDto;
 import com.abdullah.eCommerce.mappers.OrderMapper;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
@@ -32,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public int placeOrderFromCart() {
+    public int placeOrderFromCart(CheckoutRequestDto address) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(
@@ -43,6 +41,14 @@ public class OrderServiceImpl implements OrderService {
         if (cart.isEmpty()) return -1;
 
         Order order = Order.builder().user(user).build();
+
+        OrderAddress orderAddress = OrderAddress.builder()
+                .firstname(address.getFirstname())
+                .lastname(address.getLastname())
+                .city(address.getCity())
+                .street(address.getStreet())
+                .order(order)
+                .build();
 
         List<OrderItem> orderItems = cart.get().getItems().stream()
                 .map((item) -> OrderItem.builder()
@@ -56,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderItems.isEmpty()) return -1;
 
         order.setItems(orderItems);
+        order.setOrderAddress(orderAddress);
         orderRepository.save(order);
 
         cartItemRepository.deleteByCartId(cart.get().getId());

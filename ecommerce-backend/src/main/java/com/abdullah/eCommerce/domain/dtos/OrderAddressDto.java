@@ -5,16 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderDto {
-    private int id;
-    private Instant orderedAt;
-    private List<OrderItemDto> items;
-    private OrderAddressDto orderAddress;
+public class OrderAddressDto {
+    private String firstname;
+    private String lastname;
+    private String city;
+    private String street;
 }
