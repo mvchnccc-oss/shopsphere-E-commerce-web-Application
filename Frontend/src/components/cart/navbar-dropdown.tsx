@@ -38,7 +38,10 @@ export default function CartNavbarDropdown() {
             <>
               <div className="flex p-1.5 gap-2">
                 <Link href="/checkout" className="w-full">
-                  <Button className="flex justify-center items-center w-full gap-2">
+                  <Button
+                    className="flex justify-center items-center w-full gap-2"
+                    onClick={() => setOpen(false)}
+                  >
                     <CreditCardIcon /> Checkout
                   </Button>
                 </Link>
@@ -46,6 +49,7 @@ export default function CartNavbarDropdown() {
                   <Button
                     variant="secondary"
                     className="flex justify-center items-center w-full gap-2"
+                    onClick={() => setOpen(false)}
                   >
                     <ShoppingCart /> Cart
                   </Button>
