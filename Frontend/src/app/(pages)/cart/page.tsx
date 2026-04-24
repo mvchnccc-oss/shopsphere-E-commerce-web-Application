@@ -123,7 +123,7 @@ const CartPage = () => {
                     )}
                 </div>
 
-                {/* Summary Section */}
+        
                 <div className="relative">
                     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm sticky top-6">
                         <h2 className="font-serif text-lg font-medium text-gray-900 mb-6">Order summary</h2>

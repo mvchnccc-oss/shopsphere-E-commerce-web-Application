@@ -202,7 +202,7 @@ const CheckoutPage = () => {
                         <div className="flex justify-between text-base font-medium pt-3 border-t border-gray-200 mt-2">
                             <span>Total</span>
                             <span className="text-gray-900 font-bold">
-                                {(runningSubtotal - (runningSubtotal * appliedDiscount)).toLocaleString()} EGP
+                                <span className='text-emerald-700 font-semibold'>Total:</span> {(runningSubtotal - (runningSubtotal * appliedDiscount)).toLocaleString()} EGP
                             </span>
                         </div>
                     </div>
