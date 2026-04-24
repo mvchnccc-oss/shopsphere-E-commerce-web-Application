@@ -32,7 +32,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className="bg-accent p-5">
+    <div className="bg-accent p-5 sticky top-0 z-10">
       {/* Desktop Row */}
       <div className="flex items-center gap-4">
         <Link

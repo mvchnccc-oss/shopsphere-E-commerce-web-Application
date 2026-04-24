@@ -14,7 +14,7 @@ export default function CartItem({ product, onClick, dark }: CardItemProps) {
   return (
     <Link key={product.id} href={`/products/${product.id}`} onClick={onClick}>
       <div className="flex items-center gap-2">
-        <div className="max-w-16 max-h-16">
+        <div className="flex-none w-16 h-16">
           <LoadingImage
             src={product.image}
             width={64}
