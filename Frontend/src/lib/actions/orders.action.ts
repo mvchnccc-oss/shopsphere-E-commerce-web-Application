@@ -1,12 +1,12 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import { CheckoutFormData } from "@/app/(pages)/checkout/page";
 
 export async function getOrdersAction() {
   const session = await getServerSession(authOptions);
   if (!session) return { success: false };
   const { token } = session;
-  
 
   try {
     const res = await fetch(
@@ -30,11 +30,10 @@ export async function getOrdersAction() {
   }
 }
 
-export async function PostOrdersAction() {
+export async function PostOrdersAction(formData: CheckoutFormData) {
   const session = await getServerSession(authOptions);
   if (!session) return { success: false };
   const { token } = session;
-  
 
   try {
     const res = await fetch(
@@ -45,6 +44,13 @@ export async function PostOrdersAction() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+
+        body: JSON.stringify({
+          address: formData.address,
+          city: formData.city,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        }),
       },
     );
 

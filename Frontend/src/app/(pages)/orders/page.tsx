@@ -55,7 +55,6 @@ export default async function OrdersPage() {
         ))}
       </div>
 
-      {/* Orders */}
       <div className="flex flex-col gap-3">
         {orders.map((order) => {
           const total = order.items.reduce((s, i) => s + i.quantity * i.pricePerUnit, 0);
@@ -94,7 +93,7 @@ export default async function OrdersPage() {
                     ))}
                   </tbody>
                 </table>
-                <div className="flex justify-between items-center p-3 bg-muted border-t">
+                <div className="flex flex-col md:flex-row justify-between items-center p-3 bg-muted border-t">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Ordered At</span>
                     <span className="text-base font-medium">

@@ -14,12 +14,16 @@ import { useRouter } from 'next/navigation';
 const checkoutSchema = z.object({
     firstName: z.string().min(2, "First name is to short"),
     lastName: z.string().min(2, "Last name is to short"),
-    email: z.string().email("Invalid email"),
     address: z.string().min(5, "Please enter detailed address "),
     city: z.string().min(2, "Required"),
 });
 
-type CheckoutFormData = z.infer<typeof checkoutSchema>;
+export interface CheckoutFormData {
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+}
 
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -33,17 +37,18 @@ const CheckoutPage = () => {
         resolver: zodResolver(checkoutSchema),
     });
     const router = useRouter();
-
     const onSubmit = async (data: CheckoutFormData) => {
         try {
 
-            const result = await PostOrdersAction();
+            const result = await PostOrdersAction(data);
 
             if (result.success) {
                 setIsSubmitted(true);
-                router.push('/orders');
+                setTimeout(() => {
+                    router.push('/orders');
+                }, 1500);
             } else {
-                alert("Failed");
+                alert("Failed to place order. Please try again.");
             }
         } catch (error) {
             console.error("Order Error:", error);
@@ -82,7 +87,7 @@ const CheckoutPage = () => {
                                 <label className="text-[12px] font-medium text-gray-500">First name</label>
                                 <input
                                     {...register("firstName")}
-                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                    className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
                                     placeholder="John"
                                 />
                                 {errors.firstName && <p className="text-red-500 text-[10px]">{errors.firstName.message}</p>}
@@ -91,7 +96,7 @@ const CheckoutPage = () => {
                                 <label className="text-[12px] font-medium text-gray-500">Last name</label>
                                 <input
                                     {...register("lastName")}
-                                    className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                    className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
                                     placeholder="Smith"
                                 />
                                 {errors.lastName && <p className="text-red-500 text-[10px]">{errors.lastName.message}</p>}
@@ -99,21 +104,10 @@ const CheckoutPage = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[12px] font-medium text-gray-500">Email address</label>
-                            <input
-                                {...register("email")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
-                                type="email"
-                                placeholder="john@example.com"
-                            />
-                            {errors.email && <p className="text-red-500 text-[10px]">{errors.email.message}</p>}
-                        </div>
-
-                        <div className="space-y-1">
                             <label className="text-[12px] font-medium text-gray-500">Street address</label>
                             <input
                                 {...register("address")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
                                 placeholder="123 Main Street, Apt 5"
                             />
                             {errors.address && <p className="text-red-500 text-[10px]">{errors.address.message}</p>}
@@ -123,7 +117,7 @@ const CheckoutPage = () => {
                             <label className="text-[12px] font-medium text-gray-500">City</label>
                             <input
                                 {...register("city")}
-                                className={`w-full p-2.5 border rounded-lg text-sm focus:outline-none ${errors.city ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
+                                className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.city ? 'border-red-500' : 'border-gray-200 focus:border-[#1D9E75]'}`}
                                 placeholder="New York"
                             />
                             {errors.city && <p className="text-red-500 text-[10px]">{errors.city.message}</p>}
