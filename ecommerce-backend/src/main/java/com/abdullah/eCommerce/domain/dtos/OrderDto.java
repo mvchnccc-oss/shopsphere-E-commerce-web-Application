@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -13,5 +14,6 @@ import java.util.List;
 @Builder
 public class OrderDto {
     private int id;
+    private Instant orderedAt;
     private List<OrderItemDto> items;
 }

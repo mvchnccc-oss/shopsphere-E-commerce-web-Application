@@ -5,6 +5,7 @@ export interface Orders {
 export interface Order {
   id: number;
   items: OrderItem[];
+  orderedAt: string;
 }
 export interface OrderItem {
   productTitle: string;

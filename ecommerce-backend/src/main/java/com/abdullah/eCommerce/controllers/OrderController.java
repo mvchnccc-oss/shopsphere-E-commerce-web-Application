@@ -19,7 +19,10 @@ public class OrderController {
 
     @GetMapping
     public Map<String, List<OrderDto>> getOrders() {
-        return Map.of("orders", orderService.getOrders());
+        var orders = orderService.getOrders();
+        for (var order : orders) System.out.println(order.getOrderedAt());
+
+        return Map.of("orders", orders);
     }
 
     @PostMapping

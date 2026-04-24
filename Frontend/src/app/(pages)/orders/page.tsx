@@ -1,6 +1,15 @@
 import { getOrdersAction } from "@/lib/actions/orders.action";
 import { Orders } from "@/lib/interfaces/orders.interface";
 
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 export default async function OrdersPage() {
   const res = await getOrdersAction();
 
@@ -85,9 +94,17 @@ export default async function OrdersPage() {
                     ))}
                   </tbody>
                 </table>
-                <div className="flex justify-end items-center gap-2 p-3 bg-muted border-t">
-                  <span className="text-sm text-muted-foreground">Order total</span>
-                  <span className="text-base font-medium">${total.toFixed(2)}</span>
+                <div className="flex justify-between items-center p-3 bg-muted border-t">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Ordered At</span>
+                    <span className="text-base font-medium">
+                      {dateFormatter.format(new Date(order.orderedAt))}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Order total</span>
+                    <span className="text-base font-medium">${total.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
             </details>

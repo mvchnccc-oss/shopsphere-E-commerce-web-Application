@@ -1,6 +1,9 @@
 package com.abdullah.eCommerce.services.impl;
 
-import com.abdullah.eCommerce.domain.*;
+import com.abdullah.eCommerce.domain.Cart;
+import com.abdullah.eCommerce.domain.Order;
+import com.abdullah.eCommerce.domain.OrderItem;
+import com.abdullah.eCommerce.domain.User;
 import com.abdullah.eCommerce.domain.dtos.OrderDto;
 import com.abdullah.eCommerce.mappers.OrderMapper;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
@@ -68,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
                         () -> new UsernameNotFoundException(email)
                 );
 
-        List<Order> orders = orderRepository.findByUserId(user.getId());
+        List<Order> orders = orderRepository.findByUserIdOrderByOrderedAtDesc(user.getId());
 
         return orderMapper.toOrdersDto(orders);
     }
