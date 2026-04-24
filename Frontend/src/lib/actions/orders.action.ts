@@ -29,7 +29,6 @@ export async function getOrdersAction() {
     return { success: false };
   }
 }
-
 export async function PostOrdersAction(formData: CheckoutFormData) {
   const session = await getServerSession(authOptions);
   if (!session) return { success: false };
@@ -46,18 +45,25 @@ export async function PostOrdersAction(formData: CheckoutFormData) {
         },
 
         body: JSON.stringify({
-          address: formData.address,
-          city: formData.city,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
+          orderAddress: {
+            firstname: formData.firstName,
+            lastname: formData.lastName,
+            city: formData.city,
+            street: formData.address,
+          },
         }),
       },
     );
 
-    if (!res.ok) return { success: false };
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Backend Error:", errorData);
+      return { success: false };
+    }
 
     return { success: true };
   } catch (error) {
+    console.error("Action Catch Error:", error);
     return { success: false };
   }
 }
