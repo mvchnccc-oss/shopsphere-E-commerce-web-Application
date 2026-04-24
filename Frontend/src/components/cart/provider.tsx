@@ -51,7 +51,16 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     setCartProducts((cart) => ({ ...cart, [id]: { ...data } }));
   }
 
+  async function clearCart() {
+    setCartProducts({});
+    try {
+      const productIds = Object.keys(cartProducts);
+      await Promise.all(productIds.map(id => updateCartItemAction(id, 0)));
+    } catch (error) {
+      console.error("Failed to clear backend cart:", error);
+    }
+  }
   return (
-    <CartContext value={{ cartProducts, updateCartItem, addCartItem }}>{children}</CartContext>
+    <CartContext value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>{children}</CartContext>
   );
 }

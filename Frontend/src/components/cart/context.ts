@@ -5,6 +5,7 @@ interface ICartContext {
   cartProducts: Record<string, CartProduct>;
   updateCartItem: (id: string, quantity: number) => void;
   addCartItem: (id: string, data: CartProduct) => void;
+  clearCart: () => Promise<void>;
 }
 
 export const CartContext = createContext<ICartContext | null>(null);

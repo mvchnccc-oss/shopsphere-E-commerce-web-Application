@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PostOrdersAction } from '@/lib/actions/orders.action';
 import { useRouter } from 'next/navigation';
+import { updateCartItemAction } from '@/lib/actions/cart.actions';
 
 
 const checkoutSchema = z.object({
@@ -27,7 +28,7 @@ export interface CheckoutFormData {
 
 const CheckoutPage = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const { cartProducts } = useCart();
+    const { cartProducts, clearCart } = useCart(); 
 
 
 
@@ -36,25 +37,28 @@ const CheckoutPage = () => {
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CheckoutFormData>({
         resolver: zodResolver(checkoutSchema),
     });
+
+
     const router = useRouter();
+    
+
     const onSubmit = async (data: CheckoutFormData) => {
         try {
-
             const result = await PostOrdersAction(data);
 
             if (result.success) {
+                await clearCart();
                 setIsSubmitted(true);
                 setTimeout(() => {
                     router.push('/orders');
-                },900);
+                }, 900);
             } else {
-                alert("Failed to place order. Please try again.");
+                alert("Failed to place order.");
             }
         } catch (error) {
             console.error("Order Error:", error);
         }
     };
-
 
     let runningSubtotal = 0;
     const [promoCode, setPromoCode] = useState('');

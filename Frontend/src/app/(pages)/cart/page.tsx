@@ -1,4 +1,5 @@
 "use client";
+import Swal from 'sweetalert2';
 import React from 'react';
 import { Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Clock, RefreshCw, Trash } from 'lucide-react';
 import Link from 'next/link';
@@ -7,7 +8,7 @@ import { useCart } from '@/components/cart/context';
 
 const CartPage = () => {
 
-    const { cartProducts, updateCartItem, addCartItem } = useCart(); 
+    const { cartProducts, updateCartItem, clearCart } = useCart();
     const productsArray = cartProducts ? Object.entries(cartProducts) : [];
 
     let subtotal = 0;
@@ -18,13 +19,30 @@ const CartPage = () => {
     };
 
     const handleRemove = (id: string) => {
-        updateCartItem(id, 0); 
+        updateCartItem(id, 0);
     };
+
 
     const handleClearCart = () => {
-        productsArray.forEach(([id]) => updateCartItem(id, 0));
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Your cart will be completely empty!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0F6E56',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, clear it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                clearCart();
+                Swal.fire(
+                    'Cleared!',
+                    'Your cart is now empty.',
+                    'success'
+                )
+            }
+        })
     };
-
     return (
         <div className="max-w-6xl mx-auto p-6">
             <div className="flex items-baseline justify-between mb-8">
@@ -123,7 +141,7 @@ const CartPage = () => {
                     )}
                 </div>
 
-        
+
                 <div className="relative">
                     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm sticky top-6">
                         <h2 className="font-serif text-lg font-medium text-gray-900 mb-6">Order summary</h2>
