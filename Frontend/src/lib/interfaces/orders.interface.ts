@@ -1,11 +1,14 @@
-export type Orders = Order[];
+export interface Orders {
+  orders: Order[];
+}
 
 export interface Order {
-    id: number;
-    items: OrderItem[];
+  id: number;
+  items: OrderItem[];
 }
 export interface OrderItem {
-    productId: number;
-    quantity: number;
-    pricePerUnit: number;
+  productTitle: string;
+  productId: number;
+  quantity: number;
+  pricePerUnit: number;
 }
