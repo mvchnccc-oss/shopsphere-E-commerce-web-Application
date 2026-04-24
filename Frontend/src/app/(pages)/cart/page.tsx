@@ -6,25 +6,23 @@ import Image from 'next/image';
 import { useCart } from '@/components/cart/context';
 
 const CartPage = () => {
-    const { cartProducts, updateCart } = useCart();
+
+    const { cartProducts, updateCartItem, addCartItem } = useCart(); 
     const productsArray = cartProducts ? Object.entries(cartProducts) : [];
 
     let subtotal = 0;
 
     const handleUpdateQuantity = (id: string, newQty: number) => {
         if (newQty < 1) return;
-        updateCart(prev => ({
-            ...prev,
-            [id]: { ...prev[id], quantity: newQty }
-        }));
+        updateCartItem(id, newQty);
     };
 
     const handleRemove = (id: string) => {
-        updateCart(prev => {
-            const newCart = { ...prev };
-            delete newCart[id];
-            return newCart;
-        });
+        updateCartItem(id, 0); 
+    };
+
+    const handleClearCart = () => {
+        productsArray.forEach(([id]) => updateCartItem(id, 0));
     };
 
     return (
@@ -34,20 +32,19 @@ const CartPage = () => {
                 <div className='flex gap-3 justify-between items-center'>
                     <span className="text-xl text-gray-500 text-nowrap">{productsArray.length} items</span>
                     <button
+                        onClick={handleClearCart}
                         disabled={productsArray.length === 0}
-                        className="w-full bg-red-500 text-white py-2 px-2 rounded-xl font-medium flex items-center justify-center gap-1 hover:bg-red-700 transition-all active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-600"
+                        className="w-full bg-red-500 text-white py-2 px-2 rounded-xl font-medium flex items-center justify-center gap-1 hover:bg-red-700 transition-all active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-600 cursor-pointer"
                     >
                         <Trash size={18} /> Clear cart
                     </button>
                 </div>
-
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
                 <div className="space-y-4">
                     {productsArray.length > 0 ? (
                         <>
-
                             <div className="hidden md:grid grid-cols-[1fr_120px_100px_100px] gap-4 pb-4 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-medium">
                                 <div>Product</div>
                                 <div className="text-center">Quantity</div>
@@ -62,7 +59,6 @@ const CartPage = () => {
 
                                     return (
                                         <div key={id} className="grid grid-cols-1 md:grid-cols-[1fr_120px_100px_100px] gap-4 py-6 items-center group">
-
                                             <div className="flex gap-4 items-center">
                                                 <Link href={`/products/${id}`}>
                                                     <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center relative shrink-0 cursor-pointer hover:shadow-md transition-shadow">
@@ -72,7 +68,7 @@ const CartPage = () => {
                                                     </div>
                                                 </Link>
                                                 <div className="flex flex-col min-w-0">
-                                                    <Link href={`/products/${id}`} className="text-sm font-medium text-gray-50 truncate hover:text-emerald-600 transition-colors">
+                                                    <Link href={`/products/${id}`} className="text-sm font-medium text-gray-200 truncate hover:text-emerald-600 transition-colors">
                                                         {product.title}
                                                     </Link>
                                                     <button
@@ -83,7 +79,6 @@ const CartPage = () => {
                                                     </button>
                                                 </div>
                                             </div>
-
 
                                             <div className="flex justify-center">
                                                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
@@ -105,11 +100,9 @@ const CartPage = () => {
                                                 </div>
                                             </div>
 
-
-                                            <div className="text-center text-sm text-gray-400 hidden md:block">
+                                            <div className="text-center text-sm text-gray-300 hidden md:block">
                                                 {product.price.toLocaleString()} EGP
                                             </div>
-
 
                                             <div className="text-right text-sm font-semibold text-gray-50">
                                                 {lineTotal.toLocaleString()} EGP
@@ -155,7 +148,7 @@ const CartPage = () => {
                         <Link href="/checkout">
                             <button
                                 disabled={productsArray.length === 0}
-                                className="w-full bg-[#0F6E56] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#085041] transition-all active:scale-[0.98] disabled:bg-gray-100"
+                                className="w-full bg-[#0F6E56] text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-[#085041] transition-all active:scale-[0.98] disabled:bg-gray-100 disabled:cursor-not-allowed"
                             >
                                 <ShoppingBag size={18} /> Proceed to checkout
                             </button>
