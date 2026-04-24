@@ -1,5 +1,6 @@
 import { getOrdersAction } from "@/lib/actions/orders.action";
 import { Orders } from "@/lib/interfaces/orders.interface";
+import { Banknote, ClockIcon, MapPinIcon } from "lucide-react";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
@@ -46,7 +47,7 @@ export default async function OrdersPage() {
         {[
           { label: "Total orders", value: orders.length },
           { label: "Items purchased", value: totalItems },
-          { label: "Total spent", value: `$${totalSpent.toFixed(2)}` },
+          { label: "Total spent", value: `EGP ${totalSpent.toFixed(2)}` },
         ].map((stat) => (
           <div key={stat.label} className="bg-muted rounded-lg p-4">
             <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
@@ -67,7 +68,7 @@ export default async function OrdersPage() {
                     {order.items.length} items
                   </span>
                 </div>
-                <span className="font-medium">${total.toFixed(2)}</span>
+                <span className="font-medium">EGP {total.toFixed(2)}</span>
               </summary>
 
               <div className="border-t">
@@ -85,24 +86,41 @@ export default async function OrdersPage() {
                       <tr key={i} className="border-t">
                         <td className="p-3">{item.productTitle}</td>
                         <td className="p-3">{item.quantity}</td>
-                        <td className="p-3">${item.pricePerUnit.toFixed(2)}</td>
+                        <td className="p-3">EGP {item.pricePerUnit.toFixed(2)}</td>
                         <td className="p-3 text-right font-medium">
-                          ${(item.quantity * item.pricePerUnit).toFixed(2)}
+                          EGP {(item.quantity * item.pricePerUnit).toFixed(2)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <div className="flex flex-col md:flex-row justify-between items-center p-3 bg-muted border-t">
+                <div className="flex flex-col p-3 bg-muted border-t">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Ordered At</span>
+                    <span className="flex-none w-23.5 md:w-fit flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPinIcon className="text-red-400" size={20} />
+                      Address
+                    </span>
                     <span className="text-base font-medium">
-                      {dateFormatter.format(new Date(order.orderedAt))}
+                      {order.orderAddress.city} - {order.orderAddress.street}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Order total</span>
-                    <span className="text-base font-medium">${total.toFixed(2)}</span>
+                  <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 ">
+                    <div className="flex items-center gap-2">
+                      <span className="flex-none w-23.5 md:flex-1 md:w-full flex items-center gap-1 text-sm text-muted-foreground">
+                        <ClockIcon className="mt-px" size={18} />
+                        Ordered At
+                      </span>
+                      <span className="text-base font-medium">
+                        {dateFormatter.format(new Date(order.orderedAt))}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="flex-none w-23.5 md:flex-1 md:w-full flex items-center gap-1 text-sm text-muted-foreground">
+                        <Banknote className="text-green-500" size={20} />
+                        Total
+                      </span>
+                      <span className="text-base font-medium">EGP {total.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>

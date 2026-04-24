@@ -1,7 +1,7 @@
 "use server";
+import { CheckoutFormData } from "@/app/(pages)/checkout/page";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
-import { CheckoutFormData } from "@/app/(pages)/checkout/page";
 
 export async function getOrdersAction() {
   const session = await getServerSession(authOptions);
@@ -9,16 +9,13 @@ export async function getOrdersAction() {
   const { token } = session;
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     const body = await res.json();
 
@@ -34,27 +31,22 @@ export async function PostOrdersAction(formData: CheckoutFormData) {
   const session = await getServerSession(authOptions);
   if (!session) return { success: false };
   const { token } = session;
-
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          firstname: formData.firstName,
-          lastname: formData.lastName,
-          street: formData.address,
-          city: formData.city,
-        }),
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        firstname: formData.firstName,
+        lastname: formData.lastName,
+        street: formData.street,
+        city: formData.city,
+      }),
+    });
 
     if (!res.ok) {
-   
       console.error("Order failed with status:", res.status);
       return { success: false };
     }
