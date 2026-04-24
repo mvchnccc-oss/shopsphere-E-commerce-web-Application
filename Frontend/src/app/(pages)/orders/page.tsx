@@ -101,12 +101,12 @@ export default async function OrdersPage() {
                       Address
                     </span>
                     <span className="text-base font-medium">
-                      {order.orderAddress.city} - {order.orderAddress.street}
+                      {order.orderAddress?.city || "No City"} - {order.orderAddress?.street || "No Street"}
                     </span>
                   </div>
                   <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 ">
                     <div className="flex items-center gap-2">
-                      <span className="flex-none w-23.5 md:flex-1 md:w-full flex items-center gap-1 text-sm text-muted-foreground">
+                      <span className="flex-none w-23.5 md:flex-1 md:w-full text-nowrap flex items-center gap-1 text-sm text-muted-foreground">
                         <ClockIcon className="mt-px" size={18} />
                         Ordered At
                       </span>

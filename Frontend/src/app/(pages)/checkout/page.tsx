@@ -111,16 +111,6 @@ const CheckoutPage = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[12px] font-medium text-gray-500">Street address</label>
-              <input
-                {...register("street")}
-                className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.street ? "border-red-500" : "border-gray-200 focus:border-[#1D9E75]"}`}
-                placeholder="123 Main Street, Apt 5"
-              />
-              {errors.street && <p className="text-red-500 text-[10px]">{errors.street.message}</p>}
-            </div>
-
-            <div className="space-y-1">
               <label className="text-[12px] font-medium text-gray-500">City</label>
               <input
                 {...register("city")}
@@ -130,6 +120,17 @@ const CheckoutPage = () => {
               {errors.city && <p className="text-red-500 text-[10px]">{errors.city.message}</p>}
             </div>
           </div>
+
+          <div className="space-y-1 mt-2">
+            <label className="text-[12px] font-medium text-gray-500">Street address</label>
+            <input
+              {...register("street")}
+              className={`w-full p-2.5 border rounded-lg placeholder:text-gray-500 text-gray-900 text-sm focus:outline-none ${errors.street ? "border-red-500" : "border-gray-200 focus:border-[#1D9E75]"}`}
+              placeholder="123 Main Street, Apt 5"
+            />
+            {errors.street && <p className="text-red-500 text-[10px]">{errors.street.message}</p>}
+          </div>
+
 
           <div className="h-px bg-gray-200 my-8"></div>
 
