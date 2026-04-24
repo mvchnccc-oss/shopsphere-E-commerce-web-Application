@@ -19,10 +19,10 @@ const checkoutSchema = z.object({
 });
 
 export interface CheckoutFormData {
-  firstName: string;
-  lastName: string;
-  address: string;
-  city: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    city: string;
 }
 
 const CheckoutPage = () => {
@@ -46,7 +46,7 @@ const CheckoutPage = () => {
                 setIsSubmitted(true);
                 setTimeout(() => {
                     router.push('/orders');
-                }, 1500);
+                },900);
             } else {
                 alert("Failed to place order. Please try again.");
             }

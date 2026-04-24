@@ -29,6 +29,7 @@ export async function getOrdersAction() {
     return { success: false };
   }
 }
+
 export async function PostOrdersAction(formData: CheckoutFormData) {
   const session = await getServerSession(authOptions);
   if (!session) return { success: false };
@@ -43,27 +44,24 @@ export async function PostOrdersAction(formData: CheckoutFormData) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-
         body: JSON.stringify({
-          orderAddress: {
-            firstname: formData.firstName,
-            lastname: formData.lastName,
-            city: formData.city,
-            street: formData.address,
-          },
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+          street: formData.address,
+          city: formData.city,
         }),
-      },
+      }
     );
 
     if (!res.ok) {
-      const errorData = await res.json();
-      console.error("Backend Error:", errorData);
+   
+      console.error("Order failed with status:", res.status);
       return { success: false };
     }
 
     return { success: true };
   } catch (error) {
-    console.error("Action Catch Error:", error);
+    console.error("Fetch error:", error);
     return { success: false };
   }
 }
