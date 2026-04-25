@@ -1,5 +1,6 @@
 import AddToCartButton from "@/components/cart/add-button";
 import LoadingImage from "@/components/loading-image";
+import AddToWishlistButton from "@/components/wishlist/add-button-whishlist";
 import type { Product } from "@/lib/interfaces/products.interface";
 import Link from "next/link";
 
@@ -33,12 +34,12 @@ export default function ProductCard({ product: prod }: { product: Product }) {
           </div>
         </Link>
         <div className="w-full mt-auto px-3 pb-3 flex items-center gap-2">
-          <AddToCartButton
-            id={prod.id}
-            title={prod.title}
-            price={prod.price}
-            image={prod.images[0]}
-          />
+          <div className="flex-1">
+            <AddToCartButton id={prod.id} title={prod.title} price={prod.price} image={prod.images[0]} />
+          </div>
+          <div className="rounded-xl border-2 border-red-100 bg-red-50">
+            <AddToWishlistButton id={Number(prod.id)} iconOnly />
+          </div>
         </div>
       </div>
     </>

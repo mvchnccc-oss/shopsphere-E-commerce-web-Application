@@ -2,6 +2,7 @@ import AddToCartButton from "@/components/cart/add-button";
 import { getProductById } from "@/lib/actions/products.actions";
 import { Product } from "@/lib/interfaces/products.interface";
 import ProductCarousel from "./_components/product-carousal";
+import AddToWishlistButton from "@/components/wishlist/add-button-whishlist";
 
 export default async function page({ params }: { params: Promise<{ productid: number }> }) {
   const { productid } = await params;
@@ -26,6 +27,7 @@ export default async function page({ params }: { params: Promise<{ productid: nu
             image={product.images[0]}
             dark
           />
+          <AddToWishlistButton id={Number(product.id)} />
         </div>
       </div>
     </div>
