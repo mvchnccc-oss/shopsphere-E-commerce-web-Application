@@ -38,7 +38,7 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
         variant="ghost"
         size="icon"
         onClick={toggleWishlist}
-        className={`rounded-full transition-all duration-200 hover:bg-transparent! bg-transparent! ${isWishlisted
+        className={`rounded-full transition-all duration-450 hover:bg-transparent! bg-transparent! ${isWishlisted
             ? "text-rose-500 hover:text-rose-600"
             : "text-rose-400 hover:text-rose-500"
           }`}

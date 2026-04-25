@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MenuIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
+import { HeartIcon, MenuIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -73,6 +73,9 @@ export default function Navbar() {
           )}
           {status === "authenticated" && (
             <>
+              <Link href="/wishlist">
+                <HeartIcon className="size-5" />
+              </Link>
               <CartNavbarDropdown />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -142,6 +145,9 @@ export default function Navbar() {
             )}
             {status === "authenticated" && (
               <>
+                <Link href="/wishlist">
+                  <HeartIcon className="size-5" />
+                </Link>
                 <CartNavbarDropdown />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
