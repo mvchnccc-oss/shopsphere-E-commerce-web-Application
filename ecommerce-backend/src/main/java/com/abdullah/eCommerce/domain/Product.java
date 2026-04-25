@@ -23,7 +23,7 @@ public class Product {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
     private Long price;
 
     @ManyToOne
@@ -37,19 +37,22 @@ public class Product {
     @Column(nullable = false)
     private List<String> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Wishlist> wishlist;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate(){
+    public void onCreate() {
         LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
     }
 
     @PreUpdate
-    public void afterUpdate(){
+    public void afterUpdate() {
         updatedAt = LocalDateTime.now();
     }
 }
