@@ -9,11 +9,13 @@ import { WishlistContext } from "./context";
 
 export default function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    getWishlistAction().then((wishlist) =>
-      setWishlist((prevState) => wishlist?.products ?? prevState),
-    );
+    getWishlistAction().then((wishlist) => {
+      setWishlist((prevState) => wishlist?.products ?? prevState);
+      setLoading(false);
+    });
   }, []);
 
   async function addToWishlist(id: number) {
@@ -31,7 +33,7 @@ export default function WishlistProvider({ children }: { children: ReactNode }) 
   }
 
   return (
-    <WishlistContext value={{ wishlist, addToWishlist, removeFromWishlist }}>
+    <WishlistContext value={{ wishlist, addToWishlist, removeFromWishlist, isLoading }}>
       {children}
     </WishlistContext>
   );
