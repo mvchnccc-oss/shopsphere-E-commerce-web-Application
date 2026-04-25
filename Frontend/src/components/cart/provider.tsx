@@ -9,7 +9,6 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     getCartAction().then((cart) => {
-      console.log(cart.success);
       const products = cart.items.map(({ product: { id, title, price, images }, quantity }) => ({
         id,
         title,
@@ -55,12 +54,14 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     setCartProducts({});
     try {
       const productIds = Object.keys(cartProducts);
-      await Promise.all(productIds.map(id => updateCartItemAction(id, 0)));
+      await Promise.all(productIds.map((id) => updateCartItemAction(id, 0)));
     } catch (error) {
       console.error("Failed to clear backend cart:", error);
     }
   }
   return (
-    <CartContext value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>{children}</CartContext>
+    <CartContext value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>
+      {children}
+    </CartContext>
   );
 }

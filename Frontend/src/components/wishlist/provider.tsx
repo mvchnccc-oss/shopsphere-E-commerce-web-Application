@@ -1,14 +1,32 @@
 "use client";
-import { ReactNode, useState } from "react";
+import {
+  addToWishlistAction,
+  getWishlistAction,
+  removeFromWishlistAction,
+} from "@/lib/actions/wishlist.actions";
+import { ReactNode, useEffect, useState } from "react";
 import { WishlistContext } from "./context";
 
 export default function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
 
-  function addToWishlist(id: number) {
+  useEffect(() => {
+    getWishlistAction().then((wishlist) =>
+      setWishlist((prevState) => wishlist?.products ?? prevState),
+    );
+  }, []);
+
+  async function addToWishlist(id: number) {
+    const success = await addToWishlistAction(id);
+    if (!success) return;
+
     setWishlist((pervState) => [...pervState, id]);
   }
-  function removeFromWishlist(id: number) {
+
+  async function removeFromWishlist(id: number) {
+    const success = await removeFromWishlistAction(id);
+    if (!success) return;
+
     setWishlist((pervState) => pervState.filter((item) => item != id));
   }
 
