@@ -145,25 +145,21 @@
   }
 }
 
-/* في ملف globals.css */
-
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px; /* كبّرنا العرض الكلي عشان نسيب مساحة للبعد */
+  width: 12px; 
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* خليه شفاف عشان ميبانش زحمة */
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #10b981; /* لون الـ Emerald */
-  border-radius: 20px;       /* خليه دائري */
-  
-  /* السر هنا: بنعمل border شفاف بياخد مساحة من الـ Scrollbar نفسه */
-  border: 4px solid transparent; 
-  background-clip: content-box; /* بيخلي اللون يملأ المحتوى فقط ويبعد عن الـ border الشفاف */
+  background-color: #10b981;
+  border-radius: 20px;         
+    border: 4px solid transparent; 
+  background-clip: content-box; 
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #059669; /* لون أغمق عند الوقوف عليه */
+  background-color: #059669; 
 }
