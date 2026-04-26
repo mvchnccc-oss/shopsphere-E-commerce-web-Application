@@ -13,7 +13,7 @@ import ProductCard from '@/app/(pages)/products/_components/product-card';
 
 export function FeaturedCarousel({ featured }: { featured: any[] }) {
     const plugin = React.useRef(
-        Autoplay({ delay: 800, stopOnInteraction: true })
+        Autoplay({ delay: 1500, stopOnInteraction: true })
     );
 
     return (
