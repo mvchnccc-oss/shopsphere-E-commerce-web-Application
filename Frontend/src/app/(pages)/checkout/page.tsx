@@ -170,7 +170,7 @@ const CheckoutPage = () => {
           <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-6">
             Order Summary
           </p>
-          <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 pt-2">
+          <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 pt-2 custom-scrollbar">
             {productsArray.map((product: any, index: number) => {
               const productTotal = (product.price || 0) * (product.quantity || 0);
               runningSubtotal += productTotal;
