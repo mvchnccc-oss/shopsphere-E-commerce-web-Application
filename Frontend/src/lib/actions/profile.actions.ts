@@ -1,37 +1,29 @@
 "use server";
 import { UpdateProfileForm, updateProfileSchema } from "@/lib/validations/profile.schema";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth";
+import fetchApi from "../fetchApi";
 import { UpdateProfileResponse } from "../interfaces/profile.interface";
 
 export async function updateProfileAction(data: UpdateProfileForm): Promise<UpdateProfileResponse> {
   const { error } = updateProfileSchema.safeParse(data);
   if (error) return { success: false, message: error.message };
 
-  const session = await getServerSession(authOptions);
-  if (!session) return { success: false, message: "Unauthorized" };
-  const { token } = session;
+  const result = await fetchApi("auth/me", "POST", {
+    includeToken: true,
+    body: {
+      name: data.name,
+      email: data.email,
+    },
+  });
 
-  try {
-    console.log(token);
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/me`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-      }),
-    });
-
-    // TODO: Make next-auth use the new token
-    const body = await response.json();
-    const newToken = body.auth.token;
-
+  if (result.status === "Success") {
     return {
       success: true,
-      token: newToken,
+      token: result.data.auth.token,
     };
-  } catch (_) {
-    return { success: false, message: "Server unavailable" };
   }
+
+  return { 
+    success: false, 
+    message: result.status === "Unauthorized" ? "Unauthorized" : "Server unavailable" 
+  };
 }

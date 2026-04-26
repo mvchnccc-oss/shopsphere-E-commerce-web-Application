@@ -10,6 +10,8 @@ export default function Footer() {
     const accountLinks = [
         { href: "/profile", label: "My Profile" },
         { href: "/orders", label: "My Orders" },
+        { href: "/wishlist", label: "My Wishlist" },
+        { href: "/cart", label: "My Cart" },
         { href: "/auth/login", label: "Login" },
         { href: "/auth/register", label: "Register" },
     ];

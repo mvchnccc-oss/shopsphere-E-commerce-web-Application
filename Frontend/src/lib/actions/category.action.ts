@@ -1,31 +1,26 @@
+"use server";
+import fetchApi from "../fetchApi";
 
 export async function getAllCategories() {
- try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/categories`);
+  const result = await fetchApi("categories", "GET", {
+    includeToken: false,
+  });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-   console.log(error);
+  if (result.status === "Success") {
+    return result.data;
   }
 
+  return null;
 }
-export async function getCategoryById(id:Number) {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/categories/${id}`);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
+export async function getCategoryById(id: number) {
+  const result = await fetchApi(`categories/${id}`, "GET", {
+    includeToken: false,
+  });
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-   console.log(error);
+  if (result.status === "Success") {
+    return result.data;
   }
 
+  return null;
 }

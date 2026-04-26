@@ -1,59 +1,33 @@
 "use server";
+import fetchApi from "../fetchApi";
 import { CheckoutFormData } from "@/app/(pages)/checkout/page";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth";
 
 export async function getOrdersAction() {
-  const session = await getServerSession(authOptions);
-  if (!session) return { success: false };
-  const { token } = session;
+  const result = await fetchApi("orders", "GET", {
+    includeToken: true,
+  });
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const body = await res.json();
-
-    if (!res.ok) return { success: false, ...body };
-
-    return { ...body, success: true };
-  } catch (error) {
-    return { success: false };
+  if (result.status === "Success") {
+    return { ...result.data, success: true };
   }
+
+  return { success: false };
 }
 
 export async function PostOrdersAction(formData: CheckoutFormData) {
-  const session = await getServerSession(authOptions);
-  if (!session) return { success: false };
-  const { token } = session;
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        firstname: formData.firstName,
-        lastname: formData.lastName,
-        street: formData.street,
-        city: formData.city,
-      }),
-    });
+  const result = await fetchApi("orders", "POST", {
+    includeToken: true,
+    body: {
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      street: formData.street,
+      city: formData.city,
+    },
+  });
 
-    if (!res.ok) {
-      console.error("Order failed with status:", res.status);
-      return { success: false };
-    }
-
+  if (result.status === "Success") {
     return { success: true };
-  } catch (error) {
-    console.error("Fetch error:", error);
-    return { success: false };
   }
+
+  return { success: false };
 }

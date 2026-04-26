@@ -1,44 +1,40 @@
 "use server";
+import fetchApi from "../fetchApi";
 import type { Products } from "@/lib/interfaces/products.interface";
 
 export async function getAllProducts(): Promise<Products> {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`);
+  const result = await fetchApi("products", "GET", {
+    includeToken: false,
+  });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data ?? [];
-  } catch (error) {
-    console.error("[getAllProducts]", error);
-    return [];
+  if (result.status === "Success") {
+    return result.data ?? [];
   }
+
+  return [];
 }
 
-export async function getProductById(id:number) {
- try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products/${id}`);
+export async function getProductById(id: number) {
+  const result = await fetchApi(`products/${id}`, "GET", {
+    includeToken: false,
+  });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-   console.log(error);
+  if (result.status === "Success") {
+    return result.data;
   }
+
+  return null;
 }
 
 export async function getProductsByCategory(categoryId: number): Promise<Products> {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`);
-    const data: Products = await response.json();
+  const result = await fetchApi("products", "GET", {
+    includeToken: false,
+  });
+
+  if (result.status === "Success") {
+    const data: Products = result.data;
     return data.filter((p) => p.category?.id === categoryId) ?? [];
-  } catch (error) {
-    console.error("[getProductsByCategory]", error);
-    return [];
   }
+
+  return [];
 }
