@@ -1,3 +1,4 @@
+import { InvoiceModal } from "@/components/InvoiceModal";
 import { getOrdersAction } from "@/lib/actions/orders.action";
 import { Orders } from "@/lib/interfaces/orders.interface";
 import { Banknote, ClockIcon, MapPinIcon } from "lucide-react";
@@ -64,6 +65,11 @@ export default async function OrdersPage() {
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
                 <div className="flex items-center gap-3">
                   <span className="font-medium">Order #{order.id}</span>
+                  <InvoiceModal
+                    order={order}
+                    total={total}
+                    
+                  />
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
                     {order.items.length} items
                   </span>
