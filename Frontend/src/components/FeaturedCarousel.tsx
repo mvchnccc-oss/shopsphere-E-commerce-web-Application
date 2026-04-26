@@ -1,4 +1,4 @@
-"use client"; // ضروري جداً هنا
+"use client";
 
 import React from 'react';
 import Autoplay from "embla-carousel-autoplay";
@@ -12,6 +12,7 @@ import {
 import ProductCard from '@/app/(pages)/products/_components/product-card';
 
 export function FeaturedCarousel({ featured }: { featured: any[] }) {
+ 
     const plugin = React.useRef(
         Autoplay({ delay: 1500, stopOnInteraction: true })
     );
