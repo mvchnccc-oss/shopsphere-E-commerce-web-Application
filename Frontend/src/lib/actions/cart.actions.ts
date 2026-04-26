@@ -1,24 +1,19 @@
 "use server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import fetchApi from "../fetchApi";
 import { GetCartResponse } from "../interfaces/cart.interface";
 
 export async function getCartAction(): Promise<GetCartResponse & { success: boolean }> {
-  const session = await getServerSession(authOptions);
-  if (!session) return { success: false, items: [], totalPrice: 0, totalProducts: 0 };
+  const result = await fetchApi("cart", "GET", {
+    includeToken: true,
+  });
 
-  const { token } = session;
-
-  try {
-    const body = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/cart`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    }).then((data) => data.json());
-
-    return { ...body, success: true };
-  } catch (error) {
+  if (result.status !== "Success") {
     return { success: false, items: [], totalPrice: 0, totalProducts: 0 };
   }
+
+  return { success: true, ...result.data };
 }
 
 export async function updateCartItemAction(productId: string, quantity: number): Promise<boolean> {
