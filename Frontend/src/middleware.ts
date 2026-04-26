@@ -5,9 +5,11 @@ import type { NextRequest } from "next/server";
 const protectedRoutes = [
   "/profile",
   "/cart",
-  "/favs",
+  "/orders",
   "/checkout",
-  "/myOrders",
+  "/wishlist",
+  "/dashboard",
+  "/dashboard/products"
 ];
 
 // ✅ المسارات الصح مع /auth/

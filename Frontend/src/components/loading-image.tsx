@@ -46,11 +46,6 @@ export default function LoadingImage(props: LoadingImageProps) {
         className={props.className}
         ref={imageRef}
       />
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <Spinner className="text-black w-1/4 h-1/4" />
-        </div>
-      )}
     </div>
   );
 }

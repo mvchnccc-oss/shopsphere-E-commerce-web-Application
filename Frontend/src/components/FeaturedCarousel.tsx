@@ -23,6 +23,7 @@ export function FeaturedCarousel({ featured }: { featured: any[] }) {
                 opts={{
                     align: "start",
                     loop: true,
+                    duration: 50
                 }}
                 plugins={[plugin.current]}
                 onMouseEnter={() => plugin.current.stop()}

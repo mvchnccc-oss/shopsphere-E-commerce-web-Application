@@ -7,7 +7,7 @@ import { FeaturedCarousel } from '@/components/FeaturedCarousel'; // استدع�
 
 export default async function HomePage() {
   const allProducts: Products = await getAllProducts();
-  const featured = allProducts.slice(0, 18);
+  const featured = allProducts.slice(0, 20);
 
   return (
     <main className="min-h-screen bg-background xl:pt-6">
@@ -62,7 +62,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {/* استخدام الـ Client Component هنا */}
+    
         <FeaturedCarousel featured={featured} />
       </section>
     </main>

@@ -25,6 +25,7 @@ export default function Navbar() {
     { path: "/", label: "Home" },
     { path: "/products", label: "Products" },
     { path: "/categories", label: "Categories" },
+    { path: "/dashboard", label: "Dashboard" },
   ];
 
   async function handleLogout() {
