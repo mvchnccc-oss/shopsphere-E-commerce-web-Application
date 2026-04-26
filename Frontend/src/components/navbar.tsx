@@ -29,6 +29,7 @@ export default function Navbar() {
 
   async function handleLogout() {
     await signOut();
+    window.location.reload();
   }
 
   return (

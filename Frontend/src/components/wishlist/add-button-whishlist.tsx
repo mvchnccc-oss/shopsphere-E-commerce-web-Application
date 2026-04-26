@@ -11,7 +11,7 @@ interface AddToWishlistButtonProps {
 }
 
 export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButtonProps) {
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { wishlist, addToWishlist, removeFromWishlist, isLoading } = useWishlist();
   const router = useRouter();
   const session = useSession();
 
@@ -38,16 +38,23 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
         variant="ghost"
         size="icon"
         onClick={toggleWishlist}
+        disabled={isLoading}
         className={`rounded-full transition-all duration-450 hover:bg-transparent! bg-transparent! ${isWishlisted
-            ? "text-rose-500 hover:text-rose-600"
-            : "text-rose-400 hover:text-rose-500"
+          ? "text-rose-500 hover:text-rose-600"
+          : "text-rose-400 hover:text-rose-500"
           }`}
+
         aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}>
-        <HeartIcon
-          className="size-5 transition-transform duration-200"
-          fill={isWishlisted ? "currentColor" : "none"}
-          strokeWidth={2}
-        />
+        {isLoading ? (
+          <span className="size-5 border-2 border-rose-400 border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <HeartIcon
+            className={`size-5 transition-all duration-300 ease-in-out ${isWishlisted ? "scale-110" : "scale-100"
+              }`}
+            fill={isWishlisted ? "currentColor" : "transparent"} 
+            strokeWidth={2}
+          />
+        )}
       </Button>
     );
   }
@@ -60,12 +67,19 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
         : "border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-700"
         }`}
       onClick={toggleWishlist}
+      disabled={isLoading}
     >
-      <HeartIcon
-        className="size-4"
-        fill={isWishlisted ? "currentColor" : "none"}
-      />
-      {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
+      {isLoading ? (
+        <span className="size-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+      ) : (
+        <HeartIcon
+          className={`size-5 transition-all duration-300 ease-in-out ${isWishlisted ? "scale-110" : "scale-100"
+            }`}
+          fill={isWishlisted ? "currentColor" : "transparent"} 
+          strokeWidth={2}
+        />
+      )}
+      {isLoading ? "Loading..." : isWishlisted ? "Wishlisted" : "Add to Wishlist"}
     </Button>
   );
 }

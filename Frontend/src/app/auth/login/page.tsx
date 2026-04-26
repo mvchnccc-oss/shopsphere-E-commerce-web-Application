@@ -60,7 +60,7 @@ export default function LoginPage() {
     }
 
     router.push(redirectUrl);
-    router.refresh();
+    setTimeout(() => window.location.reload(), 100);
   };
 
   return (
