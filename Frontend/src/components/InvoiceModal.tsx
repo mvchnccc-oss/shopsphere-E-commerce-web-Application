@@ -10,7 +10,6 @@ import {
 import { ReceiptText, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// 1. عرف الـ Formatter هنا داخل الـ Client Component
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
   year: "numeric",
@@ -20,8 +19,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   minute: "2-digit",
 });
 
-// 2. شيل dateFormatter من الـ props
+
 export function InvoiceModal({ order, total }: { order: any; total: number }) {
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -30,7 +30,7 @@ export function InvoiceModal({ order, total }: { order: any; total: number }) {
           View Invoice
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[500px]">
+      <DialogContent className="max-w-125">
         <DialogHeader>
           <DialogTitle>Order Invoice</DialogTitle>
         </DialogHeader>
@@ -39,14 +39,23 @@ export function InvoiceModal({ order, total }: { order: any; total: number }) {
           className="p-4 border rounded-lg bg-white text-black space-y-4 shadow-sm"
           id={`invoice-${order.id}`}
         >
-          <div className="flex justify-between items-start border-b pb-4">
+          <div className="flex justify-between items-start border-b pb-2">
             <div>
               <h2 className="text-xl font-bold uppercase tracking-tight">Invoice</h2>
               <p className="text-[10px] text-muted-foreground font-mono">ID: {order.id}</p>
+
+              <div className="mt-2">
+                <p className="text-[10px] text-gray-400 uppercase font-bold">Customer</p>
+                <div className="flex gap-1 text-sm text-black font-medium">
+                  <span>{order.orderAddress?.firstname}</span>
+                  <span>{order.orderAddress?.lastname}</span>
+                </div>
+              </div>
+
             </div>
+
             <div className="text-right">
               <p className="text-sm font-medium">Date</p>
-              {/* 3. استخدامه مباشرة هنا */}
               <p className="text-xs">
                 {dateFormatter.format(new Date(order.orderedAt))}
               </p>
@@ -71,7 +80,7 @@ export function InvoiceModal({ order, total }: { order: any; total: number }) {
             <tbody>
               {order.items.map((item: any, i: number) => (
                 <tr key={i} className="border-b border-dashed last:border-b-0">
-                  <td className="py-2 text-xs max-w-[200px] truncate">
+                  <td className="py-2 text-xs max-w-50 truncate">
                     {item.productTitle}
                   </td>
                   <td className="py-2 text-center text-xs">{item.quantity}</td>
