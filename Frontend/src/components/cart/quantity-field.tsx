@@ -1,14 +1,21 @@
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useCart } from "./context";
+import toast from "react-hot-toast";
 
 export default function QuantityField({ id, dark }: { id: string; dark?: boolean }) {
   const { cartProducts, updateCartItem } = useCart();
 
   function deleteProduct() {
-    updateCartItem(id, 0);
-  }
+    const productName = cartProducts[id]?.title || "Item";
 
+    updateCartItem(id, 0);
+
+    toast(`${productName} removed from cart`, {
+      icon: <Trash2Icon className="size-5 text-red-500" />,
+      duration: 2000,
+    });
+  }
   function updateQuanitity(value: number) {
     if (value < 1) return;
     updateCartItem(id, value);
