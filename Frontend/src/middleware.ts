@@ -22,18 +22,19 @@ export default async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // Redirect unauthenticated users away from protected routes
+  const isTokenExpired = token && (token as any).error === "AccessTokenError";
+
+  // Redirect unauthenticated or expired-token users away from protected routes
   if (protectedRoutes.includes(pathname)) {
-    if (!token) {
+    if (!token || isTokenExpired) {
       const redirectURL = new URL("/auth/login", req.url);
       redirectURL.searchParams.set("url", pathname);
       return NextResponse.redirect(redirectURL);
     }
   }
 
-
   if (authRoutes.includes(pathname)) {
-    if (token) {
+    if (token && !isTokenExpired) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }

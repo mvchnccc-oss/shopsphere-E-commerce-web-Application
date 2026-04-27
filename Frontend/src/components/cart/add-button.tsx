@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useCart } from "./context";
 import QuantityField from "./quantity-field";
@@ -20,22 +20,32 @@ export default function AddToCartButton({ id, title, price, image, dark }: AddTo
   const { cartProducts, addCartItem } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter();
-  const { status } = useSession();
+  const pathname = usePathname();
+  const { status, data } = useSession();
 
   async function addProduct() {
     if (status === "loading") return;
 
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
+    if (
+      status === "unauthenticated" ||
+      (status === "authenticated" && (data as any)?.error === "AccessTokenError")
+    ) {
+      router.push(`/auth/login?url=${encodeURIComponent(pathname)}`);
       return;
     }
 
     setIsAdding(true);
     try {
-      await addCartItem(id, { title, price, image, quantity: 1 });
-      toast.success(`${title} added to cart!`, {
-        icon: <ShoppingCart className="h-5 w-5 text-emerald-600" />,
-      });
+      const success = await addCartItem(id, { title, price, image, quantity: 1 });
+      if (success) {
+        toast.success(`${title} added to cart!`, {
+          icon: <ShoppingCart className="h-5 w-5 text-emerald-600" />,
+        });
+      } else {
+        toast.error("Failed to add to cart. Try again.", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+      }
     } catch {
       toast.error("Failed to add to cart. Try again.", {
         icon: <AlertCircle className="h-5 w-5 text-red-500" />,

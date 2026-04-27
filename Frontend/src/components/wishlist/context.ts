@@ -2,8 +2,8 @@ import { createContext, useContext } from "react";
 
 interface IWishlistContext {
   wishlist: number[];
-  addToWishlist: (id: number) => void;
-  removeFromWishlist: (id: number) => void;
+  addToWishlist: (id: number) => Promise<boolean>;
+  removeFromWishlist: (id: number) => Promise<boolean>;
   isLoading: boolean;
 }
 
