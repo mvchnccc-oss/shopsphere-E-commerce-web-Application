@@ -3,8 +3,8 @@ import { createContext, useContext } from "react";
 
 interface ICartContext {
   cartProducts: Record<string, CartProduct>;
-  updateCartItem: (id: string, quantity: number) => Promise<boolean>;
-  addCartItem: (id: string, data: CartProduct) => Promise<boolean>;
+  updateCartItem: (id: string, quantity: number) => void;
+  addCartItem: (id: string, data: CartProduct) => void;
   clearCart: () => Promise<void>;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useWishlist } from "./context";
 import { Heart, HeartIcon, HeartOff } from "lucide-react";
@@ -14,8 +14,7 @@ interface AddToWishlistButtonProps {
 export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButtonProps) {
   const { wishlist, addToWishlist, removeFromWishlist, isLoading } = useWishlist();
   const router = useRouter();
-  const pathname = usePathname();
-  const { status, data } = useSession();
+  const session = useSession();
 
   const isWishlisted = wishlist.includes(id);
 
@@ -23,36 +22,16 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
     e.preventDefault();
     e.stopPropagation();
 
-    if (
-      status === "unauthenticated" ||
-      (status === "authenticated" && (data as any)?.error === "AccessTokenError")
-    ) {
-      router.push(`/auth/login?url=${encodeURIComponent(pathname)}`);
-      return;
-    }
-
     if (isWishlisted) {
-      const removed = await removeFromWishlist(id);
-      if (removed) {
-        toast("Removed from wishlist", {
-          icon: <HeartOff className="size-5 text-gray-500" />,
-        });
-      } else {
-        toast.error("Failed to update wishlist. Try again.", {
-          icon: <HeartOff className="size-5 text-red-500" />,
-        });
-      }
+      await removeFromWishlist(id);
+      toast("Removed from wishlist", {
+        icon: <HeartOff className="size-5 text-gray-500" />,
+      });
     } else {
-      const added = await addToWishlist(id);
-      if (added) {
-        toast.success("Added to wishlist!", {
-          icon: <Heart className="size-5 text-rose-500" fill="#f43f5e" />,
-        });
-      } else {
-        toast.error("Failed to update wishlist. Try again.", {
-          icon: <HeartOff className="size-5 text-red-500" />,
-        });
-      }
+      await addToWishlist(id);
+      toast.success("Added to wishlist!", {
+        icon: <Heart className="size-5 text-rose-500" fill="#f43f5e" />,
+      });
     }
   }
 

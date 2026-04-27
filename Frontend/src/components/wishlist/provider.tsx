@@ -18,20 +18,18 @@ export default function WishlistProvider({ children }: { children: ReactNode }) 
     });
   }, []);
 
-  async function addToWishlist(id: number): Promise<boolean> {
+  async function addToWishlist(id: number) {
     const success = await addToWishlistAction(id);
-    if (!success) return false;
+    if (!success) return;
 
     setWishlist((pervState) => [...pervState, id]);
-    return true;
   }
 
-  async function removeFromWishlist(id: number): Promise<boolean> {
+  async function removeFromWishlist(id: number) {
     const success = await removeFromWishlistAction(id);
-    if (!success) return false;
+    if (!success) return;
 
     setWishlist((pervState) => pervState.filter((item) => item != id));
-    return true;
   }
 
   return (

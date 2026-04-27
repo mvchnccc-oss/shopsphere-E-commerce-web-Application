@@ -26,9 +26,9 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  async function updateCartItem(id: string, quantity: number): Promise<boolean> {
+  async function updateCartItem(id: string, quantity: number) {
     const success = await updateCartItemAction(id, quantity);
-    if (!success) return false;
+    if (!success) return;
 
     if (quantity === 0) {
       setCartProducts((cart) => {
@@ -41,16 +41,13 @@ export default function CartProvider({ children }: { children: ReactNode }) {
       const product = cartProducts[id];
       setCartProducts((cart) => ({ ...cart, [id]: { ...product, quantity } }));
     }
-
-    return true;
   }
 
-  async function addCartItem(id: string, data: CartProduct): Promise<boolean> {
+  async function addCartItem(id: string, data: CartProduct) {
     const success = await updateCartItemAction(id, data.quantity);
-    if (!success) return false;
+    if (!success) return;
 
     setCartProducts((cart) => ({ ...cart, [id]: { ...data } }));
-    return true;
   }
 
   async function clearCart() {
