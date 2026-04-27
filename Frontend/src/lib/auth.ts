@@ -23,44 +23,58 @@ export const authOptions: NextAuthOptions = {
         );
 
         const payload = await response.json();
-
-        if (response.ok) {
-          // Decode JWT to extract user email (sub field)
-          const base64Payload = payload.token.split(".")[1];
-          const decoded = JSON.parse(atob(base64Payload));
-
+        if (response.ok && payload.token) {
           return {
-            id: decoded.sub, 
+            id: data?.email as string,
             user: {
-              email: decoded.sub,
-              name: data?.email?.split("@")[0] ?? "", 
-              role: decoded.role ?? "user",
+              email: data?.email,
+              name: data?.email?.split("@")[0] ?? "",
+              // role: payload.role,
             },
             token: payload.token,
+            expiresAt: payload.expiresAt,
           };
         } else {
-          throw new Error(payload.message || "Invalid credentials");
+          throw new Error(payload.message || "Invalid cerdintials");
         }
       },
     }),
   ],
   pages: {
-    signIn: "/auth/login", // correct path
-    error: "/auth/login", // correct path
+    signIn: "/auth/login",
+    error: "/auth/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user = user.user;
-        token.token = user.token;
+        token.user = (user as any).user;
+        token.token = (user as any).token;
+        // token.role = (user as any).user.role;
+        token.accessTokenExpires = (user as any).expiresAt;
       }
-      return token;
+
+      const currentTime = Date.now();
+
+      if (currentTime < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      console.log("Token expired, triggering redirect...");
+      return { ...token, error: "AccessTokenError" };
     },
     async session({ session, token }) {
-      session.user = token.user;
+      /* 
+     
+      if (session.user) {
+        (session.user as any).role = token.role;
+      } 
+     
+      */
+      session.user = token.user as any;
       (session as any).token = token.token;
+      (session as any).error = token.error;
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
