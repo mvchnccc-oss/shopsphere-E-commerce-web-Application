@@ -11,8 +11,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Heart } from "lucide-react";
+import { Heart, ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function WishlistCarousel() {
   const { wishlist } = useWishlist();
@@ -47,11 +48,20 @@ export default function WishlistCarousel() {
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-muted-foreground gap-3">
-        <Heart className="size-12" />
-        <p className="text-lg font-medium">Your wishlist is empty</p>
-        <Link href="/products" className="text-sm text-emerald-600 hover:underline">
-          Browse products
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div className="bg-rose-50 dark:bg-rose-950 rounded-full p-6">
+          <Heart className="size-12 text-rose-300 dark:text-rose-700" />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-semibold">Your wishlist is empty</p>
+          <p className="text-muted-foreground text-sm mt-1">
+            Save items you love and find them here later
+          </p>
+        </div>
+        <Link href="/products">
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2">
+            Browse products <ArrowRightIcon className="size-4" />
+          </Button>
         </Link>
       </div>
     );
