@@ -12,7 +12,6 @@ const protectedRoutes = [
   "/dashboard/products"
 ];
 
-// ✅ المسارات الصح مع /auth/
 const authRoutes = ["/auth/login", "/auth/register"];
 
 export default async function middleware(req: NextRequest) {
@@ -32,7 +31,7 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  // Redirect already-authenticated users away from auth pages
+
   if (authRoutes.includes(pathname)) {
     if (token) {
       return NextResponse.redirect(new URL("/", req.url));

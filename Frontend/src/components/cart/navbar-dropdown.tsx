@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreditCardIcon, ShoppingCart, ShoppingCartIcon } from "lucide-react";
+import { CreditCardIcon, ShoppingBag, ShoppingCart, ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import CartItem from "./cart-item";
@@ -31,10 +31,17 @@ export default function CartNavbarDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80">
         <DropdownMenuGroup className="w-full">
-          {count === 0 && (
-            <div className="text-muted-foreground text-center italic text-sm">No products</div>
-          )}
-          {count !== 0 && (
+          {count === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-3 text-muted-foreground">
+              <ShoppingBag className="size-10 opacity-30" />
+              <p className="text-sm font-medium">Your cart is empty</p>
+              <Link href="/products" onClick={() => setOpen(false)}>
+                <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-200 hover:bg-emerald-50">
+                  Browse products
+                </Button>
+              </Link>
+            </div>
+          ) : (
             <>
               <div className="flex p-1.5 gap-2">
                 <Link href="/checkout" className="w-full">

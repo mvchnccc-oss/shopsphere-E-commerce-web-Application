@@ -3,7 +3,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useWishlist } from "./context";
-import { HeartIcon } from "lucide-react";
+import { Heart, HeartIcon, HeartOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface AddToWishlistButtonProps {
   id: number;
@@ -17,21 +18,23 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
 
   const isWishlisted = wishlist.includes(id);
 
-  function toggleWishlist(e: React.MouseEvent) {
+  async function toggleWishlist(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (session.status === "unauthenticated") {
-      router.push("/auth/login");
-      return;
-    }
-
     if (isWishlisted) {
-      removeFromWishlist(id);
+      await removeFromWishlist(id);
+      toast("Removed from wishlist", {
+        icon: <HeartOff className="size-5 text-gray-500" />,
+      });
     } else {
-      addToWishlist(id);
+      await addToWishlist(id);
+      toast.success("Added to wishlist!", {
+        icon: <Heart className="size-5 text-rose-500" fill="#f43f5e" />,
+      });
     }
   }
+
   if (iconOnly) {
     return (
       <Button
@@ -40,18 +43,18 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
         onClick={toggleWishlist}
         disabled={isLoading}
         className={`rounded-full transition-all duration-450 hover:bg-transparent! bg-transparent! ${isWishlisted
-          ? "text-rose-500 hover:text-rose-600"
-          : "text-rose-400 hover:text-rose-500"
+            ? "text-rose-500 hover:text-rose-600"
+            : "text-rose-400 hover:text-rose-500"
           }`}
-
-        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}>
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+      >
         {isLoading ? (
           <span className="size-5 border-2 border-rose-400 border-t-transparent rounded-full animate-spin" />
         ) : (
           <HeartIcon
             className={`size-5 transition-all duration-300 ease-in-out ${isWishlisted ? "scale-110" : "scale-100"
               }`}
-            fill={isWishlisted ? "currentColor" : "transparent"} 
+            fill={isWishlisted ? "currentColor" : "transparent"}
             strokeWidth={2}
           />
         )}
@@ -63,8 +66,8 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
     <Button
       variant="outline"
       className={`w-full px-4 py-3 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${isWishlisted
-        ? "border-rose-300 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950"
-        : "border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-700"
+          ? "border-rose-300 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950"
+          : "border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-700"
         }`}
       onClick={toggleWishlist}
       disabled={isLoading}
@@ -75,7 +78,7 @@ export default function AddToWishlistButton({ id, iconOnly }: AddToWishlistButto
         <HeartIcon
           className={`size-5 transition-all duration-300 ease-in-out ${isWishlisted ? "scale-110" : "scale-100"
             }`}
-          fill={isWishlisted ? "currentColor" : "transparent"} 
+          fill={isWishlisted ? "currentColor" : "transparent"}
           strokeWidth={2}
         />
       )}

@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </Link>
       ))}
 
-      <div className="mt-auto">
+      <div className="">
         <button
           onClick={() => signOut()}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors w-full"
