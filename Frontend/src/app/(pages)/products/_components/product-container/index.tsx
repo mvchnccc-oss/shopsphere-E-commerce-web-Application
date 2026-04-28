@@ -1,7 +1,7 @@
 "use client";
 import SearchBar from "@/components/search-bar";
 import { Product } from "@/lib/interfaces/products.interface";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ProductCategories from "./product-categories";
 
 interface ProductContainerProps {
@@ -9,15 +9,17 @@ interface ProductContainerProps {
 }
 
 export default function ProductContainer({ products: initialProducts }: ProductContainerProps) {
-  const [products, setProducts] = useState(initialProducts);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const products = useMemo(() => {
+    const normalized = searchTerm.toLowerCase();
+    return searchTerm
+      ? initialProducts.filter((p) => p.title.toLowerCase().includes(normalized))
+      : initialProducts;
+  }, [initialProducts, searchTerm]);
 
   function handleSearch(term: string) {
-    const normalized = term.toLowerCase();
-    setProducts(
-      term
-        ? initialProducts.filter((p) => p.title.toLowerCase().includes(normalized))
-        : initialProducts
-    );
+    setSearchTerm(term);
   }
 
   return (
