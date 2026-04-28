@@ -44,7 +44,7 @@ export default function LoadingImage(props: LoadingImageProps) {
         alt={props.alt}
         onLoad={() => setLoading(false)}
         onError={() => setError(true)}
-        className={cn(props.className, isLoading ? "hidden" : "")}
+        className={cn(props.className, isLoading ? "hidden" : "block")}
         ref={imageRef}
       />
       {isLoading && (
