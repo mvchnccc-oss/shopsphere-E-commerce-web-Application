@@ -42,7 +42,7 @@ export default function LoadingImage(props: LoadingImageProps) {
         width={props.width}
         height={props.height}
         alt={props.alt}
-        onLoadingComplete={() => setLoading(false)}
+        onLoad={() => setLoading(false)}
         onError={() => setError(true)}
         className={cn(props.className, isLoading ? "hidden" : "")}
         ref={imageRef}
