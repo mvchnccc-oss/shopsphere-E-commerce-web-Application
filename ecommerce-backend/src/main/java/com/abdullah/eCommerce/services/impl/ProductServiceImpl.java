@@ -1,12 +1,16 @@
 package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.dtos.ProductDto;
+import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
 import com.abdullah.eCommerce.entities.Product;
 import com.abdullah.eCommerce.exceptions.ProductNotFoundException;
 import com.abdullah.eCommerce.mappers.ProductMapper;
 import com.abdullah.eCommerce.repositories.ProductRepository;
 import com.abdullah.eCommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +23,35 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
 
     @Override
-    public List<ProductDto> getProducts() {
-        List<Product> products = productRepository.findAll();
+    public GetProductsResponse getProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAll(pageable);
 
-        return productMapper.toDtoList(products);
+        List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
+
+        return new GetProductsResponse(
+                products,
+                productPage.getNumber(),
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.getSize()
+        );
     }
 
     @Override
-    public List<ProductDto> getProducts(Long categoryId) {
-        List<Product> products = productRepository.findAllByCategoryId(categoryId);
+    public GetProductsResponse getProducts(Long categoryId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findAllByCategoryId(categoryId, pageable);
 
-        return productMapper.toDtoList(products);
+        List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
+
+        return new GetProductsResponse(
+                products,
+                productPage.getNumber(),
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.getSize()
+        );
     }
 
     @Override

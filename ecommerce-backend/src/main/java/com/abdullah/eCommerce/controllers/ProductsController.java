@@ -7,8 +7,6 @@ import com.abdullah.eCommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -16,12 +14,14 @@ public class ProductsController {
     private final ProductService productService;
 
     @GetMapping
-    public GetProductsResponse getProducts(@RequestParam(required = false) Long categoryId) {
-        List<ProductDto> products = categoryId == null
-                ? productService.getProducts()
-                : productService.getProducts(categoryId);
-
-        return new GetProductsResponse(products);
+    public GetProductsResponse getProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return categoryId == null
+                ? productService.getProducts(page, size)
+                : productService.getProducts(categoryId, page, size);
     }
 
     @GetMapping("{id}")
