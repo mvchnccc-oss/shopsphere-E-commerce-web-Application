@@ -1,6 +1,6 @@
 "use client";
 import { useCart } from "@/components/cart/context";
-import { PostOrdersAction } from "@/lib/actions/orders.action";
+import { placeOrderAction } from "@/lib/actions/orders.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, ChevronLeft, Truck } from "lucide-react";
 import Image from "next/image";
@@ -40,7 +40,7 @@ const CheckoutPage = () => {
   const router = useRouter();
   const onSubmit = async (data: CheckoutFormData) => {
     try {
-      const result = await PostOrdersAction(data);
+      const result = await placeOrderAction(data);
 
       if (result.success) {
         await clearCart();

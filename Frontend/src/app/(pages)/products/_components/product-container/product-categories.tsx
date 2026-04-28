@@ -1,32 +1,35 @@
-import { Product } from "@/lib/interfaces/products.interface";
+import { getProductsByCategory } from "@/lib/actions/products.actions";
+import { Category } from "@/lib/interfaces/categories.interface";
 import ProductCategory from "./product-category";
 
 interface ProductCategoriesProps {
-  products: Product[];
+  categories: Category[];
 }
 
-interface GroupedCategory {
-  id: number;
-  name: string;
-  products: Product[];
-}
+const INITIAL_PRODUCTS_PER_CATEGORY = 10;
 
-export default function ProductCategories({ products }: ProductCategoriesProps) {
-  const grouped = products.reduce<Record<number, GroupedCategory>>((acc, product) => {
-    const { id, name } = product.category;
+export default async function ProductCategories({ categories }: ProductCategoriesProps) {
 
-    if (!acc[id]) {
-      acc[id] = { id, name, products: [] };
-    }
-
-    acc[id].products.push(product);
-    return acc;
-  }, {});
+  const categoriesWithProducts = await Promise.all(
+    categories.map(async (category) => {
+      const { products, totalPages } = await getProductsByCategory(
+        category.id,
+        0,
+        INITIAL_PRODUCTS_PER_CATEGORY
+      );
+      return { category, products, hasMore: totalPages > 1 };
+    })
+  );
 
   return (
     <>
-      {Object.values(grouped).map((category) => (
-        <ProductCategory key={category.id} category={category} />
+      {categoriesWithProducts.map(({ category, products, hasMore }) => (
+        <ProductCategory
+          key={category.id}
+          category={category}
+          initialProducts={products}
+          hasMore={hasMore}
+        />
       ))}
     </>
   );

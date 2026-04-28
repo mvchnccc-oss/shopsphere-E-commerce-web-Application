@@ -1,9 +1,9 @@
 import Pagination from "@/components/pagination";
-import { getAllProducts } from "@/lib/actions/products.actions";
+import { getPaginatedCategories } from "@/lib/actions/category.action";
 import { Suspense } from "react";
 import ProductContainer from "./_components/product-container";
 
-const PAGE_SIZE = 40;
+const CATEGORIES_PER_PAGE = 3;
 
 interface AllProductsPageProps {
   searchParams: Promise<{ page?: string }>;
@@ -13,11 +13,14 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
   const { page } = await searchParams;
   const currentPage = Math.max(0, parseInt(page ?? "0") || 0);
 
-  const { products, totalPages } = await getAllProducts(currentPage, PAGE_SIZE);
+  const { categories, totalPages } = await getPaginatedCategories(
+    currentPage,
+    CATEGORIES_PER_PAGE
+  );
 
   return (
     <div>
-      <ProductContainer products={products} />
+      <ProductContainer categories={categories} />
       <Suspense>
         <Pagination currentPage={currentPage} totalPages={totalPages} />
       </Suspense>

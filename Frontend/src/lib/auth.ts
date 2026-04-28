@@ -10,14 +10,17 @@ export const authOptions: NextAuthOptions = {
         password: { label: "enter your password", type: "password" },
       },
       async authorize(data) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
-          method: "POST",
-          body: JSON.stringify({
-            email: data?.email,
-            password: data?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: data?.email,
+              password: data?.password,
+            }),
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
         const payload = await response.json();
         if (response.ok && payload.token) {
@@ -44,22 +47,20 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user = user.user;
-        token.token = user.token;
-        // convert duration to an actual future timestamp
-        token.accessTokenExpires = Date.now() + user.expiresAt;
+        token.user = (user as any).user;
+        token.token = (user as any).token;
+        // token.role = (user as any).user.role;
+        token.accessTokenExpires = (user as any).expiresAt;
       }
 
-      if (!token.accessTokenExpires) {
-        return { ...token, error: "AccessTokenError" as const };
+      const currentTime = Date.now();
+
+      if (currentTime < (token.accessTokenExpires as number)) {
+        return token;
       }
 
-      if (Date.now() < token.accessTokenExpires) {
-        const { error: _, ...validToken } = token;
-        return validToken;
-      }
-
-      return { ...token, error: "AccessTokenError" as const };
+      console.log("Token expired, triggering redirect...");
+      return { ...token, error: "AccessTokenError" };
     },
     async session({ session, token }) {
       /* 

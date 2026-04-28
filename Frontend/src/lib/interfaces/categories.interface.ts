@@ -6,3 +6,11 @@ export interface Category {
 }
 
 export type Categories = Category[];
+
+export interface PaginatedCategories {
+  categories: Category[];
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
+}
