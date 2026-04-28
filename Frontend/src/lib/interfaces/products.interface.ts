@@ -1,7 +1,3 @@
-export type Products = {
-  products: Product[];
-};
-
 export interface Product {
   id: string;
   title: string;
@@ -16,4 +12,12 @@ export interface Product {
   brand?: {
     name: string;
   };
+}
+
+export interface PaginatedProducts {
+  products: Product[];
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
 }

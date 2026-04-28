@@ -1,19 +1,38 @@
 "use server";
-import type { Product, Products } from "@/lib/interfaces/products.interface";
+import type { PaginatedProducts, Product } from "@/lib/interfaces/products.interface";
 import fetchApi from "../fetchApi";
 
-export async function getAllProducts(): Promise<Product[]> {
-  const result = await fetchApi("products", "GET", {
+const EMPTY_PAGE: PaginatedProducts = {
+  products: [],
+  currentPage: 0,
+  totalPages: 0,
+  totalElements: 0,
+  pageSize: 10,
+};
+
+export async function getAllProducts(
+  page: number = 0,
+  size: number = 10
+): Promise<PaginatedProducts> {
+  const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
     includeToken: false,
   });
+
   if (result.status === "Success") {
-    return result.data.products ?? [];
+    const data = result.data;
+    return {
+      products: data.products ?? [],
+      currentPage: data.currentPage ?? 0,
+      totalPages: data.totalPages ?? 0,
+      totalElements: data.totalElements ?? 0,
+      pageSize: data.pageSize ?? size,
+    };
   }
 
-  return [];
+  return { ...EMPTY_PAGE, pageSize: size };
 }
 
-export async function getProductById(id: number) {
+export async function getProductById(id: number): Promise<Product | null> {
   const result = await fetchApi(`products/${id}`, "GET", {
     includeToken: false,
   });
@@ -25,15 +44,27 @@ export async function getProductById(id: number) {
   return null;
 }
 
-export async function getProductsByCategory(categoryId: number): Promise<Product[]> {
-  const result = await fetchApi("products", "GET", {
-    includeToken: false,
-  });
+export async function getProductsByCategory(
+  categoryId: number,
+  page: number = 0,
+  size: number = 10
+): Promise<PaginatedProducts> {
+  const result = await fetchApi(
+    `products?categoryId=${categoryId}&page=${page}&size=${size}`,
+    "GET",
+    { includeToken: false }
+  );
 
   if (result.status === "Success") {
-    const data: Products = result.data;
-    return data.products.filter((p) => p.category?.id === categoryId) ?? [];
+    const data = result.data;
+    return {
+      products: data.products ?? [],
+      currentPage: data.currentPage ?? 0,
+      totalPages: data.totalPages ?? 0,
+      totalElements: data.totalElements ?? 0,
+      pageSize: data.pageSize ?? size,
+    };
   }
 
-  return [];
+  return { ...EMPTY_PAGE, pageSize: size };
 }

@@ -1,8 +1,8 @@
-export type categories = category[];
-
-export interface category {
+export interface Category {
   id: number;
   name: string;
   image: string;
   totalProducts: number;
 }
+
+export type Categories = Category[];

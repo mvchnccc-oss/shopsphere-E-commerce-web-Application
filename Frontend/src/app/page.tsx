@@ -1,4 +1,4 @@
-import { FeaturedCarousel } from "@/components/FeaturedCarousel"; // استدعاء المكون الجديد
+import { FeaturedCarousel } from "@/components/FeaturedCarousel"; 
 import { Button } from "@/components/ui/button";
 import { getAllProducts } from "@/lib/actions/products.actions";
 import { Product } from "@/lib/interfaces/products.interface";
@@ -12,8 +12,7 @@ import {
 import Link from "next/link";
 
 export default async function HomePage() {
-  const allProducts: Product[] = await getAllProducts();
-  const featured = allProducts.slice(0, 20);
+  const { products } = await getAllProducts(0, 20);
 
   return (
     <main className="min-h-screen bg-background xl:pt-6">
@@ -87,7 +86,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <FeaturedCarousel featured={featured} />
+        <FeaturedCarousel featured={products} />
       </section>
     </main>
   );

@@ -26,7 +26,7 @@ export interface CheckoutFormData {
 
 const CheckoutPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { cartProducts } = useCart();
+  const { cartProducts, clearCart } = useCart();
 
   const productsArray = cartProducts ? Object.values(cartProducts) : [];
 
@@ -43,6 +43,7 @@ const CheckoutPage = () => {
       const result = await PostOrdersAction(data);
 
       if (result.success) {
+        await clearCart();
         setIsSubmitted(true);
         setTimeout(() => {
           router.push("/orders");

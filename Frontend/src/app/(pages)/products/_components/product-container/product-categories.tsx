@@ -5,31 +5,27 @@ interface ProductCategoriesProps {
   products: Product[];
 }
 
-type GroupedProducts = { id: number; name: string; products: Product[] };
+interface GroupedCategory {
+  id: number;
+  name: string;
+  products: Product[];
+}
 
 export default function ProductCategories({ products }: ProductCategoriesProps) {
-  const groupedProducts = products.reduce(
-    (acc: Record<string, any>, prod) => {
-      const category = prod.category;
+  const grouped = products.reduce<Record<number, GroupedCategory>>((acc, product) => {
+    const { id, name } = product.category;
 
-      if (!acc[category.id]) {
-        acc[category.id] = {
-          id: category.id,
-          name: category.name,
-          products: [],
-        };
-      }
+    if (!acc[id]) {
+      acc[id] = { id, name, products: [] };
+    }
 
-      acc[category.id].products.push(prod);
-
-      return acc;
-    },
-    {} as Record<string, GroupedProducts>,
-  );
+    acc[id].products.push(product);
+    return acc;
+  }, {});
 
   return (
     <>
-      {Object.values(groupedProducts).map((category: GroupedProducts) => (
+      {Object.values(grouped).map((category) => (
         <ProductCategory key={category.id} category={category} />
       ))}
     </>

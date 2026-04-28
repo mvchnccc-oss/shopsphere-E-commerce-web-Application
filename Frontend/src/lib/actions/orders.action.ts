@@ -14,7 +14,7 @@ export async function getOrdersAction() {
   return { success: false };
 }
 
-export async function PostOrdersAction(formData: CheckoutFormData) {
+export async function placeOrderAction(formData: CheckoutFormData) {
   const result = await fetchApi("orders", "POST", {
     includeToken: true,
     body: {
@@ -25,9 +25,5 @@ export async function PostOrdersAction(formData: CheckoutFormData) {
     },
   });
 
-  if (result.status === "Success") {
-    return { success: true };
-  }
-
-  return { success: false };
+  return { success: result.status === "Success" };
 }

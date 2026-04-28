@@ -8,12 +8,15 @@ interface ProductContainerProps {
   products: Product[];
 }
 
-export default function ProductContainer(props: ProductContainerProps) {
-  const [products, setProducts] = useState(props.products);
+export default function ProductContainer({ products: initialProducts }: ProductContainerProps) {
+  const [products, setProducts] = useState(initialProducts);
 
   function handleSearch(term: string) {
+    const normalized = term.toLowerCase();
     setProducts(
-      props.products.filter((product) => product.title.toLowerCase().includes(term.toLowerCase())),
+      term
+        ? initialProducts.filter((p) => p.title.toLowerCase().includes(normalized))
+        : initialProducts
     );
   }
 
