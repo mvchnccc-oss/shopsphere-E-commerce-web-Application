@@ -1,11 +1,11 @@
 "use client";
 import SearchBar from "@/components/search-bar";
-import { Products } from "@/lib/interfaces/products.interface";
+import { Product } from "@/lib/interfaces/products.interface";
 import { useState } from "react";
 import ProductCategories from "./product-categories";
 
 interface ProductContainerProps {
-  products: Products;
+  products: Product[];
 }
 
 export default function ProductContainer(props: ProductContainerProps) {

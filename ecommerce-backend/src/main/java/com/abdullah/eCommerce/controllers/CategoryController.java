@@ -1,10 +1,10 @@
 package com.abdullah.eCommerce.controllers;
 
-import com.abdullah.eCommerce.domain.dtos.CategoryDto;
-import com.abdullah.eCommerce.mappers.CategoryMapper;
+import com.abdullah.eCommerce.dtos.CategoryDto;
+import com.abdullah.eCommerce.dtos.responses.GetCategoriesResponse;
+import com.abdullah.eCommerce.dtos.responses.GetCategoryResponse;
 import com.abdullah.eCommerce.services.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,27 +16,19 @@ import java.util.List;
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-
     private final CategoryService categoryService;
-    private final CategoryMapper categoryMapper;
 
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> getCategories(){
-        return ResponseEntity.ok(
-                categoryService.getCategories().stream().map(
-                        categoryMapper::toDto
-                ).toList()
-        );
-    }
+    public GetCategoriesResponse getCategories() {
+        List<CategoryDto> categories = categoryService.getCategories();
 
+        return new GetCategoriesResponse(categories);
+    }
 
     @GetMapping("{id}")
-    public ResponseEntity<CategoryDto> getCategory(
-            @PathVariable Integer id
-    ){
-        return ResponseEntity.ok(
-                categoryMapper.toDto( categoryService.getCategory(id))
-        );
-    }
+    public GetCategoryResponse getCategory(@PathVariable Long id) {
+        CategoryDto category = categoryService.getCategory(id);
 
+        return new GetCategoryResponse(category);
+    }
 }

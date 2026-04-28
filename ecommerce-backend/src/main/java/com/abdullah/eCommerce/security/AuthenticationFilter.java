@@ -36,8 +36,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                if (userDetails instanceof ProductUserDetails) {
-                    request.setAttribute("userId", ((ProductUserDetails) userDetails).getId());
+                if (userDetails instanceof UserPrincipal) {
+                    request.setAttribute("userId", ((UserPrincipal) userDetails).getId());
                 }
             }
         } catch (Exception e) {

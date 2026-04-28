@@ -1,9 +1,9 @@
 package com.abdullah.eCommerce.repositories;
 
-import com.abdullah.eCommerce.domain.Category;
+import com.abdullah.eCommerce.entities.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 }

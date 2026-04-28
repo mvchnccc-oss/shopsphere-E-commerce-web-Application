@@ -1,9 +1,9 @@
 package com.abdullah.eCommerce.config;
 
-import com.abdullah.eCommerce.domain.User;
+import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.repositories.UserRepository;
+import com.abdullah.eCommerce.security.AppUserDetailsService;
 import com.abdullah.eCommerce.security.AuthenticationFilter;
-import com.abdullah.eCommerce.security.ProductUserDetailsService;
 import com.abdullah.eCommerce.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +33,8 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public ProductUserDetailsService productUserDetailsService(UserRepository userRepository) {
-        ProductUserDetailsService productUserDetailsService = new ProductUserDetailsService(userRepository);
+    public AppUserDetailsService productUserDetailsService(UserRepository userRepository) {
+        AppUserDetailsService appUserDetailsService = new AppUserDetailsService(userRepository);
         String email = "abdullah@gmail.com";
         userRepository.findByEmail(email).orElseGet(() -> {
             User user = User.builder()
@@ -45,7 +45,7 @@ public class SecurityConfiguration {
             return userRepository.save(user);
         });
 
-        return productUserDetailsService;
+        return appUserDetailsService;
     }
 
     @Bean

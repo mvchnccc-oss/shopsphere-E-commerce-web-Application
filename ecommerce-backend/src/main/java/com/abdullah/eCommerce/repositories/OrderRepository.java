@@ -1,11 +1,10 @@
 package com.abdullah.eCommerce.repositories;
 
-import com.abdullah.eCommerce.domain.Order;
+import com.abdullah.eCommerce.entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findByUserIdOrderByOrderedAtDesc(UUID userId);
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByUserIdOrderByOrderedAtDesc(Long userId);
 }

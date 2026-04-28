@@ -67,9 +67,10 @@
 //}
 package com.abdullah.eCommerce.seeder;
 
-import com.abdullah.eCommerce.domain.Category;
-import com.abdullah.eCommerce.domain.Product;
-import com.abdullah.eCommerce.domain.dtos.seeders.ProductSeedDto;
+import com.abdullah.eCommerce.dtos.seeders.ProductSeedDto;
+import com.abdullah.eCommerce.entities.Category;
+import com.abdullah.eCommerce.entities.Product;
+import com.abdullah.eCommerce.entities.ProductImage;
 import com.abdullah.eCommerce.repositories.CategoryRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -128,13 +129,26 @@ public class DataSeeder implements ApplicationRunner {
         List<Product> allProducts = new ArrayList<>();
         for (ProductSeedDto dto : dtos) {
             Category category = categoryCache.get(dto.getCategory().getName());
+
             Product product = Product.builder()
                     .title(dto.getTitle())
                     .price(dto.getPrice())
                     .description(dto.getDescription())
-                    .images(dto.getImages())
                     .category(category)
                     .build();
+
+            if (dto.getImages() != null) {
+                List<ProductImage> productImages = dto.getImages().stream().map(imgUrl -> {
+                    ProductImage.Id imgId = new ProductImage.Id(null, imgUrl);
+
+                    return ProductImage.builder()
+                            .id(imgId)
+                            .product(product)
+                            .build();
+                }).toList();
+                product.setImages(productImages);
+            }
+
             allProducts.add(product);
         }
 

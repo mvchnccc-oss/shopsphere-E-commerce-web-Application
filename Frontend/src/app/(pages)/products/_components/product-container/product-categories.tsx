@@ -1,8 +1,8 @@
-import { Product, Products } from "@/lib/interfaces/products.interface";
+import { Product } from "@/lib/interfaces/products.interface";
 import ProductCategory from "./product-category";
 
 interface ProductCategoriesProps {
-  products: Products;
+  products: Product[];
 }
 
 type GroupedProducts = { id: number; name: string; products: Product[] };

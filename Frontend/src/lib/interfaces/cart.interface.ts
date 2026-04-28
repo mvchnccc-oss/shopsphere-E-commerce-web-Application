@@ -15,13 +15,10 @@ export interface GetCartResponse {
         id: number;
         name: string;
         image: string;
-        totalProducts: number;
       };
       description: string;
       images: string[];
     };
     quantity: number;
   }[];
-  totalPrice: number;
-  totalProducts: number;
 }

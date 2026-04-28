@@ -1,83 +1,61 @@
 package com.abdullah.eCommerce.services.impl;
 
-import com.abdullah.eCommerce.domain.*;
-import com.abdullah.eCommerce.domain.dtos.CheckoutRequestDto;
-import com.abdullah.eCommerce.domain.dtos.OrderDto;
+import com.abdullah.eCommerce.dtos.OrderDto;
+import com.abdullah.eCommerce.dtos.requests.PlaceOrderRequest;
+import com.abdullah.eCommerce.entities.*;
+import com.abdullah.eCommerce.mappers.AddressMapper;
+import com.abdullah.eCommerce.mappers.OrderItemMapper;
 import com.abdullah.eCommerce.mappers.OrderMapper;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
-import com.abdullah.eCommerce.repositories.CartRepository;
 import com.abdullah.eCommerce.repositories.OrderRepository;
-import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.OrderService;
+import com.abdullah.eCommerce.services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
-    private final CartRepository cartRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final CartItemRepository cartItemRepository;
 
     private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
+    private final AddressMapper addressMapper;
 
     @Override
     @Transactional
-    public int placeOrderFromCart(CheckoutRequestDto address) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException(email)
-                );
+    public Long placeOrderFromCart(PlaceOrderRequest placeOrderRequest) {
+        User user = userService.getUser();
 
-        Optional<Cart> cart = cartRepository.findByUser(user);
-        if (cart.isEmpty()) return -1;
+        List<CartItem> cartItems = user.getCartItems();
+        if (cartItems.isEmpty()) return null;
 
         Order order = Order.builder().user(user).build();
 
-        OrderAddress orderAddress = OrderAddress.builder()
-                .firstname(address.getFirstname())
-                .lastname(address.getLastname())
-                .city(address.getCity())
-                .street(address.getStreet())
-                .order(order)
-                .build();
+        List<OrderItem> orderItems = orderItemMapper.fromCartItems(cartItems, order);
+        order.setOrderItems(orderItems);
 
-        List<OrderItem> orderItems = cart.get().getItems().stream()
-                .map((item) -> OrderItem.builder()
-                        .order(order)
-                        .product(item.getProduct())
-                        .pricePerUnit(item.getProduct().getPrice())
-                        .quantity(item.getQuantity())
-                        .build()
-                ).toList();
+        Address address = addressMapper.toAddress(placeOrderRequest);
+        address.setOrder(order);
 
-        if (orderItems.isEmpty()) return -1;
-
-        order.setItems(orderItems);
-        order.setOrderAddress(orderAddress);
+        order.setAddress(address);
+        order.setOrderItems(orderItems);
         orderRepository.save(order);
 
-        cartItemRepository.deleteByCartId(cart.get().getId());
+        cartItemRepository.deleteByUserId(user.getId());
 
         return order.getId();
     }
 
     @Override
+    @Transactional
     public List<OrderDto> getOrders() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException(email)
-                );
-
+        User user = userService.getUser();
         List<Order> orders = orderRepository.findByUserIdOrderByOrderedAtDesc(user.getId());
 
         return orderMapper.toOrdersDto(orders);

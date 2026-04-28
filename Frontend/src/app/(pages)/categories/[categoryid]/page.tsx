@@ -1,14 +1,13 @@
-import { getCategoryById } from '@/lib/actions/category.action';
-import { category } from '@/lib/interfaces/categories.interface';
-import { getProductsByCategory } from '@/lib/actions/products.actions';
-import { Products } from '@/lib/interfaces/products.interface';
-import ProductCard from '@/app/(pages)/products/_components/product-card';
-import React from 'react'
+import ProductCard from "@/app/(pages)/products/_components/product-card";
+import { getCategoryById } from "@/lib/actions/category.action";
+import { getProductsByCategory } from "@/lib/actions/products.actions";
+import { Category } from "@/lib/interfaces/categories.interface";
+import { Products } from "@/lib/interfaces/products.interface";
 
 export default async function page({ params }: { params: Promise<{ categoryid: string }> }) {
   const { categoryid } = await params;
   const categoryId = parseInt(categoryid);
-  const categorydetails: category = await getCategoryById(categoryId);
+  const categorydetails: Category = await getCategoryById(categoryId);
   const products: Products = await getProductsByCategory(categoryId);
 
   return (
@@ -25,5 +24,5 @@ export default async function page({ params }: { params: Promise<{ categoryid: s
         )}
       </div>
     </>
-  )
+  );
 }

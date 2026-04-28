@@ -1,27 +1,22 @@
 package com.abdullah.eCommerce.services.impl;
 
-import com.abdullah.eCommerce.domain.Cart;
-import com.abdullah.eCommerce.domain.User;
+import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.exceptions.UserAlreadyExistsException;
-import com.abdullah.eCommerce.repositories.CartRepository;
 import com.abdullah.eCommerce.repositories.UserRepository;
-import com.abdullah.eCommerce.security.ProductUserDetails;
-import com.abdullah.eCommerce.security.ProductUserDetailsService;
+import com.abdullah.eCommerce.security.AppUserDetailsService;
+import com.abdullah.eCommerce.security.UserPrincipal;
 import com.abdullah.eCommerce.services.AuthenticationService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +26,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
-    private final ProductUserDetailsService productUserDetailsService;
+    private final AppUserDetailsService appUserDetailsService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CartRepository cartRepository;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -42,11 +36,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${jwt.expiry}")
     private Long jwtExpiryMs;
 
-
     @Override
     public UserDetails createUser(String email, String password, String name) {
-        if (userRepository.findByEmail(email).isPresent()){
-            throw new UserAlreadyExistsException(email) ;
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new UserAlreadyExistsException(email);
         }
         User user = User.builder()
                 .email(email)
@@ -55,24 +48,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         userRepository.save(user);
 
-        Cart cart = Cart.builder()
-                .user(user)
-                .items(new ArrayList<>())
-                .totalPrice(0L)
-                .build();
-        cartRepository.save(cart);
-
-        user.setCart(cart);
-        userRepository.save(user);
-
-        return new ProductUserDetails(user);
+        return new UserPrincipal(user);
     }
 
     @Override
     public UserDetails authenticate(String email, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        return productUserDetailsService.loadUserByUsername(email);
+        return appUserDetailsService.loadUserByUsername(email);
     }
 
     @Override
@@ -90,10 +73,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public UserDetails validateToken(String token) {
         String email = getSubject(token);
-        return productUserDetailsService.loadUserByUsername(email);
+        return appUserDetailsService.loadUserByUsername(email);
     }
 
-    private String getSubject(String token){
+    private String getSubject(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -102,9 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .getSubject();
     }
 
-    private SecretKey getSigningKey(){
-        return Keys.hmacShaKeyFor(
-                secretKey.getBytes()
-        );
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 }

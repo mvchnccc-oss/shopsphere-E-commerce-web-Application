@@ -1,13 +1,13 @@
 package com.abdullah.eCommerce.services;
 
-import com.abdullah.eCommerce.domain.Product;
+import com.abdullah.eCommerce.dtos.ProductDto;
 
 import java.util.List;
 
 public interface ProductService {
-    List<Product> getProducts();
+    List<ProductDto> getProducts();
 
-    Product getProduct(Integer id);
+    List<ProductDto> getProducts(Long categoryId);
 
-    List<Product> getProductsByCategory(Integer categoryId);
+    ProductDto getProduct(Long id);
 }

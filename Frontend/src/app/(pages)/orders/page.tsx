@@ -31,10 +31,13 @@ export default async function OrdersPage() {
     );
   }
   const totalSpent = orders.reduce(
-    (s, o) => s + o.items.reduce((ss, i) => ss + i.quantity * i.pricePerUnit, 0),
+    (s, o) => s + o.orderItems.reduce((ss, i) => ss + i.quantity * i.pricePerUnit, 0),
     0,
   );
-  const totalItems = orders.reduce((s, o) => s + o.items.reduce((ss, i) => ss + i.quantity, 0), 0);
+  const totalItems = orders.reduce(
+    (s, o) => s + o.orderItems.reduce((ss, i) => ss + i.quantity, 0),
+    0,
+  );
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -59,19 +62,15 @@ export default async function OrdersPage() {
 
       <div className="flex flex-col gap-3">
         {orders.map((order) => {
-          const total = order.items.reduce((s, i) => s + i.quantity * i.pricePerUnit, 0);
+          const total = order.orderItems.reduce((s, i) => s + i.quantity * i.pricePerUnit, 0);
           return (
             <details key={order.id} className="border rounded-xl overflow-hidden group">
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
                 <div className="flex items-center gap-3">
                   <span className="font-medium">Order #{order.id}</span>
-                  <InvoiceModal
-                    order={order}
-                    total={total}
-                    
-                  />
+                  <InvoiceModal order={order} total={total} />
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                    {order.items.length} items
+                    {order.orderItems.length} items
                   </span>
                 </div>
                 <span className="font-medium">EGP {total.toFixed(2)}</span>
@@ -88,7 +87,7 @@ export default async function OrdersPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {order.items.map((item, i) => (
+                    {order.orderItems.map((item, i) => (
                       <tr key={i} className="border-t">
                         <td className="p-3">{item.productTitle}</td>
                         <td className="p-3">{item.quantity}</td>
@@ -107,7 +106,7 @@ export default async function OrdersPage() {
                       Address
                     </span>
                     <span className="text-base font-medium">
-                      {order.orderAddress?.city || "No City"} - {order.orderAddress?.street || "No Street"}
+                      {order.address?.city || "No City"} - {order.address?.street || "No Street"}
                     </span>
                   </div>
                   <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 ">

@@ -1,11 +1,11 @@
 package com.abdullah.eCommerce.services;
 
-import com.abdullah.eCommerce.domain.Category;
+import com.abdullah.eCommerce.dtos.CategoryDto;
 
 import java.util.List;
 
 public interface CategoryService {
-    List<Category> getCategories();
+    List<CategoryDto> getCategories();
 
-    Category getCategory(Integer id);
+    CategoryDto getCategory(Long id);
 }

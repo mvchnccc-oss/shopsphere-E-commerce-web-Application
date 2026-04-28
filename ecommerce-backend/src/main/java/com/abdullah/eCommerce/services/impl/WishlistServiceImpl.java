@@ -1,11 +1,12 @@
 package com.abdullah.eCommerce.services.impl;
 
-import com.abdullah.eCommerce.domain.Product;
-import com.abdullah.eCommerce.domain.User;
-import com.abdullah.eCommerce.domain.Wishlist;
-import com.abdullah.eCommerce.domain.WishlistId;
+import com.abdullah.eCommerce.dtos.WishlistDto;
+import com.abdullah.eCommerce.entities.Product;
+import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.WishlistItem;
+import com.abdullah.eCommerce.mappers.WishlistMapper;
 import com.abdullah.eCommerce.repositories.ProductRepository;
-import com.abdullah.eCommerce.repositories.WishlistRepository;
+import com.abdullah.eCommerce.repositories.WishlistItemRepository;
 import com.abdullah.eCommerce.services.UserService;
 import com.abdullah.eCommerce.services.WishlistService;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +18,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WishlistServiceImpl implements WishlistService {
     private final UserService userService;
-    private final WishlistRepository wishlistRepository;
+    private final WishlistItemRepository wishlistItemRepository;
     private final ProductRepository productRepository;
+    private final WishlistMapper wishlistMapper;
 
     @Override
-    public void wishlist(int productId) {
+    public void wishlist(Long productId) {
         User user = userService.getUser();
         Product product = productRepository.getReferenceById(productId);
 
-        wishlistRepository.save(new Wishlist(product, user));
+        wishlistItemRepository.save(new WishlistItem(user, product));
     }
 
     @Override
-    public void unWishlist(int productId) {
+    public void unWishlist(Long productId) {
         User user = userService.getUser();
-        wishlistRepository.deleteById(new WishlistId(productId, user.getId()));
+        wishlistItemRepository.deleteById(new WishlistItem.Id(user.getId(), productId));
     }
 
     @Override
-    public List<Wishlist> getWishlist() {
+    public List<Long> getWishlist() {
         User user = userService.getUser();
+        List<WishlistItem> wishlistItems = wishlistItemRepository.findByUserId(user.getId());
 
-        return wishlistRepository.findByUserId(user.getId());
+        return wishlistMapper
+                .toDtoList(wishlistItems)
+                .stream()
+                .map(WishlistDto::getProductId)
+                .toList();
     }
 }

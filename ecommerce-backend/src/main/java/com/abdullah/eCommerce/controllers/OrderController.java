@@ -1,14 +1,15 @@
 package com.abdullah.eCommerce.controllers;
 
-import com.abdullah.eCommerce.domain.dtos.CheckoutRequestDto;
-import com.abdullah.eCommerce.domain.dtos.OrderDto;
+import com.abdullah.eCommerce.dtos.OrderDto;
+import com.abdullah.eCommerce.dtos.requests.PlaceOrderRequest;
+import com.abdullah.eCommerce.dtos.responses.GetOrdersResponse;
+import com.abdullah.eCommerce.dtos.responses.PlaceOrderResponse;
 import com.abdullah.eCommerce.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -17,15 +18,16 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public Map<String, List<OrderDto>> getOrders() {
-        var orders = orderService.getOrders();
-        for (var order : orders) System.out.println(order.getOrderedAt());
+    public GetOrdersResponse getOrders() {
+        List<OrderDto> orders = orderService.getOrders();
 
-        return Map.of("orders", orders);
+        return new GetOrdersResponse(orders);
     }
 
     @PostMapping
-    public int placeOrder(@Valid @RequestBody CheckoutRequestDto body) {
-        return orderService.placeOrderFromCart(body);
+    public PlaceOrderResponse placeOrder(@Valid @RequestBody PlaceOrderRequest body) {
+        Long id = orderService.placeOrderFromCart(body);
+
+        return new PlaceOrderResponse(id);
     }
 }

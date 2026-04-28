@@ -1,9 +1,11 @@
 package com.abdullah.eCommerce.services;
 
-import com.abdullah.eCommerce.domain.Cart;
+import com.abdullah.eCommerce.dtos.CartItemDto;
+
+import java.util.List;
 
 public interface CartService {
-    Cart getCart();
-    void update(int productId, int quantity);
-    void clear();
+    List<CartItemDto> getCartItems();
+
+    void updateQuantity(Long productId, int quantity);
 }

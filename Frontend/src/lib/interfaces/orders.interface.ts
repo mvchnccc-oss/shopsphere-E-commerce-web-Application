@@ -6,9 +6,9 @@ export interface Orders {
 
 export interface Order {
   id: number;
-  items: OrderItem[];
+  orderItems: OrderItem[];
   orderedAt: string;
-  orderAddress: CheckoutFormData;
+  address: CheckoutFormData;
 }
 export interface OrderItem {
   productTitle: string;

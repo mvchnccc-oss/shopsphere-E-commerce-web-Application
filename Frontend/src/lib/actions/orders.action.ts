@@ -1,6 +1,6 @@
 "use server";
-import fetchApi from "../fetchApi";
 import { CheckoutFormData } from "@/app/(pages)/checkout/page";
+import fetchApi from "../fetchApi";
 
 export async function getOrdersAction() {
   const result = await fetchApi("orders", "GET", {

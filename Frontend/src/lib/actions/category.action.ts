@@ -7,7 +7,7 @@ export async function getAllCategories() {
   });
 
   if (result.status === "Success") {
-    return result.data;
+    return result.data.categories;
   }
 
   return null;
@@ -19,7 +19,7 @@ export async function getCategoryById(id: number) {
   });
 
   if (result.status === "Success") {
-    return result.data;
+    return result.data.category;
   }
 
   return null;

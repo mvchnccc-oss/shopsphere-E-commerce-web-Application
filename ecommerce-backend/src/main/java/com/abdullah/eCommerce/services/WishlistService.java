@@ -1,13 +1,11 @@
 package com.abdullah.eCommerce.services;
 
-import com.abdullah.eCommerce.domain.Wishlist;
-
 import java.util.List;
 
 public interface WishlistService {
-    void wishlist(int productId);
+    void wishlist(Long productId);
 
-    void unWishlist(int productId);
+    void unWishlist(Long productId);
 
-    List<Wishlist> getWishlist();
+    List<Long> getWishlist();
 }

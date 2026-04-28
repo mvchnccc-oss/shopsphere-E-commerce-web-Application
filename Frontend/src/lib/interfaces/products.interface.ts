@@ -1,4 +1,6 @@
-export type Products = Product[];
+export type Products = {
+  products: Product[];
+};
 
 export interface Product {
   id: string;
