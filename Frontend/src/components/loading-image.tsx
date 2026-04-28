@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
@@ -18,7 +19,7 @@ export default function LoadingImage(props: LoadingImageProps) {
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const width = imageRef.current?.width ?? props.width;
-  const height = imageRef.current?.width ?? props.height;
+  const height = imageRef.current?.height ?? props.height;
 
   if (isError || !props.src || props.src.trim() === "")
     return (
@@ -43,9 +44,14 @@ export default function LoadingImage(props: LoadingImageProps) {
         alt={props.alt}
         onLoadingComplete={() => setLoading(false)}
         onError={() => setError(true)}
-        className={props.className}
+        className={cn(props.className, isLoading ? "hidden" : "")}
         ref={imageRef}
       />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <Spinner className="text-black w-1/4 h-1/4" />
+        </div>
+      )}
     </div>
   );
 }

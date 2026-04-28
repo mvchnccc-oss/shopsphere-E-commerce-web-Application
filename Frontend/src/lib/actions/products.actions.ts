@@ -19,7 +19,7 @@ export async function getProductById(id: number) {
   });
 
   if (result.status === "Success") {
-    return result.data;
+    return result.data.product;
   }
 
   return null;
