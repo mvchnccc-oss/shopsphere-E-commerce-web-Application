@@ -1,6 +1,5 @@
 package com.abdullah.eCommerce.config;
 
-import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.security.AppUserDetailsService;
 import com.abdullah.eCommerce.security.AuthenticationFilter;
@@ -34,18 +33,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AppUserDetailsService productUserDetailsService(UserRepository userRepository) {
-        AppUserDetailsService appUserDetailsService = new AppUserDetailsService(userRepository);
-        String email = "abdullah@gmail.com";
-        userRepository.findByEmail(email).orElseGet(() -> {
-            User user = User.builder()
-                    .name("Abdullah")
-                    .email(email)
-                    .password(passwordEncoder().encode("Password@123"))
-                    .build();
-            return userRepository.save(user);
-        });
-
-        return appUserDetailsService;
+        return new AppUserDetailsService(userRepository);
     }
 
     @Bean
