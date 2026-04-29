@@ -25,7 +25,7 @@ export default function Navbar() {
     { path: "/", label: "Home" },
     { path: "/products", label: "Products" },
     { path: "/categories", label: "Categories" },
-    { path: "/dashboard", label: "Dashboard" },
+    { path: "/dashboard", label: "Dashboard", protected: true },
   ];
 
   async function handleLogout() {
@@ -48,16 +48,18 @@ export default function Navbar() {
         {/* Links - Desktop only */}
         <div className=" flex-1 hidden sm:flex justify-center">
           <ul className="py-2 px-15 bg-[#111] text-white rounded-full flex items-center gap-8">
-            {links.map((link) => (
-              <li key={link.path}>
-                <Link
-                  href={link.path}
-                  className={pathname === link.path ? "text-emerald-500" : "text-white"}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {links.map((link) =>
+              link.protected && status !== "authenticated" ? undefined : (
+                <li key={link.path}>
+                  <Link
+                    href={link.path}
+                    className={pathname === link.path ? "text-emerald-500" : "text-white"}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
         </div>
 
@@ -124,16 +126,18 @@ export default function Navbar() {
         className={`sm:hidden overflow-hidden transition-all duration-500 ease-in-out ${toggler ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}
       >
         <div className="flex flex-col gap-3">
-          {links.map((link) => (
-            <Link
-              key={link.path}
-              href={link.path}
-              onClick={() => setToggler(false)}
-              className={pathname === link.path ? "text-emerald-400" : ""}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) =>
+            link.protected && status !== "authenticated" ? undefined : (
+              <Link
+                key={link.path}
+                href={link.path}
+                onClick={() => setToggler(false)}
+                className={pathname === link.path ? "text-emerald-400" : ""}
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
           <div className="flex items-center gap-1 pt-1">
             {status === "unauthenticated" && (
               <>

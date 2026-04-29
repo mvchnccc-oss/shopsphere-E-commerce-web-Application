@@ -1,6 +1,6 @@
 import { getToken } from "next-auth/jwt";
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const protectedRoutes = [
   "/profile",
@@ -9,12 +9,12 @@ const protectedRoutes = [
   "/checkout",
   "/wishlist",
   "/dashboard",
-  "/dashboard/products"
+  "/dashboard/products",
 ];
 
 const authRoutes = ["/auth/login", "/auth/register"];
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
@@ -31,7 +31,6 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-
   if (authRoutes.includes(pathname)) {
     if (token) {
       return NextResponse.redirect(new URL("/", req.url));
@@ -42,7 +41,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
