@@ -1,9 +1,11 @@
 package com.abdullah.eCommerce.controllers;
 
 import com.abdullah.eCommerce.dtos.ProductDto;
+import com.abdullah.eCommerce.dtos.requests.CreateProductRequest;
 import com.abdullah.eCommerce.dtos.responses.GetProductResponse;
 import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
 import com.abdullah.eCommerce.services.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,5 +31,15 @@ public class ProductsController {
         ProductDto product = productService.getProduct(id);
 
         return new GetProductResponse(product);
+    }
+
+    @PostMapping
+    public void createProduct(@RequestBody @Valid CreateProductRequest request) {
+        productService.createProduct(request);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
     }
 }
