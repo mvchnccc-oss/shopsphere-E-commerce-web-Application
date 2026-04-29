@@ -45,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .name(name)
+                .isSeller(false)
                 .build();
         userRepository.save(user);
 
