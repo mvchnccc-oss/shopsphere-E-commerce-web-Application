@@ -9,4 +9,5 @@ import lombok.Data;
 public class AuthResponse {
     public String token;
     public Long expiresAt;
+    public boolean isSeller;
 }

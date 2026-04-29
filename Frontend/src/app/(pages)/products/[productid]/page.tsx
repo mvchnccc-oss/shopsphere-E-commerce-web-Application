@@ -1,12 +1,14 @@
 import AddToCartButton from "@/components/cart/add-button";
 import AddToWishlistButton from "@/components/wishlist/add-button-whishlist";
 import { getProductById } from "@/lib/actions/products.actions";
-import { Product } from "@/lib/interfaces/products.interface";
+import { notFound } from "next/navigation";
 import ProductCarousel from "./_components/product-carousal";
 
 export default async function page({ params }: { params: Promise<{ productid: number }> }) {
   const { productid } = await params;
-  const product: Product = await getProductById(productid);
+  const product = await getProductById(productid);
+
+  if (!product) notFound();
 
   return (
     <div className="min-h-screen bg-background py-10 px-4">
@@ -17,6 +19,9 @@ export default async function page({ params }: { params: Promise<{ productid: nu
           <span className="text-sm text-muted-foreground">{product.category.name}</span>
           <h1 className="text-2xl md:text-3xl font-bold">{product.title}</h1>
           <p className="text-muted-foreground text-sm leading-relaxed">{product.description}</p>
+          <span className="text-muted-foreground">
+            <strong>Sold by</strong> {product.seller}
+          </span>
           <span className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
             {product.price} EGP
           </span>

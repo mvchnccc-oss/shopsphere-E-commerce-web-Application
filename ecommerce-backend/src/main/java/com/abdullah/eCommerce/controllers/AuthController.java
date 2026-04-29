@@ -32,8 +32,9 @@ public class AuthController {
     public AuthResponse login(@RequestBody @Valid LoginRequest body) {
         UserDetails user = authenticationService.authenticate(body.email, body.password);
         String token = authenticationService.generateToken(user);
+        boolean isSeller = userService.isSeller(user);
 
-        return new AuthResponse(token, expiresAt);
+        return new AuthResponse(token, expiresAt, isSeller);
     }
 
     @PostMapping("signup")
@@ -41,7 +42,7 @@ public class AuthController {
         UserDetails user = authenticationService.createUser(body.email, body.password, body.name);
         String token = authenticationService.generateToken(user);
 
-        return new AuthResponse(token, expiresAt);
+        return new AuthResponse(token, expiresAt, false);
     }
 
     @GetMapping("me")
@@ -54,7 +55,7 @@ public class AuthController {
         User updatedUser = userService.updateUser(userMapper.toUser(body));
 
         String token = authenticationService.generateToken(new UserPrincipal(updatedUser));
-        AuthResponse authResponse = new AuthResponse(token, expiresAt);
+        AuthResponse authResponse = new AuthResponse(token, expiresAt, updatedUser.getIsSeller());
 
         return new UpdateUserResponse(userMapper.toUserDto(updatedUser), authResponse);
     }

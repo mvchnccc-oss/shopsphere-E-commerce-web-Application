@@ -71,8 +71,10 @@ import com.abdullah.eCommerce.dtos.seeders.ProductSeedDto;
 import com.abdullah.eCommerce.entities.Category;
 import com.abdullah.eCommerce.entities.Product;
 import com.abdullah.eCommerce.entities.ProductImage;
+import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.repositories.CategoryRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +96,7 @@ public class DataSeeder implements ApplicationRunner {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     private static final int CHUNK_SIZE = 100;
@@ -114,6 +117,8 @@ public class DataSeeder implements ApplicationRunner {
 
         // 1. Save all unique categories first
         Map<String, Category> categoryCache = new HashMap<>();
+        Map<String, User> userCache = new HashMap<>();
+
         for (ProductSeedDto dto : dtos) {
             String catName = dto.getCategory().getName();
             categoryCache.computeIfAbsent(catName, name -> {
@@ -130,11 +135,24 @@ public class DataSeeder implements ApplicationRunner {
         for (ProductSeedDto dto : dtos) {
             Category category = categoryCache.get(dto.getCategory().getName());
 
+            User seller = userCache.computeIfAbsent(dto.getSeller().getEmail(), email ->
+                    userRepository.findByEmail(email)
+                            .orElseGet(() -> userRepository.save(
+                                    User.builder()
+                                            .name(dto.getSeller().getName())
+                                            .email(dto.getSeller().getEmail())
+                                            .password(dto.getSeller().getPassword())
+                                            .isSeller(true)
+                                            .build()
+                            ))
+            );
+
             Product product = Product.builder()
                     .title(dto.getTitle())
                     .price(dto.getPrice())
                     .description(dto.getDescription())
                     .category(category)
+                    .seller(seller)
                     .build();
 
             if (dto.getImages() != null) {
