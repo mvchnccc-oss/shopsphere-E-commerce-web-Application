@@ -27,4 +27,9 @@ public class CartController {
     public void addToCart(@RequestBody @Valid UpdateCartRequest body) {
         cartService.updateQuantity(body.productId, body.quantity);
     }
+
+    @DeleteMapping
+    public void clear() {
+        cartService.clear();
+    }
 }

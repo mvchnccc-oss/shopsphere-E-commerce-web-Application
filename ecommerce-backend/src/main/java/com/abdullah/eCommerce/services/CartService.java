@@ -8,4 +8,6 @@ public interface CartService {
     List<CartItemDto> getCartItems();
 
     void updateQuantity(Long productId, int quantity);
+
+    void clear();
 }
