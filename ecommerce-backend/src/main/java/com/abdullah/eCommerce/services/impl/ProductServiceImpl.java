@@ -110,4 +110,40 @@ public class ProductServiceImpl implements ProductService {
         User user = userService.getUser();
         productRepository.deleteByIdAndSellerId(id, user.getId());
     }
+
+    @Override
+    @Transactional
+    public void updateProduct(Long id, CreateProductRequest body) {
+        User user = userService.getUser();
+        Product product = productRepository.findByIdAndSellerId(id, user.getId())
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        if (!body.category.equals(product.getCategory().getName())) {
+            Category category = categoryRepository.findByName(body.category)
+                    .orElseThrow(() -> new CategoryNotFoundException(0L));
+            product.setCategory(category);
+        }
+
+        var productImages = product.getImages().stream().map(i -> i.getId().getImage()).toList();
+        if (!productImages.equals(body.images)) {
+            productImageRepository.deleteByProductId(product.getId());
+
+            var newImages = body.images.stream().map(item ->
+                    ProductImage.builder()
+                            .product(product)
+                            .id(new ProductImage.Id(product.getId(), item))
+                            .build()
+            ).collect(Collectors.toList());
+
+            productImageRepository.saveAll(newImages);
+            product.getImages().clear();
+            product.getImages().addAll(newImages);
+        }
+
+        product.setTitle(body.title);
+        product.setDescription(body.description);
+        product.setPrice(body.price);
+
+        productRepository.save(product);
+    }
 }

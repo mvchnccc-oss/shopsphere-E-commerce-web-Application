@@ -38,6 +38,11 @@ public class ProductsController {
         productService.createProduct(request);
     }
 
+    @PostMapping("{id}")
+    public void updateProduct(@PathVariable Long id, @RequestBody @Valid CreateProductRequest body) {
+        productService.updateProduct(id, body);
+    }
+
     @DeleteMapping("{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
