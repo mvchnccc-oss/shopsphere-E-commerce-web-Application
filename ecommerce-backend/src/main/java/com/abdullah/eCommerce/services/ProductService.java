@@ -1,8 +1,11 @@
 package com.abdullah.eCommerce.services;
 
 import com.abdullah.eCommerce.dtos.ProductDto;
+import com.abdullah.eCommerce.dtos.SellerProductDto;
 import com.abdullah.eCommerce.dtos.requests.CreateProductRequest;
 import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
+
+import java.util.List;
 
 public interface ProductService {
     GetProductsResponse getProducts(int page, int size);
@@ -16,4 +19,6 @@ public interface ProductService {
     void deleteProduct(Long id);
 
     void updateProduct(Long id, CreateProductRequest product);
+
+    List<SellerProductDto> getUserProducts();
 }

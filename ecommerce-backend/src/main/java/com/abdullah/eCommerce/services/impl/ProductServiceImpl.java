@@ -1,6 +1,7 @@
 package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.dtos.ProductDto;
+import com.abdullah.eCommerce.dtos.SellerProductDto;
 import com.abdullah.eCommerce.dtos.requests.CreateProductRequest;
 import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
 import com.abdullah.eCommerce.entities.Category;
@@ -145,5 +146,13 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(body.price);
 
         productRepository.save(product);
+    }
+
+    @Override
+    public List<SellerProductDto> getUserProducts() {
+        User user = userService.getUser();
+        List<Product> products = productRepository.findBySellerId(user.getId());
+
+        return productMapper.toSellerDtoList(products);
     }
 }
