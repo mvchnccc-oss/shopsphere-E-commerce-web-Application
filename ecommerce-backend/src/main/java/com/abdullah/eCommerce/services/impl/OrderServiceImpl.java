@@ -7,6 +7,7 @@ import com.abdullah.eCommerce.mappers.AddressMapper;
 import com.abdullah.eCommerce.mappers.OrderItemMapper;
 import com.abdullah.eCommerce.mappers.OrderMapper;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
+import com.abdullah.eCommerce.repositories.OrderItemRepository;
 import com.abdullah.eCommerce.repositories.OrderRepository;
 import com.abdullah.eCommerce.services.OrderService;
 import com.abdullah.eCommerce.services.UserService;
@@ -15,11 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final UserService userService;
     private final CartItemRepository cartItemRepository;
 
@@ -57,6 +60,33 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrders() {
         User user = userService.getUser();
         List<Order> orders = orderRepository.findByUserIdOrderByOrderedAtDesc(user.getId());
+
+        return orderMapper.toOrdersDto(orders);
+    }
+
+    @Override
+    public List<OrderDto> getSellerOrders() {
+        User user = userService.getUser();
+        System.out.println("User ID: " + user.getId());
+
+        List<Order> orders = orderItemRepository
+                .findAllByProductSellerId(user.getId())
+                .stream()
+                .collect(Collectors.groupingBy(OrderItem::getOrder))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    Order order = entry.getKey();
+
+
+                    List<OrderItem> orderItems = entry.getValue().stream()
+                            .toList();
+                    System.out.println("Size " + orderItems.size());
+
+                    order.setOrderItems(orderItems);
+                    return order;
+                })
+                .toList();
 
         return orderMapper.toOrdersDto(orders);
     }

@@ -9,4 +9,6 @@ public interface OrderService {
     Long placeOrderFromCart(PlaceOrderRequest address);
 
     List<OrderDto> getOrders();
+
+    List<OrderDto> getSellerOrders();
 }
