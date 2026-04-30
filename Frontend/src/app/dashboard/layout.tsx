@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { path: "/dashboard", label: "Overview", icon: LayoutDashboardIcon },
@@ -12,7 +12,28 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isSeller = (session as any)?.isSeller ?? false;
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/auth/login");
+    } else if (status === "authenticated" && !isSeller) {
+      router.replace("/profile");
+    }
+  }, [status, isSeller]);
+
+  // Loading state while session resolves
+  if (status === "loading" || (status === "authenticated" && !isSeller)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-muted-foreground text-sm">Loading...</div>
+      </div>
+    );
+  }
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full py-6 px-4 gap-2">
@@ -43,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </Link>
       ))}
 
-      <div className="">
+      <div className="mt-auto">
         <button
           onClick={() => signOut()}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors w-full"
@@ -70,7 +91,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
       )}
 
-      
       <aside
         className={`fixed top-0 left-0 z-50 h-full w-64 bg-background border-r border-border transform transition-transform duration-300 md:hidden ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -85,9 +105,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <SidebarContent />
       </aside>
 
-      
       <div className="flex-1 flex flex-col min-w-0">
-      
         <header className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-border sticky top-0 bg-background z-30">
           <button
             onClick={() => setSidebarOpen(true)}

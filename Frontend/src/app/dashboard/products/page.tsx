@@ -1,100 +1,321 @@
 "use client";
-import { useState } from "react";
-import { PlusIcon, PencilIcon, Trash2Icon, XIcon, SearchIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  PlusIcon, PencilIcon, Trash2Icon, XIcon, SearchIcon,
+  PackageIcon, AlertTriangleIcon, CheckCircle2Icon, LoaderIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  SellerProduct, CreateProductPayload,
+  getSellerProductsAction, createProductAction,
+  updateProductAction, deleteProductAction,
+} from "@/lib/actions/seller.actions";
+import { getAllCategories } from "@/lib/actions/category.action";
+import { Category } from "@/lib/interfaces/categories.interface";
 
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  category: string;
-  stock: number;
-  image: string;
+const emptyForm: CreateProductPayload = {
+  title: "", description: "", price: 0, category: "", images: [],
+};
+
+// ── Confirm Delete Modal ─────────────────────────────────
+function ConfirmDeleteModal({
+  product, onConfirm, onCancel, isPending,
+}: {
+  product: SellerProduct;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isPending: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        {/* Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="p-3 rounded-full bg-red-100 dark:bg-red-950">
+            <AlertTriangleIcon className="size-7 text-red-500" />
+          </div>
+        </div>
+
+        {/* Text */}
+        <h2 className="text-lg font-bold text-center mb-1">Delete Product?</h2>
+        <p className="text-muted-foreground text-sm text-center mb-1">
+          You're about to delete
+        </p>
+        <p className="text-sm font-semibold text-center mb-5 px-4 truncate">
+          "{product.title}"
+        </p>
+        <p className="text-xs text-muted-foreground text-center mb-6">
+          This action cannot be undone.
+        </p>
+
+        {/* Actions */}
+        <div className="flex gap-3">
+          <Button variant="outline" className="flex-1" onClick={onCancel} disabled={isPending}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            className="flex-1 flex items-center gap-2"
+            onClick={onConfirm}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <><LoaderIcon className="size-4 animate-spin" /> Deleting...</>
+            ) : (
+              <><Trash2Icon className="size-4" /> Delete</>
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-const mockProducts: Product[] = [
-  { id: 1, title: "Wireless Headphones", price: 850, category: "Electronics", stock: 24, image: "https://i.imgur.com/QkIa5tT.jpeg" },
-  { id: 2, title: "Smart Watch", price: 1200, category: "Electronics", stock: 12, image: "https://i.imgur.com/QkIa5tT.jpeg" },
-  { id: 3, title: "Laptop Stand", price: 320, category: "Accessories", stock: 40, image: "https://i.imgur.com/QkIa5tT.jpeg" },
-  { id: 4, title: "Mechanical Keyboard", price: 650, category: "Accessories", stock: 8, image: "https://i.imgur.com/QkIa5tT.jpeg" },
-  { id: 5, title: "USB-C Hub", price: 280, category: "Accessories", stock: 35, image: "https://i.imgur.com/QkIa5tT.jpeg" },
-];
+// ── Product Form Modal ───────────────────────────────────
+function ProductModal({
+  editingProduct, categories, onSave, onClose,
+}: {
+  editingProduct: SellerProduct | null;
+  categories: Category[];
+  onSave: (payload: CreateProductPayload) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState<CreateProductPayload>(
+    editingProduct
+      ? {
+          title: editingProduct.title,
+          description: editingProduct.description,
+          price: editingProduct.price,
+          category: editingProduct.category,
+          images: editingProduct.images,
+        }
+      : { ...emptyForm }
+  );
+  const [imageInput, setImageInput] = useState("");
+  const [isPending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-const emptyForm = { title: "", price: "", category: "", stock: "", image: "" };
+  async function handleSave() {
+    if (!form.title.trim() || !form.price || !form.category) {
+      setError("Title, price and category are required.");
+      return;
+    }
+    setPending(true);
+    setError(null);
+    await onSave(form);
+    setSuccess(true);
+    setPending(false);
+  }
 
+  function addImage() {
+    if (imageInput.trim()) {
+      setForm((f) => ({ ...f, images: [...f.images, imageInput.trim()] }));
+      setImageInput("");
+    }
+  }
+
+  function removeImage(i: number) {
+    setForm((f) => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }));
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold">
+            {editingProduct ? "Edit Product" : "Add Product"}
+          </h2>
+          <button onClick={onClose} className="p-1 rounded-md hover:bg-muted transition-colors">
+            <XIcon className="size-4" />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {/* Title */}
+          <div className="grid gap-1.5">
+            <Label>Title *</Label>
+            <Input
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="Product name"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="grid gap-1.5">
+            <Label>Description *</Label>
+            <textarea
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              placeholder="Describe your product..."
+              rows={3}
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+            />
+          </div>
+
+          {/* Price + Category */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-1.5">
+              <Label>Price (EGP) *</Label>
+              <Input
+                type="number"
+                value={form.price || ""}
+                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                placeholder="0"
+                min={0}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Category *</Label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="">Select...</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Images */}
+          <div className="grid gap-1.5">
+            <Label>Images (URLs)</Label>
+            <div className="flex gap-2">
+              <Input
+                value={imageInput}
+                onChange={(e) => setImageInput(e.target.value)}
+                placeholder="https://..."
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImage())}
+              />
+              <Button type="button" variant="outline" onClick={addImage} className="shrink-0">
+                Add
+              </Button>
+            </div>
+            {form.images.length > 0 && (
+              <div className="flex flex-col gap-1.5 mt-1">
+                {form.images.map((url, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs bg-muted rounded-lg px-3 py-2">
+                    <span className="flex-1 truncate text-muted-foreground">{url}</span>
+                    <button onClick={() => removeImage(i)} className="text-destructive hover:opacity-70">
+                      <XIcon className="size-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <p className="text-destructive text-xs mt-3 flex items-center gap-1">
+            <AlertTriangleIcon className="size-3" /> {error}
+          </p>
+        )}
+
+        <div className="flex gap-3 mt-6">
+          <Button variant="outline" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button className="flex-1 flex items-center gap-2" onClick={handleSave} disabled={isPending}>
+            {isPending ? (
+              <><LoaderIcon className="size-4 animate-spin" /> Saving...</>
+            ) : (
+              editingProduct ? "Save Changes" : "Add Product"
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Page ────────────────────────────────────────────
 export default function DashboardProductsPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<SellerProduct[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [form, setForm] = useState(emptyForm);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editingProduct, setEditingProduct] = useState<SellerProduct | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SellerProduct | null>(null);
+  const [isDeletePending, setDeletePending] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  function showToast(msg: string) {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  }
+
+  async function loadProducts() {
+    const res = await getSellerProductsAction();
+    if (res.success) setProducts(res.data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadProducts();
+    getAllCategories().then((cats) => {
+      if (cats) setCategories(Array.isArray(cats) ? cats : []);
+    });
+  }, []);
 
   const filtered = products.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  function openAdd() {
-    setEditingProduct(null);
-    setForm(emptyForm);
-    setModalOpen(true);
-  }
-
-  function openEdit(product: Product) {
-    setEditingProduct(product);
-    setForm({
-      title: product.title,
-      price: String(product.price),
-      category: product.category,
-      stock: String(product.stock),
-      image: product.image,
-    });
-    setModalOpen(true);
-  }
-
-  function handleSave() {
-    if (!form.title || !form.price) return;
-
+  async function handleSave(payload: CreateProductPayload) {
     if (editingProduct) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === editingProduct.id
-            ? { ...p, title: form.title, price: Number(form.price), category: form.category, stock: Number(form.stock), image: form.image }
-            : p
-        )
-      );
+      const res = await updateProductAction(editingProduct.id, payload);
+      if (res.success) {
+        showToast("Product updated successfully!");
+        await loadProducts();
+      } else showToast(`Error: ${res.message}`);
     } else {
-      setProducts((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          title: form.title,
-          price: Number(form.price),
-          category: form.category,
-          stock: Number(form.stock),
-          image: form.image,
-        },
-      ]);
+      const res = await createProductAction(payload);
+      if (res.success) {
+        showToast("Product added successfully!");
+        await loadProducts();
+      } else showToast(`Error: ${res.message}`);
     }
     setModalOpen(false);
+    setEditingProduct(null);
   }
 
-  function handleDelete(id: number) {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    setDeleteId(null);
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeletePending(true);
+    const res = await deleteProductAction(deleteTarget.id);
+    setDeletePending(false);
+    setDeleteTarget(null);
+    if (res.success) {
+      showToast("Product deleted.");
+      await loadProducts();
+    } else showToast(`Error: ${res.message}`);
   }
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Toast */}
+      {toastMsg && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-3 shadow-lg text-sm animate-in fade-in slide-in-from-bottom-3 duration-300">
+          <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
+          {toastMsg}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Products</h1>
-          <p className="text-muted-foreground text-sm mt-1">{products.length} products total</p>
+          <p className="text-muted-foreground text-sm mt-1">
+            {loading ? "Loading..." : `${products.length} products total`}
+          </p>
         </div>
-        <Button onClick={openAdd} className="flex items-center gap-2">
+        <Button onClick={() => { setEditingProduct(null); setModalOpen(true); }} className="flex items-center gap-2">
           <PlusIcon className="size-4" />
           Add Product
         </Button>
@@ -113,122 +334,90 @@ export default function DashboardProductsPage() {
 
       {/* Table */}
       <div className="border border-border rounded-xl bg-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-muted-foreground text-xs">
-              <th className="text-left px-5 py-3 font-medium">Product</th>
-              <th className="text-left px-5 py-3 font-medium hidden md:table-cell">Category</th>
-              <th className="text-left px-5 py-3 font-medium">Price</th>
-              <th className="text-left px-5 py-3 font-medium hidden sm:table-cell">Stock</th>
-              <th className="text-right px-5 py-3 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((product) => (
-              <tr key={product.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
-                <td className="px-5 py-3.5">
-                  <span className="font-medium">{product.title}</span>
-                </td>
-                <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell">{product.category}</td>
-                <td className="px-5 py-3.5 font-semibold">EGP {product.price}</td>
-                <td className="px-5 py-3.5 hidden sm:table-cell">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    product.stock > 20
-                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300"
-                      : product.stock > 5
-                      ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                      : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                  }`}>
-                    {product.stock} in stock
-                  </span>
-                </td>
-                <td className="px-5 py-3.5">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => openEdit(product)}
-                      className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                    >
-                      <PencilIcon className="size-4" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteId(product.id)}
-                      className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-muted-foreground hover:text-red-500"
-                    >
-                      <Trash2Icon className="size-4" />
-                    </button>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground">
+            <LoaderIcon className="size-6 animate-spin" />
+            <span className="text-sm">Loading products...</span>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground">
+            <PackageIcon className="size-8 opacity-40" />
+            <span className="text-sm">
+              {search ? "No products match your search." : "No products yet. Add your first one!"}
+            </span>
+          </div>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-muted-foreground text-xs">
+                <th className="text-left px-5 py-3 font-medium">Product</th>
+                <th className="text-left px-5 py-3 font-medium hidden md:table-cell">Category</th>
+                <th className="text-left px-5 py-3 font-medium">Price</th>
+                <th className="text-right px-5 py-3 font-medium">Actions</th>
               </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground">
-                  No products found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map((product) => (
+                <tr key={product.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      {product.images[0] ? (
+                        <img
+                          src={product.images[0]}
+                          alt={product.title}
+                          className="size-9 rounded-lg object-cover border border-border shrink-0"
+                        />
+                      ) : (
+                        <div className="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                          <PackageIcon className="size-4 text-muted-foreground" />
+                        </div>
+                      )}
+                      <span className="font-medium truncate max-w-[140px]">{product.title}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell">{product.category}</td>
+                  <td className="px-5 py-3.5 font-semibold">EGP {product.price.toLocaleString()}</td>
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => { setEditingProduct(product); setModalOpen(true); }}
+                        className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                      >
+                        <PencilIcon className="size-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(product)}
+                        className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-muted-foreground hover:text-red-500"
+                      >
+                        <Trash2Icon className="size-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      
+      {/* Product Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold">{editingProduct ? "Edit Product" : "Add Product"}</h2>
-              <button onClick={() => setModalOpen(false)} className="p-1 rounded-md hover:bg-muted transition-colors">
-                <XIcon className="size-4" />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <div className="grid gap-1.5">
-                <Label>Title</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Product name" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="grid gap-1.5">
-                  <Label>Price (EGP)</Label>
-                  <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0" />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>Stock</Label>
-                  <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} placeholder="0" />
-                </div>
-              </div>
-              <div className="grid gap-1.5">
-                <Label>Category</Label>
-                <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Electronics" />
-              </div>
-              <div className="grid gap-1.5">
-                <Label>Image URL</Label>
-                <Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <Button variant="outline" className="flex-1" onClick={() => setModalOpen(false)}>Cancel</Button>
-              <Button className="flex-1" onClick={handleSave}>
-                {editingProduct ? "Save Changes" : "Add Product"}
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ProductModal
+          editingProduct={editingProduct}
+          categories={categories}
+          onSave={handleSave}
+          onClose={() => { setModalOpen(false); setEditingProduct(null); }}
+        />
       )}
 
-      
-      {deleteId !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
-            <h2 className="text-lg font-bold mb-2">Delete Product?</h2>
-            <p className="text-muted-foreground text-sm mb-6">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setDeleteId(null)}>Cancel</Button>
-              <Button variant="destructive" className="flex-1" onClick={() => handleDelete(deleteId)}>Delete</Button>
-            </div>
-          </div>
-        </div>
+      {/* Confirm Delete Modal */}
+      {deleteTarget && (
+        <ConfirmDeleteModal
+          product={deleteTarget}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteTarget(null)}
+          isPending={isDeletePending}
+        />
       )}
     </div>
   );

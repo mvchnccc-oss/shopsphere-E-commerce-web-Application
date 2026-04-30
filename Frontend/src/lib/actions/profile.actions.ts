@@ -1,7 +1,9 @@
 "use server";
 import { UpdateProfileForm, updateProfileSchema } from "@/lib/validations/profile.schema";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth";
 import fetchApi from "../fetchApi";
-import { UpdateProfileResponse } from "../interfaces/profile.interface";
+import { BecomeSellerResponse, UpdateProfileResponse } from "../interfaces/profile.interface";
 
 export async function updateProfileAction(data: UpdateProfileForm): Promise<UpdateProfileResponse> {
   const { error } = updateProfileSchema.safeParse(data);
@@ -22,8 +24,45 @@ export async function updateProfileAction(data: UpdateProfileForm): Promise<Upda
     };
   }
 
-  return { 
-    success: false, 
-    message: result.status === "Unauthorized" ? "Unauthorized" : "Server unavailable" 
+  return {
+    success: false,
+    message: result.status === "Unauthorized" ? "Unauthorized" : "Server unavailable",
+  };
+}
+
+export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
+  // جيب الـ name و email من الـ session عشان الباك اند بيطلبهم @NotBlank
+  const session = await getServerSession(authOptions);
+  if (!session) return { success: false, message: "Unauthorized" };
+
+  // جيب البيانات الحالية من الـ /me endpoint
+  const meResult = await fetchApi("auth/me", "GET", { includeToken: true });
+  if (meResult.status !== "Success") {
+    return { success: false, message: "Could not fetch user data" };
+  }
+
+  const { name, email } = meResult.data;
+
+  // ابعت name + email + isSeller مع بعض
+  const result = await fetchApi("auth/me", "POST", {
+    includeToken: true,
+    body: {
+      name,
+      email,
+      isSeller: true,
+    },
+  });
+
+  if (result.status === "Success") {
+    return {
+      success: true,
+      token: result.data.auth.token,
+      isSeller: result.data.user?.isSeller ?? true,
+    };
+  }
+
+  return {
+    success: false,
+    message: result.status === "Unauthorized" ? "Unauthorized" : "Server unavailable",
   };
 }

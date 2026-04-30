@@ -29,13 +29,13 @@ export const authOptions: NextAuthOptions = {
             user: {
               email: data?.email,
               name: data?.email?.split("@")[0] ?? "",
-              // role: payload.role,
             },
             token: payload.token,
             expiresAt: payload.expiresAt,
+            isSeller: payload.isSeller ?? false,
           };
         } else {
-          throw new Error(payload.message || "Invalid cerdintials");
+          throw new Error(payload.message || "Invalid credentials");
         }
       },
     }),
@@ -45,16 +45,22 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.user = (user as any).user;
         token.token = (user as any).token;
-        // token.role = (user as any).user.role;
+        token.isSeller = (user as any).isSeller ?? false;
         token.accessTokenExpires = (user as any).expiresAt;
       }
 
-      const currentTime = Date.now();
 
+      if (trigger === "update" && session?.isSeller !== undefined) {
+        token.isSeller = session.isSeller;
+        if (session.token) token.token = session.token;
+        if (session.user) token.user = session.user;
+      }
+
+      const currentTime = Date.now();
       if (currentTime < (token.accessTokenExpires as number)) {
         return token;
       }
@@ -63,15 +69,9 @@ export const authOptions: NextAuthOptions = {
       return { ...token, error: "AccessTokenError" };
     },
     async session({ session, token }) {
-      /* 
-     
-      if (session.user) {
-        (session.user as any).role = token.role;
-      } 
-     
-      */
       session.user = token.user as any;
       (session as any).token = token.token;
+      (session as any).isSeller = token.isSeller ?? false;
       (session as any).error = token.error;
       return session;
     },

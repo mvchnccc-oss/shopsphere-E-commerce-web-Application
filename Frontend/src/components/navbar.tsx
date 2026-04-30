@@ -2,12 +2,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuGroup,
+  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HeartIcon, MenuIcon, ShoppingBagIcon, UserIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
@@ -17,15 +13,16 @@ import { useState } from "react";
 import CartNavbarDropdown from "./cart/navbar-dropdown";
 
 export default function Navbar() {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
+  const isSeller = (session as any)?.isSeller ?? false;
   const pathname = usePathname();
   const [toggler, setToggler] = useState(false);
 
-  const links = [
-    { path: "/", label: "Home" },
-    { path: "/products", label: "Products" },
+
+  const middleLinks = [
+    { path: "/",           label: "Home" },
+    { path: "/products",   label: "Products" },
     { path: "/categories", label: "Categories" },
-    { path: "/dashboard", label: "Dashboard", protected: true },
   ];
 
   async function handleLogout() {
@@ -35,21 +32,29 @@ export default function Navbar() {
 
   return (
     <div className="bg-accent p-5 sticky top-0 z-10">
-      {/* Desktop Row */}
       <div className="flex items-center gap-4">
-        <Link
-          href="/"
-          className="text-emerald-600 dark:text-emerald-400 font-extrabold text-2xl flex items-center gap-0.5"
-        >
-          <ShoppingBagIcon className="size-8" />
-          <span className="pt-1">ShopSphere</span>
-        </Link>
 
-        {/* Links - Desktop only */}
-        <div className=" flex-1 hidden sm:flex justify-center">
-          <ul className="py-2 px-15 bg-[#111] text-white rounded-full flex items-center gap-8">
-            {links.map((link) =>
-              link.protected && status !== "authenticated" ? undefined : (
+        {/* Brand — لو seller مش بيبقى link */}
+        {isSeller ? (
+          <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-2xl flex items-center gap-0.5 cursor-default select-none">
+            <ShoppingBagIcon className="size-8" />
+            <span className="pt-1">ShopSphere</span>
+          </span>
+        ) : (
+          <Link
+            href="/"
+            className="text-emerald-600 dark:text-emerald-400 font-extrabold text-2xl flex items-center gap-0.5"
+          >
+            <ShoppingBagIcon className="size-8" />
+            <span className="pt-1">ShopSphere</span>
+          </Link>
+        )}
+
+        {/* Middle links — مخفية لو seller */}
+        {!isSeller && (
+          <div className="flex-1 hidden sm:flex justify-center">
+            <ul className="py-2 px-15 bg-[#111] text-white rounded-full flex items-center gap-8">
+              {middleLinks.map((link) => (
                 <li key={link.path}>
                   <Link
                     href={link.path}
@@ -58,12 +63,15 @@ export default function Navbar() {
                     {link.label}
                   </Link>
                 </li>
-              ),
-            )}
-          </ul>
-        </div>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        {/* Icons - Desktop only */}
+        {/* Spacer لو seller عشان الأيقونات تفضل على اليمين */}
+        {isSeller && <div className="flex-1" />}
+
+        {/* Right icons */}
         <div className="hidden sm:flex items-center pt-1">
           {status === "unauthenticated" && (
             <>
@@ -77,29 +85,39 @@ export default function Navbar() {
           )}
           {status === "authenticated" && (
             <>
-              <Link href="/wishlist">
-                <HeartIcon className="size-5" />
-              </Link>
-              <CartNavbarDropdown />
+         
+              {!isSeller && (
+                <>
+                  <Link href="/wishlist"><HeartIcon className="size-5" /></Link>
+                  <CartNavbarDropdown />
+                </>
+              )}
+
+              {/* Avatar dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full ml-1">
                     <Avatar>
-                      <AvatarImage src="" alt="shadcn" />
-                      <AvatarFallback>
-                        <UserIcon />
-                      </AvatarFallback>
+                      <AvatarImage src="" alt="user" />
+                      <AvatarFallback><UserIcon /></AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-32">
+                <DropdownMenuContent className="w-36">
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                       <Link href="/profile">Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/orders">Orders</Link>
-                    </DropdownMenuItem>
+                    {!isSeller && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/orders">Orders</Link>
+                      </DropdownMenuItem>
+                    )}
+                    {isSeller && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/dashboard">Dashboard</Link>
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
@@ -113,7 +131,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Hamburger - Mobile only */}
+  
         <div className="flex-1 flex justify-end sm:hidden">
           <button onClick={() => setToggler(!toggler)}>
             <MenuIcon className="size-6" />
@@ -121,23 +139,21 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Dropdown */}
-      <div
-        className={`sm:hidden overflow-hidden transition-all duration-500 ease-in-out ${toggler ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}
-      >
+
+      <div className={`sm:hidden overflow-hidden transition-all duration-500 ease-in-out ${toggler ? "max-h-72 opacity-100 mt-3" : "max-h-0 opacity-0"}`}>
         <div className="flex flex-col gap-3">
-          {links.map((link) =>
-            link.protected && status !== "authenticated" ? undefined : (
-              <Link
-                key={link.path}
-                href={link.path}
-                onClick={() => setToggler(false)}
-                className={pathname === link.path ? "text-emerald-400" : ""}
-              >
-                {link.label}
-              </Link>
-            ),
-          )}
+   
+          {!isSeller && middleLinks.map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              onClick={() => setToggler(false)}
+              className={pathname === link.path ? "text-emerald-400" : ""}
+            >
+              {link.label}
+            </Link>
+          ))}
+
           <div className="flex items-center gap-1 pt-1">
             {status === "unauthenticated" && (
               <>
@@ -151,38 +167,40 @@ export default function Navbar() {
             )}
             {status === "authenticated" && (
               <>
-                <Link href="/wishlist">
-                  <HeartIcon className="size-5" />
-                </Link>
-                <CartNavbarDropdown />
+                {!isSeller && (
+                  <>
+                    <Link href="/wishlist"><HeartIcon className="size-5" /></Link>
+                    <CartNavbarDropdown />
+                  </>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full ml-1">
                       <Avatar>
-                        <AvatarImage src="" alt="shadcn" />
-                        <AvatarFallback>
-                          <UserIcon />
-                        </AvatarFallback>
+                        <AvatarImage src="" alt="user" />
+                        <AvatarFallback><UserIcon /></AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-32">
+                  <DropdownMenuContent className="w-36">
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
-                        <Link href="/profile" onClick={() => setToggler(false)}>
-                          Profile
-                        </Link>
+                        <Link href="/profile" onClick={() => setToggler(false)}>Profile</Link>
                       </DropdownMenuItem>
+                      {!isSeller && (
+                        <DropdownMenuItem asChild>
+                          <Link href="/orders" onClick={() => setToggler(false)}>Orders</Link>
+                        </DropdownMenuItem>
+                      )}
+                      {isSeller && (
+                        <DropdownMenuItem asChild>
+                          <Link href="/dashboard" onClick={() => setToggler(false)}>Dashboard</Link>
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={() => {
-                          handleLogout();
-                          setToggler(false);
-                        }}
-                      >
+                      <DropdownMenuItem variant="destructive" onClick={() => { handleLogout(); setToggler(false); }}>
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
