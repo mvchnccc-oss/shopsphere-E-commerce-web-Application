@@ -1,5 +1,5 @@
 "use client";
-import { getCartAction, updateCartItemAction } from "@/lib/actions/cart.actions";
+import { getCartAction, updateCartItemAction, clearCartAction } from "@/lib/actions/cart.actions";
 import { CartProduct } from "@/lib/interfaces/cart.interface";
 import { ReactNode, useEffect, useState } from "react";
 import { CartContext } from "./context";
@@ -9,7 +9,8 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     getCartAction().then((cart) => {
-      const products = cart.items.map(({ product: { id, title, price, images }, quantity }) => ({
+      if (!cart?.items) return;
+      const products = cart.items.map(({ product: { id, title, price, images }, quantity }: any) => ({
         id,
         title,
         image: images[0],
@@ -34,7 +35,6 @@ export default function CartProvider({ children }: { children: ReactNode }) {
       setCartProducts((cart) => {
         const copy = { ...cart };
         delete copy[id];
-
         return copy;
       });
     } else {
@@ -46,22 +46,22 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   async function addCartItem(id: string, data: CartProduct) {
     const success = await updateCartItemAction(id, data.quantity);
     if (!success) return;
-
     setCartProducts((cart) => ({ ...cart, [id]: { ...data } }));
   }
 
   async function clearCart() {
-    setCartProducts({});
-    try {
-      const productIds = Object.keys(cartProducts);
-      await Promise.all(productIds.map((id) => updateCartItemAction(id, 0)));
-    } catch (error) {
-      console.error("Failed to clear backend cart:", error);
+    const res = await clearCartAction(); 
+
+    if (res.success) {
+      setCartProducts({}); 
+    } else {
+      console.error(res.message);
     }
   }
+
   return (
-    <CartContext value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>
+    <CartContext.Provider value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>
       {children}
-    </CartContext>
+    </CartContext.Provider>
   );
 }
