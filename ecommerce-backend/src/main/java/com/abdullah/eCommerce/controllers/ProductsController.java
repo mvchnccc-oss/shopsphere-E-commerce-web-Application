@@ -18,9 +18,13 @@ public class ProductsController {
     @GetMapping
     public GetProductsResponse getProducts(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        if (search != null)
+            return productService.getProducts(search, page, size);
+
         return categoryId == null
                 ? productService.getProducts(page, size)
                 : productService.getProducts(categoryId, page, size);

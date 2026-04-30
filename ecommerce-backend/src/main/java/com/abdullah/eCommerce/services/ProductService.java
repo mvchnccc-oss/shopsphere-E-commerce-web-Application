@@ -12,6 +12,8 @@ public interface ProductService {
 
     GetProductsResponse getProducts(Long categoryId, int page, int size);
 
+    GetProductsResponse getProducts(String searchTerm, int page, int size);
+
     ProductDto getProduct(Long id);
 
     void createProduct(CreateProductRequest product);

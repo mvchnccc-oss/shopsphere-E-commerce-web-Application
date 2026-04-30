@@ -69,6 +69,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public GetProductsResponse getProducts(String searchTerm, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage = productRepository.findByTitleContainingIgnoreCase(searchTerm, pageable);
+
+        List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
+
+        return new GetProductsResponse(
+                products,
+                productPage.getNumber(),
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.getSize()
+        );
+    }
+
+    @Override
     public ProductDto getProduct(Long id) {
         Product product = productRepository
                 .findById(id)
