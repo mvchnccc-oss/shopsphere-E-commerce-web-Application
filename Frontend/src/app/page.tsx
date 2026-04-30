@@ -1,7 +1,8 @@
-import { FeaturedCarousel } from "@/components/FeaturedCarousel"; 
+import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 import { Button } from "@/components/ui/button";
 import { getAllProducts } from "@/lib/actions/products.actions";
 import { Product } from "@/lib/interfaces/products.interface";
+import { useAuthRedirect } from "@/lib/useRoleRedirect";
 import {
   ArrowRightIcon,
   ShieldCheckIcon,
@@ -12,6 +13,9 @@ import {
 import Link from "next/link";
 
 export default async function HomePage() {
+  const { status, isSeller } = useAuthRedirect();
+  if (status === "loading" || isSeller) return null;
+
   const { products } = await getAllProducts(0, 20);
 
   return (

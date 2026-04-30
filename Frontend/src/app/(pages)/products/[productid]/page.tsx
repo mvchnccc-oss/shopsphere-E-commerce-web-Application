@@ -3,10 +3,13 @@ import AddToWishlistButton from "@/components/wishlist/add-button-whishlist";
 import { getProductById } from "@/lib/actions/products.actions";
 import { notFound } from "next/navigation";
 import ProductCarousel from "./_components/product-carousal";
+import { useAuthRedirect } from "@/lib/useRoleRedirect";
 
 export default async function page({ params }: { params: Promise<{ productid: number }> }) {
   const { productid } = await params;
   const product = await getProductById(productid);
+  const { status, isSeller } = useAuthRedirect();
+  if (status === "loading" || isSeller) return null;
 
   if (!product) notFound();
 

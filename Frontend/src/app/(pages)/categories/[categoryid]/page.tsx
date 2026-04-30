@@ -2,6 +2,7 @@ import ProductCard from "@/app/(pages)/products/_components/product-card";
 import Pagination from "@/components/pagination";
 import { getCategoryById } from "@/lib/actions/category.action";
 import { getProductsByCategory } from "@/lib/actions/products.actions";
+import { useAuthRedirect } from "@/lib/useRoleRedirect";
 import { Suspense } from "react";
 
 const PAGE_SIZE = 20;
@@ -14,6 +15,8 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { categoryid } = await params;
   const { page } = await searchParams;
+    const { status, isSeller } = useAuthRedirect();
+    if (status === "loading" || isSeller) return null;
 
   const categoryId = parseInt(categoryid);
   const currentPage = Math.max(0, parseInt(page ?? "0") || 0);

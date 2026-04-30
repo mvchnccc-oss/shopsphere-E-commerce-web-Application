@@ -8,12 +8,12 @@ import { useCart } from "@/components/cart/context";
 import { useAuthRedirect } from "@/lib/useRoleRedirect";
 
 const CartPage = () => {
-    const { status, isSeller } = useAuthRedirect();
+
     const { cartProducts, updateCartItem, clearCart } = useCart();
     const productsArray = cartProducts ? Object.entries(cartProducts) : [];
 
     let subtotal = 0;
-
+    const { status, isSeller } = useAuthRedirect();
     if (status === "loading" || isSeller) return null;
 
     const handleUpdateQuantity = (id: string, newQty: number) => {
