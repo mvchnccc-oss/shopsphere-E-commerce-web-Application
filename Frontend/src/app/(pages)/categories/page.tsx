@@ -1,14 +1,12 @@
 import CategoryImage from '@/components/CategoryImage';
 import { getAllCategories } from '@/lib/actions/category.action';
 import { categories } from '@/lib/interfaces/categories.interface';
-import { useAuthRedirect } from '@/lib/useRoleRedirect';
 import Link from 'next/link';
 
 
 export default async function page() {
   const categories: categories = await getAllCategories();
-  const { status, isSeller } = useAuthRedirect();
-  if (status === "loading" || isSeller) return null;
+
 
   return (<>
 

@@ -15,8 +15,7 @@ function formatDate(iso: string) {
 }
 
 function buildMonthlyChart(recentOrders: SellerStats["recentOrders"]) {
-  // نبني chart data من الـ orders الموجودة
-  const monthMap: Record<string, number> = {};
+   const monthMap: Record<string, number> = {};
   recentOrders.forEach((order) => {
     try {
       const month = new Date(order.orderedAt).toLocaleDateString("en-US", { month: "short" });
@@ -24,7 +23,7 @@ function buildMonthlyChart(recentOrders: SellerStats["recentOrders"]) {
     } catch {}
   });
 
-  // لو مفيش orders نرجع أشهر فاضية
+ 
   if (Object.keys(monthMap).length === 0) {
     const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
     return months.map((month) => ({ month, sales: 0 }));

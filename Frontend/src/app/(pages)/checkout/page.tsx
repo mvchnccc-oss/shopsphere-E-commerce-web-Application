@@ -2,7 +2,6 @@
 
 import { useCart } from "@/components/cart/context";
 import { placeOrderAction } from "@/lib/actions/orders.action";
-import { useAuthRedirect } from "@/lib/useRoleRedirect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, ChevronLeft, Truck } from "lucide-react";
 import Image from "next/image";
@@ -27,7 +26,7 @@ export interface CheckoutFormData {
 }
 
 const CheckoutPage = () => {
-  const { status, isSeller } = useAuthRedirect(); 
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { cartProducts, clearCart } = useCart();
   const router = useRouter();
@@ -65,7 +64,7 @@ const CheckoutPage = () => {
   };
 
 
-  if (status === "loading" || isSeller) return null;
+
 
   const runningSubtotal = productsArray.reduce((acc, p: any) => acc + (p.price || 0) * (p.quantity || 0), 0);
   const discountAmount = runningSubtotal * appliedDiscount;
