@@ -7,13 +7,21 @@ import { Spinner } from "./ui/spinner";
 
 interface LoadingImageProps {
   src: string;
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
   alt: string;
   className?: string;
+  fill?: boolean;
 }
 
-export default function LoadingImage({ src, width, height, alt, className }: LoadingImageProps) {
+export default function LoadingImage({
+  src,
+  width,
+  height,
+  alt,
+  className,
+  fill,
+}: LoadingImageProps) {
   const [isLoading, setLoading] = useState(true);
   const [isError, setError] = useState(false);
 
@@ -38,6 +46,7 @@ export default function LoadingImage({ src, width, height, alt, className }: Loa
         placeholder="empty"
         onLoad={() => setLoading(false)}
         onError={() => setError(true)}
+        fill={fill}
         className={cn(
           className,
           "transition-opacity duration-300",
