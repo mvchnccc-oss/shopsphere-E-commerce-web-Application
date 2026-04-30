@@ -7,8 +7,8 @@ import { Spinner } from "./ui/spinner";
 
 interface LoadingImageProps {
   src: string;
-  width: number | undefined;
-  height: number | undefined;
+  width?: number;
+  height?: number;
   alt: string;
   className?: string;
   fill?: boolean;
@@ -37,22 +37,24 @@ export default function LoadingImage({
     );
 
   return (
-    <div className={`relative ${fill ? "w-full h-full" : ""}`} style={{ width, height }}>
+    <div
+      className={cn("relative", fill ? "w-full h-full" : "")}
+      style={!fill ? { width, height } : undefined}
+    >
       <Image
         src={src}
-        width={width}
-        height={height}
         alt={alt}
+        {...(fill ? { fill: true } : { width, height })}
         placeholder="empty"
         onLoad={() => setLoading(false)}
         onError={() => setError(true)}
-        fill={fill}
         className={cn(
           className,
           "transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",
-          fill ? "w-full h-full" : "",
+          fill ? "object-cover" : "",
         )}
+        sizes={fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
