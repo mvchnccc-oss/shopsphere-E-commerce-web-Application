@@ -1,4 +1,5 @@
 "use client";
+import LoadingImage from "@/components/loading-image";
 import {
   Carousel,
   CarouselContent,
@@ -15,7 +16,7 @@ export default function ProductCarousel({ images, title }: { images: string[], t
         {images.map((img, i) => (
           <CarouselItem key={i}>
             <div className="relative aspect-square rounded-xl overflow-hidden bg-muted">
-              <Image src={img} alt={`${title} - ${i + 1}`} fill className="object-cover" />
+              <LoadingImage src={img} width={100} height={200} alt={`${title} - ${i + 1}`} className="object-cover" />
             </div>
           </CarouselItem>
         ))}
