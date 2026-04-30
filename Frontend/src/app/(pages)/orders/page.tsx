@@ -1,7 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { InvoiceModal } from "@/components/InvoiceModal";
 import { getOrdersAction } from "@/lib/actions/orders.action";
 import { Orders } from "@/lib/interfaces/orders.interface";
 import { Banknote, ClockIcon, MapPinIcon } from "lucide-react";
+import { useAuthRedirect } from "@/lib/useRoleRedirect";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
@@ -12,14 +16,36 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   minute: "2-digit",
 });
 
-export default async function OrdersPage() {
-  const res = await getOrdersAction();
+export default function OrdersPage() {
+  const { status, isSeller } = useAuthRedirect();
 
-  if (!res.success) {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated" && !isSeller) {
+      getOrdersAction().then((res) => {
+        if (!res.success) {
+          setError(true);
+        } else {
+          setOrders((res as Orders).orders);
+        }
+        setLoadingOrders(false);
+      });
+    }
+  }, [status, isSeller]);
+
+  if (status === "loading" || isSeller) return null;
+
+  if (loadingOrders) {
+    return <div className="p-8 text-center text-muted-foreground">Loading orders…</div>;
+  }
+
+  if (error) {
     return <div className="p-8 text-center text-red-500">Failed to load orders.</div>;
   }
 
-  const orders = (res as Orders).orders;
   if (!orders.length) {
     return (
       <div className="flex flex-col items-center justify-center p-16 text-center">
@@ -30,12 +56,13 @@ export default async function OrdersPage() {
       </div>
     );
   }
+
   const totalSpent = orders.reduce(
-    (s, o) => s + o.orderItems.reduce((ss, i) => ss + i.quantity * i.pricePerUnit, 0),
+    (s, o) => s + o.orderItems.reduce((ss: number, i: any) => ss + i.quantity * i.pricePerUnit, 0),
     0,
   );
   const totalItems = orders.reduce(
-    (s, o) => s + o.orderItems.reduce((ss, i) => ss + i.quantity, 0),
+    (s, o) => s + o.orderItems.reduce((ss: number, i: any) => ss + i.quantity, 0),
     0,
   );
 
@@ -62,7 +89,10 @@ export default async function OrdersPage() {
 
       <div className="flex flex-col gap-3">
         {orders.map((order) => {
-          const total = order.orderItems.reduce((s, i) => s + i.quantity * i.pricePerUnit, 0);
+          const total = order.orderItems.reduce(
+            (s: number, i: any) => s + i.quantity * i.pricePerUnit,
+            0,
+          );
           return (
             <details key={order.id} className="border rounded-xl overflow-hidden group">
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
@@ -87,7 +117,7 @@ export default async function OrdersPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {order.orderItems.map((item, i) => (
+                    {order.orderItems.map((item: any, i: number) => (
                       <tr key={i} className="border-t">
                         <td className="p-3">{item.productTitle}</td>
                         <td className="p-3">{item.quantity}</td>
@@ -109,7 +139,7 @@ export default async function OrdersPage() {
                       {order.address?.city || "No City"} - {order.address?.street || "No Street"}
                     </span>
                   </div>
-                  <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 ">
+                  <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
                     <div className="flex items-center gap-2">
                       <span className="flex-none w-23.5 md:flex-1 md:w-full text-nowrap flex items-center gap-1 text-sm text-muted-foreground">
                         <ClockIcon className="mt-px" size={18} />

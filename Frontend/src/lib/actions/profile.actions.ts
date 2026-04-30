@@ -53,6 +53,8 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
     },
   });
 
+  console.log(result)
+
   if (result.status === "Success") {
     return {
       success: true,

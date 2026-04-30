@@ -1,17 +1,20 @@
 "use client";
-import Swal from 'sweetalert2';
-import React from 'react';
-import { Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Clock, RefreshCw, Trash } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useCart } from '@/components/cart/context';
+import Swal from "sweetalert2";
+import React from "react";
+import { Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Clock, RefreshCw, Trash } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { useCart } from "@/components/cart/context";
+import { useAuthRedirect } from "@/lib/useRoleRedirect";
 
 const CartPage = () => {
-
+    const { status, isSeller } = useAuthRedirect();
     const { cartProducts, updateCartItem, clearCart } = useCart();
     const productsArray = cartProducts ? Object.entries(cartProducts) : [];
 
     let subtotal = 0;
+
+    if (status === "loading" || isSeller) return null;
 
     const handleUpdateQuantity = (id: string, newQty: number) => {
         if (newQty < 1) return;
@@ -22,32 +25,27 @@ const CartPage = () => {
         updateCartItem(id, 0);
     };
 
-
     const handleClearCart = () => {
         Swal.fire({
-            title: 'Are you sure?',
+            title: "Are you sure?",
             text: "Your cart will be completely empty!",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#0F6E56',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, clear it!'
+            confirmButtonColor: "#0F6E56",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, clear it!",
         }).then((result) => {
             if (result.isConfirmed) {
                 clearCart();
-                Swal.fire(
-                    'Cleared!',
-                    'Your cart is now empty.',
-                    'success'
-                )
+                Swal.fire("Cleared!", "Your cart is now empty.", "success");
             }
-        })
+        });
     };
     return (
         <div className="max-w-6xl mx-auto p-6">
             <div className="flex items-baseline justify-between mb-8">
                 <h1 className="font-serif text-3xl font-semibold text-emerald-600">Your cart</h1>
-                <div className='flex gap-3 justify-between items-center'>
+                <div className="flex gap-3 justify-between items-center">
                     <span className="text-xl text-gray-500 text-nowrap">{productsArray.length} items</span>
                     <button
                         onClick={handleClearCart}
@@ -140,7 +138,6 @@ const CartPage = () => {
                         </div>
                     )}
                 </div>
-
 
                 <div className="relative">
                     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm sticky top-6">
