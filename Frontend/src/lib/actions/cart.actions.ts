@@ -22,3 +22,18 @@ export async function updateCartItemAction(productId: string, quantity: number):
 
   return result.status === "Success";
 }
+
+export async function clearCartAction() {
+  const result = await fetchApi("cart", "DELETE", {
+    includeToken: true,
+  });
+
+  if (result.status === "Success") {
+    return { success: true };
+  }
+
+  return {
+    success: false,
+    message: result.status === "Unauthorized" ? "Session expired" : "Failed to clear cart"
+  };
+}

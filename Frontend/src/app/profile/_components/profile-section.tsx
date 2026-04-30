@@ -23,6 +23,8 @@ import {
   PackageIcon,
   TrendingUpIcon,
   ShieldCheckIcon,
+  AlertCircleIcon, // ضفت أيقونة للتنبيه
+  XIcon,           // أيقونة قفل
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -62,6 +64,9 @@ export default function ProfileSection(props: ProfileSectionProps) {
   const [isBecomingPending, setBecomingPending] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>();
   const [sellerSuccess, setSellerSuccess] = useState(false);
+  
+  // --- ضيف الـ State دي هنا ---
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const { update: updateSession } = useSession();
   const router = useRouter();
@@ -98,17 +103,16 @@ export default function ProfileSection(props: ProfileSectionProps) {
   async function handleBecomeSeller() {
     setBecomingPending(true);
     setServerError(undefined);
+    setShowConfirmModal(false); // اقفل المودال لما العملية تبدأ
     try {
       const result = await becomeSellerAction();
       if (!result.success) {
         setServerError(result.message);
         return;
       }
-      // Update next-auth session so isSeller is live everywhere
       await updateSession({ isSeller: true, token: result.token });
       setData((prev) => prev ? { ...prev, isSeller: true } : prev);
       setSellerSuccess(true);
-      // Redirect to dashboard after short delay
       setTimeout(() => router.push("/dashboard"), 1800);
     } catch {
       setServerError("Something went wrong. Please try again.");
@@ -246,7 +250,6 @@ export default function ProfileSection(props: ProfileSectionProps) {
             </CardHeader>
 
             <CardContent className="flex flex-col gap-4">
-              {/* Already a seller → show dashboard CTA */}
               {isSeller ? (
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800">
@@ -265,7 +268,6 @@ export default function ProfileSection(props: ProfileSectionProps) {
                 </div>
               ) : (
                 <>
-                  {/* Perks list */}
                   <div className="flex flex-col gap-3">
                     {sellerPerks.map(({ icon: Icon, title, desc }) => (
                       <div
@@ -293,9 +295,10 @@ export default function ProfileSection(props: ProfileSectionProps) {
                       </p>
                     </div>
                   ) : (
+                    // --- عدلنا الزرار هنا عشان يفتح المودال ---
                     <Button
                       className="w-full flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
-                      onClick={handleBecomeSeller}
+                      onClick={() => setShowConfirmModal(true)} 
                       disabled={isBecomingPending}
                     >
                       <StoreIcon className="size-4" />
@@ -306,6 +309,48 @@ export default function ProfileSection(props: ProfileSectionProps) {
               )}
             </CardContent>
           </Card>
+        )}
+
+        {/* ─── CONFIRMATION MODAL ─── */}
+        {showConfirmModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-card border border-border w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-2 bg-amber-100 dark:bg-amber-950 rounded-lg">
+                    <AlertCircleIcon className="size-6 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <button 
+                    onClick={() => setShowConfirmModal(false)}
+                    className="p-1 hover:bg-muted rounded-md transition-colors"
+                  >
+                    <XIcon className="size-5 text-muted-foreground" />
+                  </button>
+                </div>
+
+                <h3 className="text-lg font-bold mb-2">Become a Seller?</h3>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Are you sure you want to activate seller mode? You'll be able to list products and manage your own store.
+                </p>
+
+                <div className="flex gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1" 
+                    onClick={() => setShowConfirmModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" 
+                    onClick={handleBecomeSeller}
+                  >
+                    Yes, Activate
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
