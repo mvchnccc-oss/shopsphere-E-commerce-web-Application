@@ -23,4 +23,5 @@ public class UpdateUserRequest {
     @NotNull(message = NAME_REQUIRED_ERROR_MESSAGE)
     private String name;
 
+    private Boolean isSeller;
 }
