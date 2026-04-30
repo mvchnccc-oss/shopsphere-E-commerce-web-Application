@@ -16,7 +16,7 @@ public class SellerProductDto {
     private Long id;
     private String title;
     private BigDecimal price;
-    private CategoryDto category;
+    private String category;
     private String description;
     private List<String> images;
 }

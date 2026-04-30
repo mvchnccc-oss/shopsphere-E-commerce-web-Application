@@ -15,7 +15,8 @@ public interface ProductMapper {
     @Mapping(source = "product.seller.name", target = "seller")
     ProductDto toDto(Product product);
 
-    SellerProductDto toSellerDto(Product productDto);
+    @Mapping(source = "product.category.name", target = "category")
+    SellerProductDto toSellerDto(Product product);
 
     List<ProductDto> toDtoList(List<Product> products);
 
