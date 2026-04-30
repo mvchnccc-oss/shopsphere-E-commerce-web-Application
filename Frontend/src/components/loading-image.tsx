@@ -37,7 +37,7 @@ export default function LoadingImage({
     );
 
   return (
-    <div className="relative" style={{ width, height }}>
+    <div className={`relative ${fill ? "w-full h-full" : ""}`} style={{ width, height }}>
       <Image
         src={src}
         width={width}
@@ -51,6 +51,7 @@ export default function LoadingImage({
           className,
           "transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",
+          fill ? "w-full h-full" : "",
         )}
       />
       {isLoading && (
