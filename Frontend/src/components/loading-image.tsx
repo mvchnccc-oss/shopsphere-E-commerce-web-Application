@@ -17,7 +17,10 @@ export default function LoadingImage({ src, width, height, alt, className }: Loa
   const [isLoading, setLoading] = useState(true);
   const [isError, setError] = useState(false);
 
-  if (isError || !src?.trim())
+  const isValidImage =
+    src?.trim() && (src.startsWith("/") || src.startsWith("http://") || src.startsWith("https://"));
+
+  if (isError || !isValidImage)
     return (
       <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100">
         <ImageIcon className="text-gray-400" />
