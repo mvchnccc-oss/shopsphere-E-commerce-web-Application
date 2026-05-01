@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -5,7 +6,6 @@ import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Providers from "./providers";
-import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
           {/* Main App */}
           <div className=" min-h-screen">
             <Navbar />
-            <div className="container max-w-7xl mx-auto">{children}</div>
+            {children}
             <Toaster />
           </div>
           {/* Footer */}

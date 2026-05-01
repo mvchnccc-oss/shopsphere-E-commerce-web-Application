@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const authRoutes = ["/auth/login", "/auth/register"];
+const publicRoutes = ["/", "/products", "/categories"];
 
 export default async function middleware(req: NextRequest) {
   const token = await getToken({
@@ -11,11 +12,11 @@ export default async function middleware(req: NextRequest) {
   });
 
   const { pathname } = req.nextUrl;
-  const isSeller      = (token as any)?.isSeller ?? false;
+  const isSeller = (token as any)?.isSeller ?? false;
   const isAuthenticated = !!token;
 
   // مش متسجل → روح login
-  if (!isAuthenticated && !authRoutes.includes(pathname) && pathname !== "/") {
+  if (!isAuthenticated && !authRoutes.includes(pathname) && !publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
@@ -28,9 +29,7 @@ export default async function middleware(req: NextRequest) {
   if (isSeller) {
     // السيلر يقدر يدخل: dashboard + profile + admin
     const sellerAllowed =
-      pathname === "/profile" ||
-      pathname.startsWith("/dashboard") ||
-      pathname.startsWith("/admin");
+      pathname === "/profile" || pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
 
     if (!sellerAllowed) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
