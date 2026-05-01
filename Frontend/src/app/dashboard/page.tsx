@@ -44,12 +44,20 @@ export default function DashboardPage() {
     return sum + orderTotal;
   }, 0);
 
-  const chartData = [...orders]
-    .sort((a, b) => new Date(a.orderedAt).getTime() - new Date(b.orderedAt).getTime())
-    .map(order => ({
-      month: new Date(order.orderedAt).toLocaleDateString("en-US", { month: "short" }),
-      sales: order.orderItems.reduce((s, item) => s + (item.pricePerUnit * item.quantity), 0)
-    }));
+  const chartData = Object.values(
+    orders.reduce((acc, order) => {
+      const date = new Date(order.orderedAt);
+      const day = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+      const orderTotal = order.orderItems.reduce((s, item) => s + (item.pricePerUnit * item.quantity), 0);
+
+      if (!acc[day]) {
+        acc[day] = { month: day, sales: 0 };
+      }
+      acc[day].sales += orderTotal;
+      return acc;
+    }, {} as Record<string, { month: string; sales: number }>)
+  ).sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 
   const statCards = [
     { label: "Total Revenue", value: `EGP ${totalRevenue.toLocaleString()}`, icon: TrendingUpIcon, color: "text-emerald-500" },
@@ -87,11 +95,37 @@ export default function DashboardPage() {
         ) : (
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
-              <Area type="monotone" dataKey="sales" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+              <defs>
+                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <XAxis
+                dataKey="month"
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+                domain={['auto', 'auto']} 
+              />
+              <Tooltip
+                contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
+              />
+              <Area
+                type="monotone"
+                dataKey="sales"
+                stroke="#10b981"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorSales)"
+                activeDot={{ r: 6 }} 
+              />
             </AreaChart>
           </ResponsiveContainer>
         )}
