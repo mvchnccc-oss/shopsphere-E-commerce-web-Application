@@ -4,10 +4,10 @@ import { TrendingUpIcon, ShoppingCartIcon, PackageIcon, CalendarIcon } from "luc
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import { getSellerOrdersAction } from "@/lib/actions/seller.actions"; 
+import { getSellerOrdersAction } from "@/lib/actions/seller.actions";
 import { getSellerProductsAction } from "@/lib/actions/seller.actions";
 import { SellerOrder } from "@/lib/interfaces/seller.interface";
- 
+
 
 function formatDate(iso: string) {
   try {
@@ -39,17 +39,18 @@ export default function DashboardPage() {
   }, []);
 
   const totalOrders = orders.length;
-  
+
   const totalRevenue = orders.reduce((sum, order) => {
     const orderTotal = order.orderItems.reduce((s, item) => s + (item.pricePerUnit * item.quantity), 0);
     return sum + orderTotal;
   }, 0);
 
-  const chartData = orders.map(order => ({
+  const chartData = [...orders]
+    .sort((a, b) => new Date(a.orderedAt).getTime() - new Date(b.orderedAt).getTime())
+    .map(order => ({
       month: new Date(order.orderedAt).toLocaleDateString("en-US", { month: "short" }),
       sales: order.orderItems.reduce((s, item) => s + (item.pricePerUnit * item.quantity), 0)
-  }));
-
+    }));
   const statCards = [
     { label: "Total Revenue", value: `EGP ${totalRevenue.toLocaleString()}`, icon: TrendingUpIcon, color: "text-emerald-500" },
     { label: "Total Orders", value: String(totalOrders), icon: ShoppingCartIcon, color: "text-blue-500" },
@@ -63,24 +64,24 @@ export default function DashboardPage() {
         <p className="text-muted-foreground text-sm mt-1">Welcome back! Here's your seller dashboard.</p>
       </div>
 
-  
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {loading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="border border-border rounded-xl p-4 bg-card animate-pulse h-24" />
-            ))
+            <div key={i} className="border border-border rounded-xl p-4 bg-card animate-pulse h-24" />
+          ))
           : statCards.map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="border border-border rounded-xl p-4 flex flex-col gap-3 bg-card">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground font-medium">{label}</span>
-                  <Icon className={`size-4 ${color}`} />
-                </div>
-                <p className="text-2xl font-bold">{value}</p>
+            <div key={label} className="border border-border rounded-xl p-4 flex flex-col gap-3 bg-card">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">{label}</span>
+                <Icon className={`size-4 ${color}`} />
               </div>
-            ))}
+              <p className="text-2xl font-bold">{value}</p>
+            </div>
+          ))}
       </div>
 
-      
+
       <div className="border border-border rounded-xl p-6 bg-card">
         <h2 className="text-sm font-semibold mb-6">Revenue — by Orders</h2>
         {loading ? (
@@ -98,14 +99,14 @@ export default function DashboardPage() {
         )}
       </div>
 
-     
+
       <div className="border border-border rounded-xl bg-card overflow-hidden">
         <div className="p-5 border-b border-border">
           <h2 className="text-sm font-semibold">Recent Orders</h2>
         </div>
 
         {loading ? (
-           <div className="p-8 text-center text-sm">Loading orders...</div>
+          <div className="p-8 text-center text-sm">Loading orders...</div>
         ) : orders.length === 0 ? (
           <div className="p-8 text-center text-sm">No orders yet.</div>
         ) : (
