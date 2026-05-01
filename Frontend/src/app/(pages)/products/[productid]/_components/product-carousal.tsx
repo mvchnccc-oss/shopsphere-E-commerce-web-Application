@@ -16,7 +16,13 @@ export default function ProductCarousel({ images, title }: { images: string[], t
         {images.map((img, i) => (
           <CarouselItem key={i}>
             <div className="relative aspect-square rounded-xl overflow-hidden bg-muted">
-              <LoadingImage src={img} width={100} height={200} alt={`${title} - ${i + 1}`} className="object-cover" />
+              <LoadingImage
+                src={img}
+                alt={`${title} - ${i + 1}`}
+                fill={true}
+                sizes="(max-width: 768px) 100vw, 500px"
+                className="object-cover"
+              />
             </div>
           </CarouselItem>
         ))}

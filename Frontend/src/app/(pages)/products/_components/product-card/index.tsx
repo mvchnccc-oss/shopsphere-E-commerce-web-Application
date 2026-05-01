@@ -11,10 +11,10 @@ export default function ProductCard({ product: prod }: { product: Product }) {
         <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
           <LoadingImage
             src={prod.images[0]}
-            width={300}
-            height={300}
+            fill={true}
             alt={prod.title}
-            className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 250px"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/components/cart/context";
+import LoadingImage from "@/components/loading-image";
 import { placeOrderAction } from "@/lib/actions/orders.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, ChevronLeft, Truck } from "lucide-react";
@@ -141,11 +142,11 @@ const CheckoutPage = () => {
 
         <div className="p-8 bg-gray-50">
           <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wider mb-6">Order Summary</p>
-          <div className="space-y-4 mb-6 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-4 pt-2 mb-6 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
             {productsArray.map((product: any, index: number) => (
               <div key={index} className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-white border rounded-lg flex items-center justify-center relative shrink-0">
-                  {product.image && <Image src={product.image} alt={product.title} width={40} height={40} className="object-contain" />}
+                  {product.image && <LoadingImage src={product.image} width={40} height={40} alt={product.title} className="object-contain" />}
                   <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#1D9E75] text-white text-[10px] rounded-full flex items-center justify-center">{product.quantity}</span>
                 </div>
                 <div className="flex-1">

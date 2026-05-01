@@ -5,6 +5,7 @@ import { Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Clock, RefreshCw, Trash 
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/components/cart/context";
+import LoadingImage from "@/components/loading-image";
 
 
 const CartPage = () => {
@@ -78,7 +79,13 @@ const CartPage = () => {
                                                 <Link href={`/products/${id}`}>
                                                     <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center relative shrink-0 cursor-pointer hover:shadow-md transition-shadow">
                                                         {product.image && (
-                                                            <Image src={product.image} alt={product.title} width={56} height={56} className="object-contain" />
+                                                            <LoadingImage
+                                                                src={product.image}
+                                                                fill={true}
+                                                                alt={product.title}
+                                                                sizes="80px" 
+                                                                className="object-cover"
+                                                            />
                                                         )}
                                                     </div>
                                                 </Link>

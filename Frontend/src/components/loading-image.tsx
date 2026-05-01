@@ -12,6 +12,7 @@ interface LoadingImageProps {
   alt: string;
   className?: string;
   fill?: boolean;
+  sizes?: string;
 }
 
 export default function LoadingImage({
@@ -21,6 +22,7 @@ export default function LoadingImage({
   alt,
   className,
   fill,
+  sizes
 }: LoadingImageProps) {
   const [isLoading, setLoading] = useState(true);
   const [isError, setError] = useState(false);
@@ -30,9 +32,9 @@ export default function LoadingImage({
 
   if (isError || !isValidImage)
     return (
-      <div className="flex flex-col items-center justify-center w-full h-full bg-gray-100">
-        <ImageIcon className="text-gray-400" />
-        <span className="text-xs text-gray-500">No Image</span>
+      <div className="flex flex-col items-center rounded-lg justify-center w-full h-full bg-gray-100">
+        <ImageIcon className="text-gray-400 rounded-lg" />
+       
       </div>
     );
 
@@ -54,7 +56,7 @@ export default function LoadingImage({
           isLoading ? "opacity-0" : "opacity-100",
           fill ? "object-cover" : "",
         )}
-        sizes={fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined}
+       sizes={sizes || (fill ? "(max-width: 768px) 100vw, 33vw" : undefined)}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
