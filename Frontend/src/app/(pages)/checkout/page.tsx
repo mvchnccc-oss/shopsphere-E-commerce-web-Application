@@ -5,7 +5,7 @@ import LoadingImage from "@/components/loading-image";
 import { placeOrderAction } from "@/lib/actions/orders.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, ChevronLeft, Truck } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
