@@ -17,26 +17,9 @@ const navItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isAdmin = (session as any)?.isSeller ?? false;
 
-  useEffect(() => {
-    if (status === "unauthenticated") router.replace("/auth/login");
-    else if (status === "authenticated" && !isAdmin) router.replace("/");
-  }, [status, isAdmin]);
-
-  if (status === "loading" || (status === "authenticated" && !isAdmin)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0f1a]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
-          <span className="text-sm text-slate-400">Verifying access...</span>
-        </div>
-      </div>
-    );
-  }
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full py-6 px-3 gap-1">
@@ -67,8 +50,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             href={path}
             onClick={() => setSidebarOpen(false)}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                ? "bg-violet-600 text-white shadow-lg shadow-violet-600/25"
-                : "text-slate-400 hover:bg-white/5 hover:text-white"
+              ? "bg-violet-600 text-white shadow-lg shadow-violet-600/25"
+              : "text-slate-400 hover:bg-white/5 hover:text-white"
               }`}
           >
             <Icon className="size-4 shrink-0" />
