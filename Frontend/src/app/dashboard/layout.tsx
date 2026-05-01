@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboardIcon, PackageIcon, ShoppingBagIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
+import { LayoutDashboardIcon, PackageIcon, User, ShoppingBagIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const navItems = [
   { path: "/dashboard", label: "Overview", icon: LayoutDashboardIcon },
   { path: "/dashboard/products", label: "Products", icon: PackageIcon },
+  { path: "/profile", label: "Profile", icon: User },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
