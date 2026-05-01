@@ -79,7 +79,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-60 border-r border-border flex-col sticky top-0 h-screen">
+      <aside className="hidden lg:flex w-60 border-r border-border flex-col sticky top-0 h-screen">
         <SidebarContent />
       </aside>
 
@@ -92,7 +92,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-background border-r border-border transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-background border-r border-border transform transition-transform duration-300 lg:hidden ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -106,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-border sticky top-0 bg-background z-30">
+        <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border sticky top-0 bg-background z-30">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-1.5 rounded-md hover:bg-muted transition-colors"
