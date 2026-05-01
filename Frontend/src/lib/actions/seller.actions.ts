@@ -1,43 +1,20 @@
 "use server";
 import fetchApi from "../fetchApi";
-import { Product } from "../interfaces/products.interface";
+import { 
+  SellerProduct, 
+  CreateProductPayload, 
+  SellerActionResult, 
+  SellerOrder
+} from "../interfaces/seller.interface";
 
-export interface SellerProduct {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  images: string[];
-}
 
-export interface CreateProductPayload {
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  images: string[];
-}
-
-export type SellerActionResult<T = null> =
-  | { success: true; data: T }
-  | { success: false; message: string };
-
-export async function getSellerProductsAction(): Promise<
-  SellerActionResult<SellerProduct[]>
-> {
-  const result = await fetchApi("seller/products", "GET", {
-    includeToken: true,
-  });
+export async function getSellerProductsAction(): Promise<SellerActionResult<SellerProduct[]>> {
+  const result = await fetchApi("seller/products", "GET", { includeToken: true });
+  
   if (result.status !== "Success") {
-    return {
-      success: false,
-      message:
-        result.status === "Unauthorized"
-          ? "Session expired"
-          : "Failed to load products",
-    };
+    return { success: false, message: "Failed to load products" };
   }
+  
   const products: any[] = result.data.products ?? [];
   return {
     success: true,
@@ -52,138 +29,28 @@ export async function getSellerProductsAction(): Promise<
   };
 }
 
-export async function createProductAction(
-  payload: CreateProductPayload,
-): Promise<SellerActionResult> {
-  const result = await fetchApi("products", "POST", {
-    includeToken: true,
-    body: {
-      title: payload.title,
-      description: payload.description,
-      price: payload.price,
-      category: payload.category,
-      images: payload.images,
-    },
-  });
 
-  if (result.status === "Success") return { success: true, data: null };
-  return {
-    success: false,
-    message:
-      result.status === "Unauthorized"
-        ? "Unauthorized"
-        : "Failed to create product",
-  };
-}
+export async function getSellerOrdersAction(): Promise<SellerActionResult<SellerOrder[]>> {
+  const result = await fetchApi("seller/orders", "GET", { includeToken: true });
 
-// ── Update product ───────────────────────────────────────
-export async function updateProductAction(
-  id: number,
-  payload: CreateProductPayload,
-): Promise<SellerActionResult> {
-  const result = await fetchApi(`products/${id}`, "POST", {
-    includeToken: true,
-    body: {
-      title: payload.title,
-      description: payload.description,
-      price: payload.price,
-      category: payload.category,
-      images: payload.images,
-    },
-  });
-
-  if (result.status === "Success") return { success: true, data: null };
-  return {
-    success: false,
-    message:
-      result.status === "Unauthorized"
-        ? "Unauthorized"
-        : "Failed to update product",
-  };
-}
-
-// ── Delete product ───────────────────────────────────────
-export async function deleteProductAction(
-  id: number,
-): Promise<SellerActionResult> {
-  const result = await fetchApi(`products/${id}`, "DELETE", {
-    includeToken: true,
-  });
-
-  if (result.status === "Success") return { success: true, data: null };
-  return {
-    success: false,
-    message:
-      result.status === "Unauthorized"
-        ? "Unauthorized"
-        : "Failed to delete product",
-  };
-}
-
-// ── Dashboard stats (من الـ orders + products) ───────────
-export interface SellerStats {
-  totalProducts: number;
-  totalOrders: number;
-  totalRevenue: number;
-  recentOrders: RecentOrder[];
-}
-
-export interface RecentOrder {
-  id: number;
-  orderedAt: string;
-  totalAmount: number;
-  itemCount: number;
-  address: string;
-}
-
-export async function getSellerStatsAction(): Promise<
-  SellerActionResult<SellerStats>
-> {
-  const [productsResult, ordersResult] = await Promise.all([
-    getSellerProductsAction(),
-    fetchApi("orders", "GET", { includeToken: true }),
-  ]);
-
-  const totalProducts = productsResult.success ? productsResult.data.length : 0;
-
-  if (ordersResult.status !== "Success") {
-    return {
-      success: true,
-      data: {
-        totalProducts,
-        totalOrders: 0,
-        totalRevenue: 0,
-        recentOrders: [],
-      },
-    };
+  if (result.status !== "Success") {
+    return { success: false, message: "Failed to load orders" };
   }
 
-  const orders = ordersResult.data.orders ?? [];
-  const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((sum: number, order: any) => {
-    const orderTotal = (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.pricePerUnit * item.quantity,
-      0,
-    );
-    return sum + orderTotal;
-  }, 0);
+  return { success: true, data: result.data.orders ?? [] };
+}
 
-  const recentOrders: RecentOrder[] = orders.slice(0, 5).map((order: any) => ({
-    id: order.id,
-    orderedAt: order.orderedAt,
-    totalAmount: (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.pricePerUnit * item.quantity,
-      0,
-    ),
-    itemCount: (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.quantity,
-      0,
-    ),
-    address: order.address ? `${order.address.city ?? ""}` : "",
-  }));
+export async function createProductAction(payload: CreateProductPayload): Promise<SellerActionResult> {
+  const result = await fetchApi("products", "POST", { includeToken: true, body: payload });
+  return result.status === "Success" ? { success: true, data: null } : { success: false, message: "Failed" };
+}
 
-  return {
-    success: true,
-    data: { totalProducts, totalOrders, totalRevenue, recentOrders },
-  };
+export async function updateProductAction(id: number, payload: CreateProductPayload): Promise<SellerActionResult> {
+  const result = await fetchApi(`products/${id}`, "POST", { includeToken: true, body: payload });
+  return result.status === "Success" ? { success: true, data: null } : { success: false, message: "Failed" };
+}
+
+export async function deleteProductAction(id: number): Promise<SellerActionResult> {
+  const result = await fetchApi(`products/${id}`, "DELETE", { includeToken: true });
+  return result.status === "Success" ? { success: true, data: null } : { success: false, message: "Failed" };
 }
