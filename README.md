@@ -4,11 +4,11 @@ This document lists all the features available in the ShopSphere E-Commerce web 
 
 ## Database ERD
 
-![database erd][./docs/ERD.png]
+![database erd](docs/ERD.png)
 
 ## Backend API
 
-![backend API][./docs/Swagger.png]
+![backend API](docs/Swagger.png)
 
 ## Frontend Actions
 
