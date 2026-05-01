@@ -29,12 +29,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User updateUser(User updatedUser) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User Doesn't exist with id " + email)
-        );
+        User user = getUser();
+
         Optional<User> existingUser = userRepository.findByEmail(updatedUser.getEmail());
-        if (existingUser.isPresent() && !email.equals(existingUser.get().getEmail())) {
+        if (existingUser.isPresent() && !user.getEmail().equals(existingUser.get().getEmail())) {
             throw new UserAlreadyExistsException(existingUser.get().getEmail());
         }
 
@@ -51,6 +49,4 @@ public class UserServiceImpl implements UserService {
                 .anyMatch(a -> a.getAuthority()
                         .equals("ROLE_SELLER"));
     }
-
-
 }
