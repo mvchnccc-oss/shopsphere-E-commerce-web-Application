@@ -8,6 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
-    @Query(value = "SELECT oi.* FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE p.seller_id = :sellerId", nativeQuery = true)
+    @Query(value = """
+            SELECT oi.* FROM order_items oi 
+            JOIN products p ON oi.product_id = p.id 
+            JOIN orders o ON oi.order_id = o.id
+            WHERE p.seller_id = :sellerId
+            ORDER BY o.ordered_at DESC
+            """, nativeQuery = true)
     List<OrderItem> findAllByProductSellerId(@Param("sellerId") Long sellerId);
 }

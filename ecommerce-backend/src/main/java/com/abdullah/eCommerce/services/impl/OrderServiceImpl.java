@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,7 @@ public class OrderServiceImpl implements OrderService {
                     order.setOrderItems(orderItems);
                     return order;
                 })
+                .sorted(Comparator.comparing(Order::getOrderedAt).reversed())
                 .toList();
 
         return orderMapper.toOrdersDto(orders);
