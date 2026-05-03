@@ -10,10 +10,17 @@ import { WishlistContext } from "./context";
 export default function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getWishlistAction().then((wishlist) => {
-      setWishlist((prevState) => wishlist?.products ?? prevState);
+    getWishlistAction().then((result) => {
+      if (!result.success) {
+        setError(result.message ?? "Failed to load wishlist");
+        setLoading(false);
+        return;
+      }
+
+      setWishlist(result.products);
       setLoading(false);
     });
   }, []);
@@ -33,8 +40,8 @@ export default function WishlistProvider({ children }: { children: ReactNode }) 
   }
 
   return (
-    <WishlistContext value={{ wishlist, addToWishlist, removeFromWishlist, isLoading }}>
+    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, isLoading, error }}>
       {children}
-    </WishlistContext>
+    </WishlistContext.Provider>
   );
 }

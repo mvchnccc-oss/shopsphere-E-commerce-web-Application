@@ -16,7 +16,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function WishlistCarousel() {
-  const { wishlist } = useWishlist();
+  const { wishlist, isLoading, error } = useWishlist();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,12 +36,31 @@ export default function WishlistCarousel() {
     }
   }, [wishlist]);
 
-  if (loading) {
+  if (isLoading || loading) {
     return (
       <div className="flex gap-4 overflow-hidden">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="min-w-55 h-85 rounded-xl bg-muted animate-pulse" />
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div className="bg-rose-50 dark:bg-rose-950 rounded-full p-6">
+          <Heart className="size-12 text-rose-300 dark:text-rose-700" />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-semibold">Unable to load wishlist</p>
+          <p className="text-muted-foreground text-sm mt-1">{error}</p>
+        </div>
+        <Link href="/products">
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2">
+            Browse products <ArrowRightIcon className="size-4" />
+          </Button>
+        </Link>
       </div>
     );
   }

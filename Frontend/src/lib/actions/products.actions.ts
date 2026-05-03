@@ -74,7 +74,7 @@ export async function searchProducts(
   page: number = 0,
   size: number = 10,
   categoryId?: number
-): Promise<PaginatedProducts> {
+): Promise<{ success: true; data: PaginatedProducts } | { success: false; message?: string }> {
   const params = new URLSearchParams({
     search,
     page: String(page),
@@ -92,13 +92,16 @@ export async function searchProducts(
   if (result.status === "Success") {
     const data = result.data;
     return {
-      products: data.products ?? [],
-      currentPage: data.currentPage ?? 0,
-      totalPages: data.totalPages ?? 0,
-      totalElements: data.totalElements ?? 0,
-      pageSize: data.pageSize ?? size,
+      success: true,
+      data: {
+        products: data.products ?? [],
+        currentPage: data.currentPage ?? 0,
+        totalPages: data.totalPages ?? 0,
+        totalElements: data.totalElements ?? 0,
+        pageSize: data.pageSize ?? size,
+      },
     };
   }
 
-  return { ...EMPTY_PAGE, pageSize: size };
+  return { success: false, message: result.message ?? "Failed to search products" };
 }

@@ -6,6 +6,8 @@ interface ICartContext {
   updateCartItem: (id: string, quantity: number) => void;
   addCartItem: (id: string, data: CartProduct) => void;
   clearCart: () => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 export const CartContext = createContext<ICartContext | null>(null);

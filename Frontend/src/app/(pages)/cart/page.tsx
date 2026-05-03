@@ -7,7 +7,7 @@ import { useCart } from "@/components/cart/context";
 import LoadingImage from "@/components/loading-image";
 
 const CartPage = () => {
-  const { cartProducts, updateCartItem, clearCart } = useCart();
+  const { cartProducts, updateCartItem, clearCart, isLoading, error } = useCart();
   const productsArray = cartProducts ? Object.entries(cartProducts) : [];
   const [removing, setRemoving] = useState<string | null>(null);
 
@@ -39,6 +39,26 @@ const CartPage = () => {
       if (result.isConfirmed) clearCart();
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4">
+        <p className="text-sm text-gray-400">Loading cart...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 px-4">
+        <p className="text-lg font-semibold text-red-600">Failed to load cart</p>
+        <p className="text-sm text-gray-500">{error}</p>
+        <Link href="/products" className="text-emerald-600 hover:underline">
+          Browse products
+        </Link>
+      </div>
+    );
+  }
 
   // Empty state
   if (productsArray.length === 0) {

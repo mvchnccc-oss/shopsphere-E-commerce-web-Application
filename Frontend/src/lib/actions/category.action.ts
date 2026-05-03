@@ -10,20 +10,20 @@ const EMPTY_CATEGORIES_PAGE: PaginatedCategories = {
   pageSize: 3,
 };
 
-export async function getAllCategories(): Promise<Categories | null> {
+export async function getAllCategories(): Promise<{ success: true; data: Categories } | { success: false; message?: string }> {
   const result = await fetchApi("categories", "GET", { includeToken: false });
 
   if (result.status === "Success") {
-    return result.data.categories;
+    return { success: true, data: result.data.categories };
   }
 
-  return null;
+  return { success: false, message: result.message ?? "Failed to load categories" };
 }
 
 export async function getPaginatedCategories(
   page: number = 0,
   size: number = 3
-): Promise<PaginatedCategories> {
+): Promise<{ success: true; data: PaginatedCategories } | { success: false; message?: string }> {
   const result = await fetchApi(`categories?page=${page}&size=${size}`, "GET", {
     includeToken: false,
   });
@@ -31,15 +31,18 @@ export async function getPaginatedCategories(
   if (result.status === "Success") {
     const data = result.data;
     return {
-      categories: data.categories ?? [],
-      currentPage: data.currentPage ?? 0,
-      totalPages: data.totalPages ?? 0,
-      totalElements: data.totalElements ?? 0,
-      pageSize: data.pageSize ?? size,
+      success: true,
+      data: {
+        categories: data.categories ?? [],
+        currentPage: data.currentPage ?? 0,
+        totalPages: data.totalPages ?? 0,
+        totalElements: data.totalElements ?? 0,
+        pageSize: data.pageSize ?? size,
+      },
     };
   }
 
-  return { ...EMPTY_CATEGORIES_PAGE, pageSize: size };
+  return { success: false, message: result.message ?? "Failed to load categories" };
 }
 
 export async function getCategoryById(id: number): Promise<Category | null> {

@@ -2,13 +2,15 @@
 import fetchApi from "../fetchApi";
 import { GetCartResponse } from "../interfaces/cart.interface";
 
-export async function getCartAction(): Promise<GetCartResponse & { success: boolean }> {
+export type GetCartActionResult = GetCartResponse & { success: boolean; message?: string };
+
+export async function getCartAction(): Promise<GetCartActionResult> {
   const result = await fetchApi("cart", "GET", {
     includeToken: true,
   });
 
   if (result.status !== "Success") {
-    return { success: false, items: [] };
+    return { success: false, items: [], message: result.message ?? "Failed to load cart" };
   }
 
   return { success: true, ...result.data };

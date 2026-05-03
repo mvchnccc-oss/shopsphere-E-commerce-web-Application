@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   PlusIcon, PencilIcon, Trash2Icon, XIcon, SearchIcon,
-  PackageIcon, AlertTriangleIcon, CheckCircle2Icon, LoaderIcon,
+  PackageIcon, AlertTriangleIcon, CheckCircle2Icon, LoaderIcon, AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -199,6 +199,7 @@ export default function DashboardProductsPage() {
   const [products, setProducts] = useState<SellerProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<SellerProduct | null>(null);
@@ -213,15 +214,42 @@ export default function DashboardProductsPage() {
 
   async function loadProducts() {
     const res = await getSellerProductsAction();
-    if (res.success) setProducts(res.data);
+    if (res.success) {
+      setProducts(res.data);
+    } else {
+      setError(res.message || "Failed to load products");
+    }
     setLoading(false);
   }
 
   useEffect(() => {
-    loadProducts();
-    getAllCategories().then((cats) => {
-      if (cats) setCategories(Array.isArray(cats) ? cats : []);
-    });
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
+      
+      const [productsRes, categoriesRes] = await Promise.all([
+        getSellerProductsAction(),
+        getAllCategories(),
+      ]);
+      
+      if (!productsRes.success) {
+        setError(productsRes.message || "Failed to load products");
+        setLoading(false);
+        return;
+      }
+      
+      if (!categoriesRes.success) {
+        setError(categoriesRes.message || "Failed to load categories");
+        setLoading(false);
+        return;
+      }
+      
+      setProducts(productsRes.data);
+      setCategories(categoriesRes.data || []);
+      setLoading(false);
+    }
+    
+    fetchData();
   }, []);
 
   const filtered = products.filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
@@ -252,67 +280,77 @@ export default function DashboardProductsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {toastMsg && (
-        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-3 shadow-lg text-sm animate-in fade-in slide-in-from-bottom-3 duration-300">
-          <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
-          {toastMsg}
+      {error ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+          <AlertCircle className="w-16 h-16 mb-4 text-red-500" />
+          <p className="text-lg font-medium">Failed to load products</p>
+          <p className="text-sm mt-1">{error}</p>
         </div>
+      ) : (
+        <>
+          {toastMsg && (
+            <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-3 shadow-lg text-sm animate-in fade-in slide-in-from-bottom-3 duration-300">
+              <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
+              {toastMsg}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Products</h1>
+              <p className="text-muted-foreground text-sm mt-1">{loading ? "Loading..." : `${products.length} products total`}</p>
+            </div>
+            <Button onClick={() => { setEditingProduct(null); setModalOpen(true); }} className="flex items-center gap-2"><PlusIcon className="size-4" /> Add Product</Button>
+          </div>
+
+          <div className="relative max-w-sm">
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          </div>
+
+          <div className="border border-border rounded-xl bg-card overflow-hidden">
+            {loading ? (
+              <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground"><LoaderIcon className="size-6 animate-spin" /><span className="text-sm">Loading products...</span></div>
+            ) : filtered.length === 0 ? (
+              <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground"><PackageIcon className="size-8 opacity-40" /><span className="text-sm">{search ? "No products match your search." : "No products yet. Add your first one!"}</span></div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-muted-foreground text-xs">
+                    <th className="text-left px-5 py-3 font-medium">Product</th>
+                    <th className="text-left px-5 py-3 font-medium hidden md:table-cell">Category</th>
+                    <th className="text-left px-5 py-3 font-medium">Price</th>
+                    <th className="text-right px-5 py-3 font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((product) => (
+                    <tr key={product.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <ProductImage src={product.images?.[0]} title={product.title} />
+                          <span className="font-medium truncate max-w-[140px]">{product.title}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell">{product.category}</td>
+                      <td className="px-5 py-3.5 font-semibold">EGP {product.price.toLocaleString()}</td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => { setEditingProduct(product); setModalOpen(true); }} className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"><PencilIcon className="size-4" /></button>
+                          <button onClick={() => setDeleteTarget(product)} className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-muted-foreground hover:text-red-500"><Trash2Icon className="size-4" /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {modalOpen && <ProductModal editingProduct={editingProduct} categories={categories} onSave={handleSave} onClose={() => { setModalOpen(false); setEditingProduct(null); }} />}
+          {deleteTarget && <ConfirmDeleteModal product={deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} isPending={isDeletePending} />}
+        </>
       )}
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Products</h1>
-          <p className="text-muted-foreground text-sm mt-1">{loading ? "Loading..." : `${products.length} products total`}</p>
-        </div>
-        <Button onClick={() => { setEditingProduct(null); setModalOpen(true); }} className="flex items-center gap-2"><PlusIcon className="size-4" /> Add Product</Button>
-      </div>
-
-      <div className="relative max-w-sm">
-        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-        <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-      </div>
-
-      <div className="border border-border rounded-xl bg-card overflow-hidden">
-        {loading ? (
-          <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground"><LoaderIcon className="size-6 animate-spin" /><span className="text-sm">Loading products...</span></div>
-        ) : filtered.length === 0 ? (
-          <div className="p-12 flex flex-col items-center gap-3 text-muted-foreground"><PackageIcon className="size-8 opacity-40" /><span className="text-sm">{search ? "No products match your search." : "No products yet. Add your first one!"}</span></div>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-muted-foreground text-xs">
-                <th className="text-left px-5 py-3 font-medium">Product</th>
-                <th className="text-left px-5 py-3 font-medium hidden md:table-cell">Category</th>
-                <th className="text-left px-5 py-3 font-medium">Price</th>
-                <th className="text-right px-5 py-3 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((product) => (
-                <tr key={product.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <ProductImage src={product.images?.[0]} title={product.title} />
-                      <span className="font-medium truncate max-w-[140px]">{product.title}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell">{product.category}</td>
-                  <td className="px-5 py-3.5 font-semibold">EGP {product.price.toLocaleString()}</td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => { setEditingProduct(product); setModalOpen(true); }} className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"><PencilIcon className="size-4" /></button>
-                      <button onClick={() => setDeleteTarget(product)} className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-muted-foreground hover:text-red-500"><Trash2Icon className="size-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {modalOpen && <ProductModal editingProduct={editingProduct} categories={categories} onSave={handleSave} onClose={() => { setModalOpen(false); setEditingProduct(null); }} />}
-      {deleteTarget && <ConfirmDeleteModal product={deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} isPending={isDeletePending} />}
     </div>
   );
 }

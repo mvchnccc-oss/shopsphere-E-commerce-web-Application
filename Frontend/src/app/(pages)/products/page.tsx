@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import ProductContainer from "./_components/product-container";
 import ProductCard from "./_components/product-card";
 import SearchBar from "@/components/search-bar";
+import { AlertCircle, Search } from "lucide-react";
 
 const CATEGORIES_PER_PAGE = 3;
 
@@ -18,7 +19,22 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
   const searchQuery = search?.trim() ?? "";
 
   if (searchQuery) {
-    const { products, totalPages } = await searchProducts(searchQuery, currentPage);
+    const result = await searchProducts(searchQuery, currentPage);
+
+    if (!result.success) {
+      return (
+        <div className="py-7 px-4">
+          <SearchBar />
+          <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+            <AlertCircle className="w-16 h-16 mb-4 text-red-500" />
+            <p className="text-lg font-medium">Failed to search products</p>
+            <p className="text-sm mt-1">{result.message}</p>
+          </div>
+        </div>
+      );
+    }
+
+    const { products, totalPages } = result.data;
 
     return (
       <div className="py-7 px-4">
@@ -36,7 +52,7 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
-            <p className="text-4xl mb-4">🔍</p>
+            <Search className="w-16 h-16 mb-4 text-muted-foreground" />
             <p className="text-lg font-medium">No products found</p>
             <p className="text-sm mt-1">Try a different search term</p>
           </div>
@@ -48,7 +64,22 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
     );
   }
 
-  const { categories, totalPages } = await getPaginatedCategories(currentPage, CATEGORIES_PER_PAGE);
+  const categoriesResult = await getPaginatedCategories(currentPage, CATEGORIES_PER_PAGE);
+
+  if (!categoriesResult.success) {
+    return (
+      <div className="py-7 px-4">
+        <SearchBar />
+        <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+          <AlertCircle className="w-16 h-16 mb-4 text-red-500" />
+          <p className="text-lg font-medium">Failed to load categories</p>
+          <p className="text-sm mt-1">{categoriesResult.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { categories, totalPages } = categoriesResult.data;
 
   return (
     <div>

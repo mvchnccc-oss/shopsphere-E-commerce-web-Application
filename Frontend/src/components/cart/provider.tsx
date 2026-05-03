@@ -6,10 +6,17 @@ import { CartContext } from "./context";
 
 export default function CartProvider({ children }: { children: ReactNode }) {
   const [cartProducts, setCartProducts] = useState<Record<string, CartProduct>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getCartAction().then((cart) => {
-      if (!cart?.items) return;
+      if (!cart.success) {
+        setError(cart.message ?? "Failed to load cart");
+        setIsLoading(false);
+        return;
+      }
+
       const products = cart.items.map(({ product: { id, title, price, images }, quantity }: any) => ({
         id,
         title,
@@ -24,6 +31,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
       }, {});
 
       setCartProducts(cartProduct);
+      setIsLoading(false);
     });
   }, []);
 
@@ -60,7 +68,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <CartContext.Provider value={{ cartProducts, updateCartItem, addCartItem, clearCart }}>
+    <CartContext.Provider value={{ cartProducts, updateCartItem, addCartItem, clearCart, isLoading, error }}>
       {children}
     </CartContext.Provider>
   );
