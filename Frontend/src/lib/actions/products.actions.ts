@@ -16,6 +16,7 @@ export async function getAllProducts(
 ): Promise<PaginatedProducts> {
   const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
     includeToken: false,
+    next: { revalidate: 360 },
   });
 
   if (result.status === "Success") {
@@ -35,6 +36,7 @@ export async function getAllProducts(
 export async function getProductById(id: number): Promise<Product | null> {
   const result = await fetchApi(`products/${id}`, "GET", {
     includeToken: false,
+    cache: "force-cache",
   });
 
   if (result.status === "Success") {
@@ -52,7 +54,7 @@ export async function getProductsByCategory(
   const result = await fetchApi(
     `products?categoryId=${categoryId}&page=${page}&size=${size}`,
     "GET",
-    { includeToken: false }
+    { includeToken: false, cache: "force-cache" }
   );
 
   if (result.status === "Success") {
@@ -87,6 +89,7 @@ export async function searchProducts(
 
   const result = await fetchApi(`products?${params.toString()}`, "GET", {
     includeToken: false,
+    next: { revalidate: 360 },
   });
 
   if (result.status === "Success") {

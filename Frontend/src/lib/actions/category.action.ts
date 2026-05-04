@@ -11,7 +11,10 @@ const EMPTY_CATEGORIES_PAGE: PaginatedCategories = {
 };
 
 export async function getAllCategories(): Promise<{ success: true; data: Categories } | { success: false; message?: string }> {
-  const result = await fetchApi("categories", "GET", { includeToken: false });
+  const result = await fetchApi("categories", "GET", {
+    includeToken: false,
+    cache: "force-cache",
+  });
 
   if (result.status === "Success") {
     return { success: true, data: result.data.categories };
@@ -26,6 +29,7 @@ export async function getPaginatedCategories(
 ): Promise<{ success: true; data: PaginatedCategories } | { success: false; message?: string }> {
   const result = await fetchApi(`categories?page=${page}&size=${size}`, "GET", {
     includeToken: false,
+    cache: "force-cache",
   });
 
   if (result.status === "Success") {
@@ -46,7 +50,10 @@ export async function getPaginatedCategories(
 }
 
 export async function getCategoryById(id: number): Promise<Category | null> {
-  const result = await fetchApi(`categories/${id}`, "GET", { includeToken: false });
+  const result = await fetchApi(`categories/${id}`, "GET", {
+    includeToken: false,
+    cache: "force-cache",
+  });
 
   if (result.status === "Success") {
     return result.data.category;
