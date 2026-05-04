@@ -184,7 +184,7 @@ export default function DashboardPage() {
                           <td className="px-5 py-3.5 hidden sm:table-cell">{order.orderItems.reduce((s, i) => s + i.quantity, 0)} items</td>
                           <td className="px-5 py-3.5 font-semibold">EGP {total.toLocaleString()}</td>
                           <td className="px-5 py-3.5 text-muted-foreground hidden md:table-cell">{order.address.city}</td>
-                          <td className="px-5 py-3.5 text-right" onClick={(e) => e.stopPropagation()}><InvoiceModal order={order} total={total} /></td>
+                          <td className="px-5 py-3.5 text-center" onClick={(e) => e.stopPropagation()}><InvoiceModal order={order} total={total} /></td>
                         </tr>
                         {isExpanded && (
                           <tr className="border-b border-border bg-muted/20">
