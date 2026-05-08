@@ -16,6 +16,7 @@ export async function getAllProducts(
 ): Promise<PaginatedProducts> {
   const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
     includeToken: false,
+    next: { revalidate: 360 },
   });
 
   if (result.status === "Success") {
@@ -35,6 +36,7 @@ export async function getAllProducts(
 export async function getProductById(id: number): Promise<Product | null> {
   const result = await fetchApi(`products/${id}`, "GET", {
     includeToken: false,
+    cache: "force-cache",
   });
 
   if (result.status === "Success") {
@@ -52,7 +54,7 @@ export async function getProductsByCategory(
   const result = await fetchApi(
     `products?categoryId=${categoryId}&page=${page}&size=${size}`,
     "GET",
-    { includeToken: false }
+    { includeToken: false, cache: "force-cache" }
   );
 
   if (result.status === "Success") {
@@ -74,7 +76,7 @@ export async function searchProducts(
   page: number = 0,
   size: number = 10,
   categoryId?: number
-): Promise<PaginatedProducts> {
+): Promise<{ success: true; data: PaginatedProducts } | { success: false; message?: string }> {
   const params = new URLSearchParams({
     search,
     page: String(page),
@@ -87,18 +89,22 @@ export async function searchProducts(
 
   const result = await fetchApi(`products?${params.toString()}`, "GET", {
     includeToken: false,
+    next: { revalidate: 360 },
   });
 
   if (result.status === "Success") {
     const data = result.data;
     return {
-      products: data.products ?? [],
-      currentPage: data.currentPage ?? 0,
-      totalPages: data.totalPages ?? 0,
-      totalElements: data.totalElements ?? 0,
-      pageSize: data.pageSize ?? size,
+      success: true,
+      data: {
+        products: data.products ?? [],
+        currentPage: data.currentPage ?? 0,
+        totalPages: data.totalPages ?? 0,
+        totalElements: data.totalElements ?? 0,
+        pageSize: data.pageSize ?? size,
+      },
     };
   }
 
-  return { ...EMPTY_PAGE, pageSize: size };
+  return { success: false, message: result.message ?? "Failed to search products" };
 }

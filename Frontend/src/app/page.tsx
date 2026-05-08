@@ -1,4 +1,4 @@
-import { FeaturedCarousel } from "@/components/FeaturedCarousel";
+ import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 import { Button } from "@/components/ui/button";
 import { getAllProducts } from "@/lib/actions/products.actions";
 
@@ -20,7 +20,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-background xl:pt-6">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-emerald-600 dark:bg-emerald-700">
+      <section className="max-w-7xl mx-auto relative overflow-hidden bg-emerald-600 dark:bg-emerald-700">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/40 dark:bg-emerald-600/40 blur-3xl" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-emerald-800/40 blur-3xl" />
 
@@ -33,7 +33,7 @@ export default async function HomePage() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight">
             Everything you want,
             <br />
-            <span className="text-emerald-200">right away.</span>
+             <span className="text-emerald-200">right away.</span>
           </h1>
 
           <p className="text-emerald-100 text-base sm:text-lg max-w-xl">

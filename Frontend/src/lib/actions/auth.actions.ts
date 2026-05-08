@@ -27,6 +27,13 @@ export async function registerAction(formData: RegisterFormData): Promise<Action
     const payload = await response.json();
 
     if (!response.ok) {
+      if (payload.errorCode === 409) {
+        return {
+          success: false,
+          message: payload?.message || "Email",
+        };
+      }
+
       return {
         success: false,
         message: payload?.message || "Registration failed. Please try again.",

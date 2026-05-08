@@ -2,16 +2,20 @@
 import fetchApi from "../fetchApi";
 import { GetWishlist } from "../interfaces/wishlist.interface";
 
-export async function getWishlistAction(): Promise<GetWishlist | null> {
+export type GetWishlistActionResult =
+  | { success: true; products: number[] }
+  | { success: false; products: number[]; message?: string };
+
+export async function getWishlistAction(): Promise<GetWishlistActionResult> {
   const result = await fetchApi("wishlist", "GET", {
     includeToken: true,
   });
 
   if (result.status === "Success") {
-    return result.data;
+    return { success: true, products: result.data?.products ?? [] };
   }
 
-  return null;
+  return { success: false, products: [], message: result.message ?? "Failed to load wishlist" };
 }
 
 export async function addToWishlistAction(productId: number) {

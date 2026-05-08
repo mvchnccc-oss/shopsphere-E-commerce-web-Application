@@ -5,6 +5,7 @@ interface IWishlistContext {
   addToWishlist: (id: number) => void;
   removeFromWishlist: (id: number) => void;
   isLoading: boolean;
+  error: string | null;
 }
 
 export const WishlistContext = createContext<IWishlistContext | null>(null);

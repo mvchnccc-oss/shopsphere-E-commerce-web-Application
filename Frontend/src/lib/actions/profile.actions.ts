@@ -31,11 +31,11 @@ export async function updateProfileAction(data: UpdateProfileForm): Promise<Upda
 }
 
 export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
-  // جيب الـ name و email من الـ session عشان الباك اند بيطلبهم @NotBlank
+
   const session = await getServerSession(authOptions);
   if (!session) return { success: false, message: "Unauthorized" };
 
-  // جيب البيانات الحالية من الـ /me endpoint
+
   const meResult = await fetchApi("auth/me", "GET", { includeToken: true });
   if (meResult.status !== "Success") {
     return { success: false, message: "Could not fetch user data" };
@@ -43,7 +43,7 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
 
   const { name, email } = meResult.data;
 
-  // ابعت name + email + isSeller مع بعض
+  
   const result = await fetchApi("auth/me", "POST", {
     includeToken: true,
     body: {

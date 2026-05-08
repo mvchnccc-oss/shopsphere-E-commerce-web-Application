@@ -9,18 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
-import { registerAction, type ActionResult } from "@/lib/actions/auth.actions";
+import { registerAction } from "@/lib/actions/auth.actions";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailIcon, UserIcon, UserPlusIcon } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import PasswordInput from "../_components/password-input";
@@ -28,43 +25,52 @@ import PasswordInput from "../_components/password-input";
 export default function RegisterPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("url") || "/";
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError: setFormError,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data: RegisterFormData) => {
     setServerError(null);
-    setSuccessMsg(null);
 
     const result = await registerAction(data);
 
     if (!result.success) {
+      if (result.message === "Email") {
+        setFormError("email", { message: "This email unavailable" });
+        return;
+      }
       setServerError(result.message || "An unexpected error occurred.");
       return;
     }
 
-    setSuccessMsg(result.message || "Account created successfully!");
-    // Redirect to login after short delay
-    setTimeout(() => router.push("/auth/login"), 1500);
+    const signInResult = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (signInResult?.error) return;
+
+    router.push(redirectUrl);
+    setTimeout(() => window.location.reload(), 100);
   };
 
   return (
-    
     <Card className="w-full max-w-sm mx-auto my-5">
       <CardHeader className="flex flex-col items-center">
         <div className="bg-accent p-2 shadow-md rounded-lg mb-2">
           <UserPlusIcon className="size-10" />
         </div>
         <CardTitle>Create your account</CardTitle>
-        <CardDescription>
-          Enter your details below to create your account
-        </CardDescription>
+        <CardDescription>Enter your details below to create your account</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -74,13 +80,6 @@ export default function RegisterPage() {
             {serverError && (
               <p className="text-sm text-destructive text-center bg-destructive/10 py-2 px-3 rounded-md">
                 {serverError}
-              </p>
-            )}
-
-            {/* Success */}
-            {successMsg && (
-              <p className="text-sm text-green-600 text-center bg-green-50 py-2 px-3 rounded-md">
-                {successMsg}
               </p>
             )}
 
@@ -99,9 +98,7 @@ export default function RegisterPage() {
                   aria-invalid={!!errors.name}
                 />
               </InputGroup>
-              {errors.name && (
-                <p className="text-xs text-destructive">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
             </div>
 
             {/* Email */}
@@ -119,16 +116,11 @@ export default function RegisterPage() {
                   aria-invalid={!!errors.email}
                 />
               </InputGroup>
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
             {/* Password */}
-            <PasswordInput
-              registration={register("password")}
-              error={errors.password?.message}
-            />
+            <PasswordInput registration={register("password")} error={errors.password?.message} />
 
             {/* Confirm Password */}
             <PasswordInput
@@ -143,7 +135,10 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? "Creating account..." : "Register"}
             </Button>
-            <Link href="/auth/login" className="text-muted-foreground text-sm hover:text-blue-500 duration-300">
+            <Link
+              href="/auth/login"
+              className="text-muted-foreground text-sm hover:text-blue-500 duration-300"
+            >
               Login into your account instead
             </Link>
           </CardFooter>

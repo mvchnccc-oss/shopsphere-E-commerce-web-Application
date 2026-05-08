@@ -6,6 +6,8 @@ import { authOptions } from "./auth";
 interface FetchApiOptions {
   includeToken?: boolean;
   body?: any;
+  cache?: RequestCache;
+  next?: { revalidate?: number | false };
 }
 
 type FetchApiResult =
@@ -29,12 +31,22 @@ export default async function fetchApi(
     headers["Authorization"] = `Bearer ${session!.token}`;
   }
 
+  const fetchOptions: RequestInit & { next?: { revalidate?: number | false } } = {
+    method,
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  };
+
+  if (options.cache) {
+    fetchOptions.cache = options.cache;
+  }
+
+  if (options.next) {
+    fetchOptions.next = options.next;
+  }
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/${api}`, {
-      method,
-      headers,
-      body: options.body ? JSON.stringify(options.body) : undefined,
-    });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/${api}`, fetchOptions);
 
     if (res.ok) {
       const hasBody = res.headers.get("content-length") !== "0";
