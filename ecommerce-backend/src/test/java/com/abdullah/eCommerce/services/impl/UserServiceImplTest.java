@@ -28,57 +28,60 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    private MockedStatic<SecurityContextHolder> securityContextMock;
+
+    @BeforeEach
+    void setUp() {
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = Mockito.mock(Authentication.class);
+
+        securityContextMock = Mockito.mockStatic(SecurityContextHolder.class);
+        securityContextMock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+        lenient().when(authentication.getName()).thenReturn("email");
+    }
+
+    @AfterEach
+    void tearDown() {
+        securityContextMock.close();
+    }
+
     @Nested
-    @DisplayName("getUser()")
+    @DisplayName("Get User")
     class GetUser {
-        private MockedStatic<SecurityContextHolder> securityContextMock;
-
-        @BeforeEach
-        void setUp() {
-            SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-            Authentication authentication = Mockito.mock(Authentication.class);
-
-            securityContextMock = Mockito.mockStatic(SecurityContextHolder.class);
-            securityContextMock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
-            when(securityContext.getAuthentication()).thenReturn(authentication);
-            when(authentication.getName()).thenReturn("email");
-        }
-
-        @AfterEach
-        void tearDown() {
-            securityContextMock.close();
-        }
 
         @Test
-        @DisplayName("Get user by email from security context")
-        void shouldReturnUserWhenEmailExists() {
+        @DisplayName("By Email")
+        void getUser() {
             when(userRepository.findByEmail("email"))
                 .thenReturn(Optional.of(User.builder().email("email").build()));
 
-            assertDoesNotThrow(() -> userService.getUser());
-
             User user = userService.getUser();
+
             assertNotNull(user);
             assertEquals("email", user.getEmail());
+            verify(userRepository).findByEmail("email");
         }
 
         @Test
-        @DisplayName("Throw when user doesn't exist")
-        void throwWhenUserDoesntExist() {
+        @DisplayName("Not Found")
+        void getUserNotFound() {
             when(userRepository.findByEmail("email"))
                 .thenReturn(Optional.empty());
 
             assertThrows(UsernameNotFoundException.class, () -> userService.getUser());
+            verify(userRepository).findByEmail("email");
         }
     }
 
     @Nested
-    @DisplayName("updateUser()")
+    @DisplayName("Update User")
     class UpdateUser {
+
         @Test
-        @DisplayName("Update user")
+        @DisplayName("Success")
         void updateUser() {
-            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Customer).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
@@ -87,23 +90,23 @@ class UserServiceImplTest {
                 .role(UserRole.Customer)
                 .build();
 
-            // new email is not taken by anyone
-            when(userRepository.findByEmail(updatedUser.getEmail()))
-                .thenReturn(Optional.empty());
+            when(userRepository.findByEmail(updatedUser.getEmail())).thenReturn(Optional.empty());
+            when(userRepository.save(any(User.class))).thenReturn(repoUser);
 
-            assertDoesNotThrow(() -> userService.updateUser(updatedUser));
+            User result = userService.updateUser(updatedUser);
 
+            assertNotNull(result);
             verify(userRepository).save(argThat(saved ->
                 saved.getName().equals(updatedUser.getName()) &&
                     saved.getEmail().equals(updatedUser.getEmail()) &&
-                    saved.getRole().equals(updatedUser.getRole())
+                    saved.getRole().equals(UserRole.Customer)
             ));
         }
 
         @Test
-        @DisplayName("Update user without changing email")
-        void updateUserWithSameEMail() {
-            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
+        @DisplayName("Same Email")
+        void updateUserSameEmail() {
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Customer).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
@@ -112,20 +115,20 @@ class UserServiceImplTest {
                 .role(UserRole.Customer)
                 .build();
 
-            when(userRepository.findByEmail(repoUser.getEmail()))
-                .thenReturn(Optional.of(repoUser));
+            when(userRepository.findByEmail("email")).thenReturn(Optional.of(repoUser));
+            when(userRepository.save(any(User.class))).thenReturn(repoUser);
 
             assertDoesNotThrow(() -> userService.updateUser(updatedUser));
 
             verify(userRepository).save(argThat(saved ->
-                saved.getEmail().equals(updatedUser.getEmail())
+                saved.getEmail().equals("email")
             ));
         }
 
         @Test
-        @DisplayName("Throw when new email is already taken")
-        void throwWhenEmailAlreadyTaken() {
-            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
+        @DisplayName("Email Already Taken")
+        void updateUserEmailAlreadyTaken() {
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Customer).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
@@ -135,12 +138,54 @@ class UserServiceImplTest {
                 .build();
 
             User otherUser = User.builder().email("takenEmail").build();
-
-            // new email is already taken by someone else
-            when(userRepository.findByEmail(updatedUser.getEmail()))
-                .thenReturn(Optional.of(otherUser));
+            when(userRepository.findByEmail("takenEmail")).thenReturn(Optional.of(otherUser));
 
             assertThrows(UserAlreadyExistsException.class, () -> userService.updateUser(updatedUser));
+            verify(userRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Set Seller Role")
+        void updateUserRoleToSeller() {
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Customer).build();
+            doReturn(repoUser).when(userService).getUser();
+
+            User updatedUser = User.builder()
+                .name("name")
+                .email("email")
+                .role(UserRole.Seller)
+                .build();
+
+            when(userRepository.findByEmail("email")).thenReturn(Optional.of(repoUser));
+            when(userRepository.save(any(User.class))).thenReturn(repoUser);
+
+            userService.updateUser(updatedUser);
+
+            verify(userRepository).save(argThat(saved ->
+                saved.getRole().equals(UserRole.Seller)
+            ));
+        }
+
+        @Test
+        @DisplayName("Set Customer Role")
+        void updateUserRoleToCustomer() {
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
+            doReturn(repoUser).when(userService).getUser();
+
+            User updatedUser = User.builder()
+                .name("name")
+                .email("email")
+                .role(UserRole.Admin)
+                .build();
+
+            when(userRepository.findByEmail("email")).thenReturn(Optional.of(repoUser));
+            when(userRepository.save(any(User.class))).thenReturn(repoUser);
+
+            userService.updateUser(updatedUser);
+
+            verify(userRepository).save(argThat(saved ->
+                saved.getRole().equals(UserRole.Customer)
+            ));
         }
     }
 }
