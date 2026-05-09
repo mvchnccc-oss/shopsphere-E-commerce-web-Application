@@ -22,5 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         """)
     List<OrderMonthlyRevenue> getMonthlyRevenue();
 
-    Page<Order> findAllOrderByOrderedAtDesc(Pageable pageable);
+    @Query("SELECT o FROM Order o ORDER BY o.orderedAt DESC")
+    Page<Order> findAllOrdered(Pageable pageable);
+
 }

@@ -67,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public GetAllOrdersResponse getOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> ordersPage = orderRepository.findAllOrderByOrderedAtDesc(pageable);
+        Page<Order> ordersPage = orderRepository.findAllOrdered(pageable);
 
         List<OrderDto> orders = orderMapper.toOrdersDto(ordersPage.getContent());
 

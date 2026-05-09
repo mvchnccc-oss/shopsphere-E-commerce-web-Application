@@ -47,18 +47,20 @@ public class DataSeeder implements ApplicationRunner {
     @Transactional
     public void run(@NonNull ApplicationArguments args) throws Exception {
         var userExist = userRepository.findByEmail(adminEmail);
-        if (userExist.isPresent() && !userExist.get().getRole().equals(UserRole.Admin)) {
-            throw new UserAlreadyExistsException(" Failed to create admin account, email is taken");
+        if (userExist.isPresent()) {
+            if (!userExist.get().getRole().equals(UserRole.Admin))
+                throw new UserAlreadyExistsException(" Failed to create admin account, email is taken");
+        } else {
+            userRepository.save(
+                User.builder()
+                    .name(adminName)
+                    .email(adminEmail)
+                    .password(passwordEncoder.encode(adminPassword))
+                    .role(UserRole.Admin)
+                    .build()
+            );
         }
 
-        userRepository.save(
-                User.builder()
-                        .name(adminName)
-                        .email(adminEmail)
-                        .password(passwordEncoder.encode(adminPassword))
-                        .role(UserRole.Admin)
-                        .build()
-        );
 
         if (productRepository.count() > 0) {
             log.info("Already seeded, skipping.");
@@ -67,8 +69,8 @@ public class DataSeeder implements ApplicationRunner {
 
         ClassPathResource resource = new ClassPathResource("data/products.json");
         ProductSeedDto[] dtos = objectMapper.readValue(
-                resource.getInputStream(),
-                ProductSeedDto[].class
+            resource.getInputStream(),
+            ProductSeedDto[].class
         );
 
         // 1. Save all unique categories first
@@ -79,9 +81,9 @@ public class DataSeeder implements ApplicationRunner {
             String catName = dto.getCategory().getName();
             categoryCache.computeIfAbsent(catName, name -> {
                 Category c = Category.builder()
-                        .name(dto.getCategory().getName())
-                        .image(dto.getCategory().getImage())
-                        .build();
+                    .name(dto.getCategory().getName())
+                    .image(dto.getCategory().getImage())
+                    .build();
                 return categoryRepository.save(c);
             });
         }
@@ -92,33 +94,33 @@ public class DataSeeder implements ApplicationRunner {
             Category category = categoryCache.get(dto.getCategory().getName());
 
             User seller = userCache.computeIfAbsent(dto.getSeller().getEmail(), email ->
-                    userRepository.findByEmail(email)
-                            .orElseGet(() -> userRepository.save(
-                                    User.builder()
-                                            .name(dto.getSeller().getName())
-                                            .email(dto.getSeller().getEmail())
-                                            .password(dto.getSeller().getPassword())
-                                            .role(UserRole.Seller)
-                                            .build()
-                            ))
+                userRepository.findByEmail(email)
+                    .orElseGet(() -> userRepository.save(
+                        User.builder()
+                            .name(dto.getSeller().getName())
+                            .email(dto.getSeller().getEmail())
+                            .password(dto.getSeller().getPassword())
+                            .role(UserRole.Seller)
+                            .build()
+                    ))
             );
 
             Product product = Product.builder()
-                    .title(dto.getTitle())
-                    .price(dto.getPrice())
-                    .description(dto.getDescription())
-                    .category(category)
-                    .seller(seller)
-                    .build();
+                .title(dto.getTitle())
+                .price(dto.getPrice())
+                .description(dto.getDescription())
+                .category(category)
+                .seller(seller)
+                .build();
 
             if (dto.getImages() != null) {
                 List<ProductImage> productImages = dto.getImages().stream().map(imgUrl -> {
                     ProductImage.Id imgId = new ProductImage.Id(null, imgUrl);
 
                     return ProductImage.builder()
-                            .id(imgId)
-                            .product(product)
-                            .build();
+                        .id(imgId)
+                        .product(product)
+                        .build();
                 }).toList();
                 product.setImages(productImages);
             }
