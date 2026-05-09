@@ -2,6 +2,7 @@ package com.abdullah.eCommerce.seeder;
 
 import com.abdullah.eCommerce.dtos.seeders.ProductSeedDto;
 import com.abdullah.eCommerce.entities.*;
+import com.abdullah.eCommerce.exceptions.UserAlreadyExistsException;
 import com.abdullah.eCommerce.repositories.CategoryRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
 import com.abdullah.eCommerce.repositories.UserRepository;
@@ -9,9 +10,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -29,12 +32,34 @@ public class DataSeeder implements ApplicationRunner {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
 
     private static final int CHUNK_SIZE = 100;
+
+    @Value("${admin.name}")
+    private String adminName;
+    @Value("${admin.email}")
+    private String adminEmail;
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @Override
     @Transactional
     public void run(@NonNull ApplicationArguments args) throws Exception {
+        var userExist = userRepository.findByEmail(adminEmail);
+        if (userExist.isPresent() && !userExist.get().getRole().equals(UserRole.Admin)) {
+            throw new UserAlreadyExistsException(" Failed to create admin account, email is taken");
+        }
+
+        userRepository.save(
+                User.builder()
+                        .name(adminName)
+                        .email(adminEmail)
+                        .password(passwordEncoder.encode(adminPassword))
+                        .role(UserRole.Admin)
+                        .build()
+        );
+
         if (productRepository.count() > 0) {
             log.info("Already seeded, skipping.");
             return;

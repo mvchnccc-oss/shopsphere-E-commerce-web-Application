@@ -1,5 +1,6 @@
 package com.abdullah.eCommerce.config;
 
+import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.security.AppUserDetailsService;
 import com.abdullah.eCommerce.security.AuthenticationFilter;
@@ -46,6 +47,7 @@ public class SecurityConfiguration {
                                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/swagger-ui/**").permitAll()
                                         .requestMatchers("/v3/**").permitAll()
+                                        .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Admin.toString())
                                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))

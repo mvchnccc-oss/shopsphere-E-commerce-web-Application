@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
@@ -16,4 +17,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             ORDER BY o.ordered_at DESC
             """, nativeQuery = true)
     List<OrderItem> findAllByProductSellerId(@Param("sellerId") Long sellerId);
+
+    @Query("SELECT COALESCE(SUM(i.pricePerUnit * i.quantity), 0) FROM OrderItem i")
+    BigDecimal getTotalRevenue();
 }
