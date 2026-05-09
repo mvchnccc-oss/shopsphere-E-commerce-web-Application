@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    if (!session || (session as any).role !== "Seller") {
+    if (!session || (session as any).role !== "ROLE_SELLER") {
       router.push("/auth/login");
       return;
     }
@@ -37,7 +37,7 @@ export default function DashboardPage() {
     return <div>Loading...</div>;
   }
 
-  if (!session || (session as any).role !== "Seller") {
+  if (!session || (session as any).role !== "ROLE_SELLER") {
     return null; // Will redirect
   }
 

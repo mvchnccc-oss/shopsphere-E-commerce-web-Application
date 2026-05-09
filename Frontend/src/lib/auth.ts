@@ -23,6 +23,8 @@ export const authOptions: NextAuthOptions = {
         );
 
         const payload = await response.json();
+        console.log(payload);
+        
         if (response.ok && payload.token) {
           return {
             id: data?.email as string,

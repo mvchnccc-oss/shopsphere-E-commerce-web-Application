@@ -12,9 +12,9 @@ export default async function middleware(req: NextRequest) {
   });
 
   const { pathname } = req.nextUrl;
-  const role = (token as any)?.role ?? "Customer";
-  const isSeller = role === "Seller";
-  const isAdmin = role === "Admin";
+  const role = (token as any)?.role ?? "ROLE_CUSTOMER";
+  const isSeller = role === "ROLE_SELLER";
+  const isAdmin = role === "ROLE_ADMIN";
   const isAuthenticated = !!token;
 
   // مش متسجل → روح login

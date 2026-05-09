@@ -45,7 +45,7 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
 
   const result = await fetchApi("auth/me", "POST", {
     includeToken: true,
-    body: { name, email, role: "Seller" },
+    body: { name, email, role: "ROLE_SELLER" },
   });
 
   console.log(result)
@@ -54,7 +54,7 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
     return {
       success: true,
       token: result.data.auth.token,
-      role: result.data.user?.role ?? "Seller",
+      role: result.data.user?.role ?? "ROLE_SELLER",
       accessTokenExpires: Date.now() + result.data.auth.expiresAt,
     };
   }

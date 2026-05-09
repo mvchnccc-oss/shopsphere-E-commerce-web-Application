@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isSeller = (session as any)?.role === "Seller";
+  const isSeller = (session as any)?.role === "ROLE_SELLER";
 
   useEffect(() => {
     if (status === "unauthenticated") {
