@@ -53,7 +53,7 @@ class UserServiceImplTest {
         @DisplayName("Get user by email from security context")
         void shouldReturnUserWhenEmailExists() {
             when(userRepository.findByEmail("email"))
-                    .thenReturn(Optional.of(User.builder().email("email").build()));
+                .thenReturn(Optional.of(User.builder().email("email").build()));
 
             assertDoesNotThrow(() -> userService.getUser());
 
@@ -66,7 +66,7 @@ class UserServiceImplTest {
         @DisplayName("Throw when user doesn't exist")
         void throwWhenUserDoesntExist() {
             when(userRepository.findByEmail("email"))
-                    .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
             assertThrows(UsernameNotFoundException.class, () -> userService.getUser());
         }
@@ -82,21 +82,21 @@ class UserServiceImplTest {
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
-                    .name("updatedName")
-                    .email("updatedEmail")
-                    .role(UserRole.Customer)
-                    .build();
+                .name("updatedName")
+                .email("updatedEmail")
+                .role(UserRole.Customer)
+                .build();
 
             // new email is not taken by anyone
             when(userRepository.findByEmail(updatedUser.getEmail()))
-                    .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
             assertDoesNotThrow(() -> userService.updateUser(updatedUser));
 
             verify(userRepository).save(argThat(saved ->
-                    saved.getName().equals(updatedUser.getName()) &&
-                            saved.getEmail().equals(updatedUser.getEmail()) &&
-                            saved.getRole().equals(updatedUser.getRole())
+                saved.getName().equals(updatedUser.getName()) &&
+                    saved.getEmail().equals(updatedUser.getEmail()) &&
+                    saved.getRole().equals(updatedUser.getRole())
             ));
         }
 
@@ -107,18 +107,18 @@ class UserServiceImplTest {
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
-                    .name("updatedName")
-                    .email("email")
-                    .role(UserRole.Customer)
-                    .build();
+                .name("updatedName")
+                .email("email")
+                .role(UserRole.Customer)
+                .build();
 
             when(userRepository.findByEmail(repoUser.getEmail()))
-                    .thenReturn(Optional.of(repoUser));
+                .thenReturn(Optional.of(repoUser));
 
             assertDoesNotThrow(() -> userService.updateUser(updatedUser));
 
             verify(userRepository).save(argThat(saved ->
-                    saved.getEmail().equals(updatedUser.getEmail())
+                saved.getEmail().equals(updatedUser.getEmail())
             ));
         }
 
@@ -129,16 +129,16 @@ class UserServiceImplTest {
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
-                    .name("updatedName")
-                    .email("takenEmail")
-                    .role(UserRole.Customer)
-                    .build();
+                .name("updatedName")
+                .email("takenEmail")
+                .role(UserRole.Customer)
+                .build();
 
             User otherUser = User.builder().email("takenEmail").build();
 
             // new email is already taken by someone else
             when(userRepository.findByEmail(updatedUser.getEmail()))
-                    .thenReturn(Optional.of(otherUser));
+                .thenReturn(Optional.of(otherUser));
 
             assertThrows(UserAlreadyExistsException.class, () -> userService.updateUser(updatedUser));
         }
