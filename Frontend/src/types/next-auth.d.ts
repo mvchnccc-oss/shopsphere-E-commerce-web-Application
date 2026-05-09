@@ -5,12 +5,12 @@ declare module "next-auth" {
   interface Session {
     user: UserInterface;
     token: string;
-    isSeller: boolean;
+    role: string;
   }
   interface User {
     user: UserInterface;
     token: string;
-    isSeller: boolean;
+    role: string;
   }
 }
 import { JWT } from "next-auth/jwt";
@@ -19,6 +19,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     user: UserInterface;
     token: string;
-    isSeller: boolean;
+    role: string;
   }
 }

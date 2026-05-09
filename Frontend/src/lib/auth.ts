@@ -31,8 +31,8 @@ export const authOptions: NextAuthOptions = {
               name: data?.email?.split("@")[0] ?? "",
             },
             token: payload.token,
-            expiresAt: payload.expiresAt,
-            isSeller: payload.isSeller ?? false,
+            expiresAt: Date.now() + payload.expiresAt,
+            role: payload.role,
           };
         } else {
           throw new Error(payload.message || "Invalid credentials");
@@ -49,15 +49,16 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.user = (user as any).user;
         token.token = (user as any).token;
-        token.isSeller = (user as any).isSeller ?? false;
+        token.role = (user as any).role;
         token.accessTokenExpires = (user as any).expiresAt;
       }
 
 
-      if (trigger === "update" && session?.isSeller !== undefined) {
-        token.isSeller = session.isSeller;
+      if (trigger === "update" && session?.role !== undefined) {
+        token.role = session.role;
         if (session.token) token.token = session.token;
         if (session.user) token.user = session.user;
+        if (session.accessTokenExpires) token.accessTokenExpires = session.accessTokenExpires;
       }
 
       const currentTime = Date.now();
@@ -71,7 +72,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user = token.user as any;
       (session as any).token = token.token;
-      (session as any).isSeller = token.isSeller ?? false;
+      (session as any).role = token.role;
       (session as any).error = token.error;
       return session;
     },

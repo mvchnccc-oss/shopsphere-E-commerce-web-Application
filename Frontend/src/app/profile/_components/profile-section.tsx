@@ -110,8 +110,8 @@ export default function ProfileSection(props: ProfileSectionProps) {
         setServerError(result.message);
         return;
       }
-      await updateSession({ isSeller: true, token: result.token });
-      setData((prev) => prev ? { ...prev, isSeller: true } : prev);
+      await updateSession({ role: "Seller", token: result.token, accessTokenExpires: result.accessTokenExpires });
+      setData((prev) => prev ? { ...prev, role: "Seller" } : prev);
       setSellerSuccess(true);
       setTimeout(() => router.push("/dashboard"), 1800);
     } catch {
@@ -121,7 +121,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
     }
   }
 
-  const isSeller = data?.isSeller ?? false;
+  const isSeller = data?.role === "Seller";
 
   return (
     <div className="p-4 min-h-[60vh]">

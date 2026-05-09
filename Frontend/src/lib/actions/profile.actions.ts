@@ -31,7 +31,6 @@ export async function updateProfileAction(data: UpdateProfileForm): Promise<Upda
 }
 
 export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
-
   const session = await getServerSession(authOptions);
   if (!session) return { success: false, message: "Unauthorized" };
 
@@ -41,16 +40,12 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
     return { success: false, message: "Could not fetch user data" };
   }
 
-  const { name, email } = meResult.data;
+  const name: string = meResult.data.name || session.user.name || session.user.email?.split("@")[0] || "User";
+  const email: string = meResult.data.email || session.user.email;
 
-  
   const result = await fetchApi("auth/me", "POST", {
     includeToken: true,
-    body: {
-      name,
-      email,
-      isSeller: true,
-    },
+    body: { name, email, role: "Seller" },
   });
 
   console.log(result)
@@ -59,7 +54,8 @@ export async function becomeSellerAction(): Promise<BecomeSellerResponse> {
     return {
       success: true,
       token: result.data.auth.token,
-      isSeller: result.data.user?.isSeller ?? true,
+      role: result.data.user?.role ?? "Seller",
+      accessTokenExpires: Date.now() + result.data.auth.expiresAt,
     };
   }
 

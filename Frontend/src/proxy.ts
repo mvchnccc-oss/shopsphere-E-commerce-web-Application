@@ -12,7 +12,9 @@ export default async function middleware(req: NextRequest) {
   });
 
   const { pathname } = req.nextUrl;
-  const isSeller = (token as any)?.isSeller ?? false;
+  const role = (token as any)?.role ?? "Customer";
+  const isSeller = role === "Seller";
+  const isAdmin = role === "Admin";
   const isAuthenticated = !!token;
 
   // مش متسجل → روح login
@@ -27,17 +29,28 @@ export default async function middleware(req: NextRequest) {
 
   // ── Seller ───────────────────────────────────────────────
   if (isSeller) {
-    // السيلر يقدر يدخل: dashboard + profile + admin
+
     const sellerAllowed =
-      pathname === "/profile" || pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+      pathname === "/profile" || pathname.startsWith("/dashboard");
 
     if (!sellerAllowed) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
+  // ── Admin ───────────────────────────────────────────────
+  if (isAdmin) {
+    
+    const adminAllowed =
+      pathname === "/profile" || pathname.startsWith("/admin");
+
+    if (!adminAllowed) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+  }
+
   // ── Customer ─────────────────────────────────────────────
-  if (!isSeller && isAuthenticated) {
+  if (!isSeller && !isAdmin && isAuthenticated) {
     // الكاستومر ميدخلش dashboard ولا admin
     if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
       return NextResponse.redirect(new URL("/", req.url));
