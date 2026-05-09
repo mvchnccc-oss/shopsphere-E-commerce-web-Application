@@ -7,7 +7,7 @@ export interface AdminUser {
   id: number;
   name: string;
   email: string;
-  isSeller: boolean;
+  role: string;
   createdAt?: string;
 }
 
@@ -62,8 +62,8 @@ export async function getAdminStatsAction(): Promise<AdminResult<AdminStats>> {
   const products: any[] = productsRes.status === "Success" ? (productsRes.data?.products ?? productsRes.data ?? []) : [];
   const orders: any[] = ordersRes.status === "Success" ? (ordersRes.data?.orders ?? ordersRes.data ?? []) : [];
 
-  const sellers = users.filter((u) => u.isSeller);
-  const customers = users.filter((u) => !u.isSeller);
+  const sellers = users.filter((u) => u.role === "Seller");
+  const customers = users.filter((u) => u.role === "Customer");
 
   const totalRevenue = orders.reduce((sum: number, order: any) => {
     return sum + (order.orderItems ?? []).reduce(
@@ -116,7 +116,7 @@ export async function getAdminUsersAction(): Promise<AdminResult<AdminUser[]>> {
       id: u.id,
       name: u.name,
       email: u.email,
-      isSeller: u.isSeller ?? false,
+      role: u.role ?? "Customer",
       createdAt: u.createdAt,
     })),
   };

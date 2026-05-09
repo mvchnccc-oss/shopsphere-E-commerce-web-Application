@@ -7,7 +7,7 @@ import { AlertCircle } from "lucide-react";
 export default async function Profile() {
   const session = await getServerSession(authOptions);
   const { token } = session!;
-  const isSeller = (session as any).isSeller ?? false;
+  const isSeller = (session as any).role === "Seller";
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/me`, {
@@ -27,8 +27,8 @@ export default async function Profile() {
 
     const body: GetProfileResponse | null = await response.json();
 
-    // Merge isSeller from session (more reliable than API in some cases)
-    const data = body ? { ...body, isSeller: body.isSeller ?? isSeller } : null;
+    // Merge role from session (more reliable than API in some cases)
+    const data = body ? { ...body, role: body.role ?? ((session as any).role ?? "Customer") } : null;
 
     return <ProfileSection data={data} />;
   } catch (error) {

@@ -1,7 +1,7 @@
 export interface GetProfileResponse {
   name: string;
   email: string;
-  isSeller: boolean;
+  role: string;
 }
 
 export type UpdateProfileResponse =
@@ -12,5 +12,5 @@ export type UpdateProfileResponse =
   | { success: false; message?: string };
 
 export type BecomeSellerResponse =
-  | { success: true; token: string; isSeller: boolean }
+  | { success: true; token: string; role: string; accessTokenExpires: number }
   | { success: false; message?: string };

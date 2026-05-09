@@ -60,7 +60,8 @@ export default async function fetchApi(
       status = "BadRequest";
     }
 
-    console.error(`Request ${method} ${api} failed, ${status}`);
+    const errorBody = await res.text().catch(() => "(no body)");
+    console.error(`Request ${method} ${api} failed — HTTP ${res.status}: ${errorBody}`);
     return { status };
   } catch (e) {
     console.error(`Request ${method} ${api} failed, ServerNotFound`);

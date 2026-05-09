@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const { data: session } = useSession();
-  const isSeller = (session as any)?.isSeller ?? false;
+  const isSeller = (session as any)?.role === "Seller";
   const pathname = usePathname();
 
   const shopLinks = [

@@ -93,12 +93,12 @@ export default function AdminUsersPage() {
   const filtered = users.filter((u) => {
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
                         u.email.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === "all" || (filter === "seller" ? u.isSeller : !u.isSeller);
+    const matchFilter = filter === "all" || (filter === "seller" ? u.role === "Seller" : u.role === "Customer");
     return matchSearch && matchFilter;
   });
 
-  const sellers   = users.filter((u) => u.isSeller).length;
-  const customers = users.filter((u) => !u.isSeller).length;
+  const sellers   = users.filter((u) => u.role === "Seller").length;
+  const customers = users.filter((u) => u.role === "Customer").length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -193,12 +193,14 @@ export default function AdminUsersPage() {
                   <td className="px-5 py-3.5 text-slate-400 hidden sm:table-cell">{user.email}</td>
                   <td className="px-5 py-3.5">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                      user.isSeller
+                      user.role === "Seller"
                         ? "bg-violet-500/15 text-violet-400"
+                        : user.role === "Admin"
+                        ? "bg-amber-500/15 text-amber-400"
                         : "bg-emerald-500/15 text-emerald-400"
                     }`}>
-                      {user.isSeller ? <UserCheckIcon className="size-3" /> : <UserIcon className="size-3" />}
-                      {user.isSeller ? "Seller" : "Customer"}
+                      {user.role === "Seller" ? <UserCheckIcon className="size-3" /> : <UserIcon className="size-3" />}
+                      {user.role}
                     </span>
                   </td>
                   <td className="px-5 py-3.5 text-right">

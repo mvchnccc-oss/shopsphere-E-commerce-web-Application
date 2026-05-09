@@ -18,7 +18,7 @@ import CartNavbarDropdown from "./cart/navbar-dropdown";
 
 export default function Navbar() {
   const { status, data: session } = useSession();
-  const isSeller = (session as any)?.isSeller ?? false;
+  const isSeller = (session as any)?.role === "Seller";
   const pathname = usePathname();
   const [toggler, setToggler] = useState(false);
 
