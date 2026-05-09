@@ -22,7 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfiguration {
-
     @Autowired
     private CorsConfigurationSource corsConfigurationSource;
 
@@ -30,7 +29,6 @@ public class SecurityConfiguration {
     public AuthenticationFilter authenticationFilter(AuthenticationService authenticationService) {
         return new AuthenticationFilter(authenticationService);
     }
-
 
     @Bean
     public AppUserDetailsService productUserDetailsService(UserRepository userRepository) {
@@ -40,20 +38,20 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter filter) {
         http.authorizeHttpRequests(
-                        auth ->
-                                auth
-                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                                        .requestMatchers("/v3/**").permitAll()
-                                        .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Admin.toString())
-                                        .anyRequest().authenticated()
-                )
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                auth ->
+                    auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasAuthority(UserRole.Admin.toString())
+                        .anyRequest().authenticated()
+            )
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

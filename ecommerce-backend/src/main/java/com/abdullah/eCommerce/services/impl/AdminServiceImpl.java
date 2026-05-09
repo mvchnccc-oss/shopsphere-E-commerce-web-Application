@@ -37,9 +37,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public GetAdminDashboardStatsResponse getAdminDashboardStats() {
         var roleCount = userRepository
-                .countGroupedByRole()
-                .stream()
-                .collect(Collectors.toMap(UserRoleCount::getRole, UserRoleCount::getCount));
+            .countGroupedByRole()
+            .stream()
+            .collect(Collectors.toMap(UserRoleCount::getRole, UserRoleCount::getCount));
 
         long numberOfSellers = roleCount.getOrDefault(UserRole.Seller, 0L);
         long numberOfCustomers = roleCount.getOrDefault(UserRole.Customer, 0L);
@@ -51,32 +51,32 @@ public class AdminServiceImpl implements AdminService {
         BigDecimal totalRevenue = orderItemRepository.getTotalRevenue();
 
         Map<String, BigDecimal> revenueByMonth = orderRepository.getMonthlyRevenue()
-                .stream().collect(Collectors.toMap(OrderMonthlyRevenue::getMonth, OrderMonthlyRevenue::getTotal));
+            .stream().collect(Collectors.toMap(OrderMonthlyRevenue::getMonth, OrderMonthlyRevenue::getTotal));
 
         return GetAdminDashboardStatsResponse.builder()
-                .numberOfUsers(totalNumberOfUsers)
-                .numberOfSellers(numberOfSellers)
-                .numberOfCustomers(numberOfCustomers)
-                .numberOfProducts(numberOfProducts)
-                .numberOfOrders(numberOfOrders)
-                .totalRevenue(totalRevenue)
-                .revenueByMonth(revenueByMonth)
-                .build();
+            .numberOfUsers(totalNumberOfUsers)
+            .numberOfSellers(numberOfSellers)
+            .numberOfCustomers(numberOfCustomers)
+            .numberOfProducts(numberOfProducts)
+            .numberOfOrders(numberOfOrders)
+            .totalRevenue(totalRevenue)
+            .revenueByMonth(revenueByMonth)
+            .build();
     }
 
     @Override
     public GetAllOrdersResponse getOrders(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> ordersPage = orderRepository.findAll(pageable);
+        Page<Order> ordersPage = orderRepository.findAllOrderByOrderedAtDesc(pageable);
 
         List<OrderDto> orders = orderMapper.toOrdersDto(ordersPage.getContent());
 
         return new GetAllOrdersResponse(
-                orders,
-                ordersPage.getNumber(),
-                ordersPage.getTotalPages(),
-                ordersPage.getTotalElements(),
-                ordersPage.getSize()
+            orders,
+            ordersPage.getNumber(),
+            ordersPage.getTotalPages(),
+            ordersPage.getTotalElements(),
+            ordersPage.getSize()
         );
     }
 }
