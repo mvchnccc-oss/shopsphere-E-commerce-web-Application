@@ -29,9 +29,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false, columnDefinition = "smallint DEFAULT 0")
+    private UserRole role;
+
     @Column(nullable = false)
     @ColumnDefault("false")
-    private Boolean isSeller = false;
+    private boolean isLocked;
 
     @OneToMany(mappedBy = "seller")
     private List<Product> products = new ArrayList<>();

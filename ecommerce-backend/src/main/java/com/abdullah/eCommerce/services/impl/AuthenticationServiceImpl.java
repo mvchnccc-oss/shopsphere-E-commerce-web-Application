@@ -1,6 +1,7 @@
 package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.exceptions.UserAlreadyExistsException;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.security.AppUserDetailsService;
@@ -45,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .name(name)
-                .isSeller(false)
+                .role(UserRole.Customer)
                 .build();
         userRepository.save(user);
 

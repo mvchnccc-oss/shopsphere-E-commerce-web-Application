@@ -7,6 +7,7 @@ import com.abdullah.eCommerce.dtos.requests.UpdateUserRequest;
 import com.abdullah.eCommerce.dtos.responses.AuthResponse;
 import com.abdullah.eCommerce.dtos.responses.UpdateUserResponse;
 import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.mappers.UserMapper;
 import com.abdullah.eCommerce.security.UserPrincipal;
 import com.abdullah.eCommerce.services.AuthenticationService;
@@ -30,11 +31,10 @@ public class AuthController {
 
     @PostMapping("login")
     public AuthResponse login(@RequestBody @Valid LoginRequest body) {
-        UserDetails user = authenticationService.authenticate(body.email, body.password);
-        String token = authenticationService.generateToken(user);
-        boolean isSeller = userService.isSeller(user);
+        UserPrincipal principal = (UserPrincipal) authenticationService.authenticate(body.email, body.password);
+        String token = authenticationService.generateToken(principal);
 
-        return new AuthResponse(token, expiresAt, isSeller);
+        return new AuthResponse(token, expiresAt, principal.getRole());
     }
 
     @PostMapping("signup")
@@ -42,7 +42,7 @@ public class AuthController {
         UserDetails user = authenticationService.createUser(body.email, body.password, body.name);
         String token = authenticationService.generateToken(user);
 
-        return new AuthResponse(token, expiresAt, false);
+        return new AuthResponse(token, expiresAt, UserRole.Customer);
     }
 
     @GetMapping("me")
@@ -55,7 +55,7 @@ public class AuthController {
         User updatedUser = userService.updateUser(userMapper.toUser(body));
 
         String token = authenticationService.generateToken(new UserPrincipal(updatedUser));
-        AuthResponse authResponse = new AuthResponse(token, expiresAt, updatedUser.getIsSeller());
+        AuthResponse authResponse = new AuthResponse(token, expiresAt, updatedUser.getRole());
 
         return new UpdateUserResponse(userMapper.toUserDto(updatedUser), authResponse);
     }

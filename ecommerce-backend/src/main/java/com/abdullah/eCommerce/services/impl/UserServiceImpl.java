@@ -1,13 +1,13 @@
 package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.exceptions.UserAlreadyExistsException;
 import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -38,15 +38,8 @@ public class UserServiceImpl implements UserService {
 
         user.setName(updatedUser.getName());
         user.setEmail(updatedUser.getEmail());
-        user.setIsSeller(updatedUser.getIsSeller());
+        user.setRole(updatedUser.getRole() == UserRole.Seller ? UserRole.Seller : UserRole.Customer);
 
         return userRepository.save(user);
-    }
-
-    @Override
-    public boolean isSeller(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority()
-                        .equals("ROLE_SELLER"));
     }
 }

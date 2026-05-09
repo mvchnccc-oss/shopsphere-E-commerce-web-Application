@@ -1,9 +1,9 @@
 package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.exceptions.UserAlreadyExistsException;
 import com.abdullah.eCommerce.repositories.UserRepository;
-import com.abdullah.eCommerce.security.UserPrincipal;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
@@ -25,11 +24,8 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private SecurityContextHolder securityContextHolder;
-
-    @InjectMocks
     @Spy
+    @InjectMocks
     private UserServiceImpl userService;
 
     @Nested
@@ -82,13 +78,13 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Update user")
         void updateUser() {
-            User repoUser = User.builder().name("name").email("email").isSeller(true).build();
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
                     .name("updatedName")
                     .email("updatedEmail")
-                    .isSeller(false)
+                    .role(UserRole.Customer)
                     .build();
 
             // new email is not taken by anyone
@@ -100,20 +96,20 @@ class UserServiceImplTest {
             verify(userRepository).save(argThat(saved ->
                     saved.getName().equals(updatedUser.getName()) &&
                             saved.getEmail().equals(updatedUser.getEmail()) &&
-                            saved.getIsSeller().equals(updatedUser.getIsSeller())
+                            saved.getRole().equals(updatedUser.getRole())
             ));
         }
 
         @Test
         @DisplayName("Update user without changing email")
         void updateUserWithSameEMail() {
-            User repoUser = User.builder().name("name").email("email").isSeller(true).build();
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
                     .name("updatedName")
                     .email("email")
-                    .isSeller(false)
+                    .role(UserRole.Customer)
                     .build();
 
             when(userRepository.findByEmail(repoUser.getEmail()))
@@ -129,13 +125,13 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Throw when new email is already taken")
         void throwWhenEmailAlreadyTaken() {
-            User repoUser = User.builder().name("name").email("email").isSeller(true).build();
+            User repoUser = User.builder().name("name").email("email").role(UserRole.Seller).build();
             doReturn(repoUser).when(userService).getUser();
 
             User updatedUser = User.builder()
                     .name("updatedName")
                     .email("takenEmail")
-                    .isSeller(false)
+                    .role(UserRole.Customer)
                     .build();
 
             User otherUser = User.builder().email("takenEmail").build();
@@ -146,14 +142,5 @@ class UserServiceImplTest {
 
             assertThrows(UserAlreadyExistsException.class, () -> userService.updateUser(updatedUser));
         }
-    }
-
-    @Test
-    void isSeller() {
-        UserDetails sellerUser = new UserPrincipal(User.builder().isSeller(true).build());
-        assertTrue(userService.isSeller(sellerUser));
-
-        UserDetails nonSellerUser = new UserPrincipal(User.builder().isSeller(false).build());
-        assertFalse(userService.isSeller(nonSellerUser));
     }
 }

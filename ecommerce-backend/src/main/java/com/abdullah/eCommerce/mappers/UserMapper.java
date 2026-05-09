@@ -10,6 +10,6 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
     UserDto toUserDto(User user);
 
-    @Mapping(source = "user.isSeller", target = "isSeller")
+    @Mapping(source = "user.role", target = "role")
     User toUser(UpdateUserRequest user);
 }

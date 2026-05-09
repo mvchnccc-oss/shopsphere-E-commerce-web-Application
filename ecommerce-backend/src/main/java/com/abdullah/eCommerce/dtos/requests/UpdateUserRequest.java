@@ -1,5 +1,6 @@
 package com.abdullah.eCommerce.dtos.requests;
 
+import com.abdullah.eCommerce.entities.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,5 +24,5 @@ public class UpdateUserRequest {
     @NotNull(message = NAME_REQUIRED_ERROR_MESSAGE)
     private String name;
 
-    private Boolean isSeller;
+    private UserRole role;
 }

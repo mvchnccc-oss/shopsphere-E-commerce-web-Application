@@ -134,6 +134,8 @@ public class GlobalExceptionHandler {
         );
     }
 
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseErrorDto> handelExceptions(
             Exception ex
