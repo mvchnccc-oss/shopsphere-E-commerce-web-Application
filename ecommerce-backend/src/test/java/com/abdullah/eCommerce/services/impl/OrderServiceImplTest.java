@@ -7,8 +7,8 @@ import com.abdullah.eCommerce.mappers.*;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
 import com.abdullah.eCommerce.repositories.OrderItemRepository;
 import com.abdullah.eCommerce.repositories.OrderRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.OrderService;
-import com.abdullah.eCommerce.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +51,7 @@ class OrderServiceImplTest {
     private OrderItemRepository orderItemRepository;
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Mock
     private CartItemRepository cartItemRepository;
@@ -63,8 +63,8 @@ class OrderServiceImplTest {
         orderService = new OrderServiceImpl(
             orderRepository,
             orderItemRepository,
-            userService,
             cartItemRepository,
+            userRepository,
             orderMapper,
             orderItemMapper,
             addressMapper
@@ -74,45 +74,38 @@ class OrderServiceImplTest {
     @Nested
     @DisplayName("Place Order")
     class PlaceOrder {
-
+        @DisplayName("Cart with items")
         @Test
-        @DisplayName("From Cart")
         void placeOrderFromCart() {
+            final long userId = 1L;
             Product product = Product.builder().id(1L).price(new BigDecimal("99.99")).build();
 
-            CartItem cartItem = CartItem.builder()
+            List<CartItem> cartItems = List.of(CartItem.builder()
                 .product(product)
                 .quantity(2)
-                .build();
-
-            User user = User.builder()
-                .id(1L)
-                .cartItems(new ArrayList<>(List.of(cartItem)))
-                .build();
-
-            PlaceOrderRequest request = new PlaceOrderRequest(
-                "123 Street", "City", "Country", "12345"
+                .build()
             );
 
-            when(userService.getUser()).thenReturn(user);
+            when(cartItemRepository.findByUserId(userId)).thenReturn(cartItems);
+            when(userRepository.getReferenceById(userId))
+                .thenReturn(User.builder().id(userId).build());
 
-            orderService.placeOrderFromCart(request);
+            orderService.placeOrderFromCart(userId, new PlaceOrderRequest(
+                "123 Street", "City", "Country", "12345"
+            ));
 
             verify(orderRepository).save(any(Order.class));
-            verify(cartItemRepository).deleteByUserId(1L);
+            verify(cartItemRepository).deleteByUserId(userId);
         }
 
         @Test
         @DisplayName("Empty Cart Returns Null")
         void placeOrderFromCartEmpty() {
-            User user = User.builder()
-                .id(1L)
-                .cartItems(Collections.emptyList())
-                .build();
+            final long userId = 1L;
 
-            when(userService.getUser()).thenReturn(user);
+            when(cartItemRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
-            Long orderId = orderService.placeOrderFromCart(new PlaceOrderRequest(
+            Long orderId = orderService.placeOrderFromCart(userId, new PlaceOrderRequest(
                 "123 Street", "City", "Country", "12345"
             ));
 
@@ -125,25 +118,22 @@ class OrderServiceImplTest {
     @Nested
     @DisplayName("Get Orders")
     class GetOrders {
-
         @Test
         @DisplayName("All")
         void getOrders() {
-            User user = User.builder().id(1L).build();
+            final long userId = 1L;
 
             List<Order> orders = IntStream.rangeClosed(1, 5)
                 .mapToObj(i -> Order.builder()
                     .id((long) i)
-                    .user(user)
                     .orderedAt(Instant.now().minusSeconds(i * 86400L))
                     .orderItems(Collections.emptyList())
                     .build())
                 .toList();
 
-            when(userService.getUser()).thenReturn(user);
-            when(orderRepository.findByUserIdOrderByOrderedAtDesc(1L)).thenReturn(orders);
+            when(orderRepository.findByUserIdOrderByOrderedAtDesc(userId)).thenReturn(orders);
 
-            List<OrderDto> result = orderService.getOrders();
+            List<OrderDto> result = orderService.getOrders(userId);
 
             assertEquals(5, result.size());
             verify(orderRepository).findByUserIdOrderByOrderedAtDesc(1L);
@@ -152,12 +142,12 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("Empty")
         void getOrdersEmpty() {
-            User user = User.builder().id(1L).build();
+            final long userId = 1L;
 
-            when(userService.getUser()).thenReturn(user);
-            when(orderRepository.findByUserIdOrderByOrderedAtDesc(1L)).thenReturn(Collections.emptyList());
+            when(orderRepository.findByUserIdOrderByOrderedAtDesc(userId))
+                .thenReturn(Collections.emptyList());
 
-            List<OrderDto> result = orderService.getOrders();
+            List<OrderDto> result = orderService.getOrders(userId);
 
             assertTrue(result.isEmpty());
         }
@@ -166,7 +156,6 @@ class OrderServiceImplTest {
     @Nested
     @DisplayName("Get Seller Orders")
     class GetSellerOrders {
-
         @Test
         @DisplayName("All")
         void getSellerOrders() {
@@ -192,25 +181,22 @@ class OrderServiceImplTest {
                     .build())
                 .toList();
 
-            when(userService.getUser()).thenReturn(user);
-            when(orderItemRepository.findAllByProductSellerId(1L)).thenReturn(orderItems);
+            when(orderItemRepository.findAllByProductSellerId(user.getId())).thenReturn(orderItems);
 
-            List<OrderDto> result = orderService.getSellerOrders();
+            List<OrderDto> result = orderService.getSellerOrders(user.getId());
 
             assertEquals(1, result.size());
-            verify(orderItemRepository).findAllByProductSellerId(1L);
+            verify(orderItemRepository).findAllByProductSellerId(user.getId());
         }
 
         @Test
         @DisplayName("Empty")
         void getSellerOrdersEmpty() {
-            User user = User.builder().id(1L).build();
+            final long userId = 1L;
 
-            when(userService.getUser()).thenReturn(user);
-            when(orderItemRepository.findAllByProductSellerId(1L)).thenReturn(Collections.emptyList());
+            when(orderItemRepository.findAllByProductSellerId(userId)).thenReturn(Collections.emptyList());
 
-            List<OrderDto> result = orderService.getSellerOrders();
-
+            List<OrderDto> result = orderService.getSellerOrders(userId);
             assertTrue(result.isEmpty());
         }
     }

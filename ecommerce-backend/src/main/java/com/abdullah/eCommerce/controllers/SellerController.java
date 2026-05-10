@@ -7,6 +7,7 @@ import com.abdullah.eCommerce.services.OrderService;
 import com.abdullah.eCommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,14 +21,14 @@ public class SellerController {
     private final OrderService orderService;
 
     @GetMapping("/products")
-    public GetSellerProductsResponse getSellerProducts() {
-        List<SellerProductDto> products = productService.getUserProducts();
+    public GetSellerProductsResponse getSellerProducts(@RequestAttribute Long userId) {
+        List<SellerProductDto> products = productService.getUserProducts(userId);
 
         return new GetSellerProductsResponse(products);
     }
 
     @GetMapping("/orders")
-    public GetSellerOrdersResponse getSellerOrders() {
-        return new GetSellerOrdersResponse(orderService.getSellerOrders());
+    public GetSellerOrdersResponse getSellerOrders(@RequestAttribute Long userId) {
+        return new GetSellerOrdersResponse(orderService.getSellerOrders(userId));
     }
 }

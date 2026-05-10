@@ -17,19 +17,19 @@ public class CartController {
     private final CartService cartService;
 
     @GetMapping
-    public GetCartResponse getCart() {
-        List<CartItemDto> cartItems = cartService.getCartItems();
+    public GetCartResponse getCart(@RequestAttribute Long userId) {
+        List<CartItemDto> cartItems = cartService.getCartItems(userId);
 
         return new GetCartResponse(cartItems);
     }
 
     @PostMapping
-    public void addToCart(@RequestBody @Valid UpdateCartRequest body) {
-        cartService.updateQuantity(body.productId, body.quantity);
+    public void addToCart(@RequestAttribute Long userId, @RequestBody @Valid UpdateCartRequest body) {
+        cartService.updateQuantity(userId, body.productId, body.quantity);
     }
 
     @DeleteMapping
-    public void clear() {
-        cartService.clear();
+    public void clear(@RequestAttribute Long userId) {
+        cartService.clear(userId);
     }
 }

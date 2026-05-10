@@ -18,15 +18,18 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public GetOrdersResponse getOrders() {
-        List<OrderDto> orders = orderService.getOrders();
+    public GetOrdersResponse getOrders(@RequestAttribute Long userId) {
+        List<OrderDto> orders = orderService.getOrders(userId);
 
         return new GetOrdersResponse(orders);
     }
 
     @PostMapping
-    public PlaceOrderResponse placeOrder(@Valid @RequestBody PlaceOrderRequest body) {
-        Long id = orderService.placeOrderFromCart(body);
+    public PlaceOrderResponse placeOrder(
+        @RequestAttribute Long userId,
+        @Valid @RequestBody PlaceOrderRequest body
+    ) {
+        Long id = orderService.placeOrderFromCart(userId, body);
 
         return new PlaceOrderResponse(id);
     }

@@ -11,8 +11,8 @@ import com.abdullah.eCommerce.mappers.ProductMapper;
 import com.abdullah.eCommerce.repositories.CategoryRepository;
 import com.abdullah.eCommerce.repositories.ProductImageRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.ProductService;
-import com.abdullah.eCommerce.services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final ProductMapper productMapper;
 
     @Override
@@ -91,18 +91,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void createProduct(CreateProductRequest body) {
+    public void createProduct(Long userId, CreateProductRequest body) {
         Category category = categoryRepository.findByName(body.category)
             .orElseThrow(() -> new CategoryNotFoundException(0L));
-
-        User user = userService.getUser();
-
+        
         Product product = Product.builder()
             .category(category)
             .price(body.price)
             .description(body.description)
             .title(body.title)
-            .seller(user)
+            .seller(userRepository.getReferenceById(userId))
             .build();
         productRepository.save(product);
 
@@ -120,9 +118,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void deleteProduct(Long id) {
-        User user = userService.getUser();
-
+    public void deleteProduct(User user, Long id) {
         if (user.getRole() == UserRole.Admin) {
             productRepository.deleteById(id);
             return;
@@ -133,9 +129,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void updateProduct(Long id, CreateProductRequest body) {
-        User user = userService.getUser();
-        Product product = productRepository.findByIdAndSellerId(id, user.getId())
+    public void updateProduct(Long userId, Long id, CreateProductRequest body) {
+        Product product = productRepository.findByIdAndSellerId(id, userId)
             .orElseThrow(() -> new ProductNotFoundException(id));
 
         if (!body.category.equals(product.getCategory().getName())) {
@@ -168,9 +163,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<SellerProductDto> getUserProducts() {
-        User user = userService.getUser();
-        List<Product> products = productRepository.findBySellerId(user.getId());
+    public List<SellerProductDto> getUserProducts(Long userId) {
+        List<Product> products = productRepository.findBySellerId(userId);
 
         return productMapper.toSellerDtoList(products);
     }

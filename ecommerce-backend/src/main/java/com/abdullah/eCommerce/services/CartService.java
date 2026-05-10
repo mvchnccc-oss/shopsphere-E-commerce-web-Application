@@ -5,9 +5,9 @@ import com.abdullah.eCommerce.dtos.CartItemDto;
 import java.util.List;
 
 public interface CartService {
-    List<CartItemDto> getCartItems();
+    List<CartItemDto> getCartItems(Long userId);
 
-    void updateQuantity(Long productId, int quantity);
+    void updateQuantity(Long userId, Long productId, int quantity);
 
-    void clear();
+    void clear(Long userId);
 }

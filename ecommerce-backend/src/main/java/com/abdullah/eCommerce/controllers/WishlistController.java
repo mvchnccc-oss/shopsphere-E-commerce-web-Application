@@ -16,19 +16,22 @@ public class WishlistController {
     private final WishlistService wishlistService;
 
     @GetMapping
-    public GetWishlistResponse getWishlist() {
-        List<Long> wishlistItems = wishlistService.getWishlist();
+    public GetWishlistResponse getWishlist(@RequestAttribute Long userId) {
+        List<Long> wishlistItems = wishlistService.getWishlist(userId);
 
         return new GetWishlistResponse(wishlistItems);
     }
 
     @PostMapping
-    public void wishlistProduct(@Valid @RequestBody WishlistProductRequestDto body) {
-        wishlistService.wishlist(body.productId);
+    public void wishlistProduct(
+        @RequestAttribute Long userId,
+        @Valid @RequestBody WishlistProductRequestDto body
+    ) {
+        wishlistService.wishlist(userId, body.productId);
     }
 
     @DeleteMapping("/{id}")
-    public void unWishlistProduct(@PathVariable Long id) {
-        wishlistService.unWishlist(id);
+    public void unWishlistProduct(@RequestAttribute Long userId, @PathVariable Long id) {
+        wishlistService.unWishlist(userId, id);
     }
 }

@@ -10,8 +10,8 @@ import com.abdullah.eCommerce.mappers.CategoryMapperImpl;
 import com.abdullah.eCommerce.mappers.ProductMapperImpl;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.CartService;
-import com.abdullah.eCommerce.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,12 +35,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @Import({CartItemMapperImpl.class, ProductMapperImpl.class, CategoryMapperImpl.class})
 class CartServiceImplTest {
-
     @Autowired
     private CartItemMapper cartItemMapper;
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Mock
     private ProductRepository productRepository;
@@ -53,7 +52,7 @@ class CartServiceImplTest {
     @BeforeEach
     void setUp() {
         cartService = new CartServiceImpl(
-            userService,
+            userRepository,
             productRepository,
             cartItemRepository,
             cartItemMapper
@@ -63,37 +62,33 @@ class CartServiceImplTest {
     @Nested
     @DisplayName("Get Cart Items")
     class GetCartItems {
-
         @Test
         @DisplayName("All")
         void getCartItems() {
+            final long userId = 1;
+
             List<CartItem> cartItems = IntStream.rangeClosed(1, 3)
                 .mapToObj(i -> CartItem.builder()
-                    .id(new CartItem.Id(1L, (long) i))
+                    .id(new CartItem.Id(userId, (long) i))
                     .product(Product.builder().id((long) i).build())
                     .quantity(i)
                     .build())
                 .toList();
 
-            User user = User.builder().id(1L).cartItems(cartItems).build();
+            when(cartItemRepository.findByUserId(userId)).thenReturn(cartItems);
 
-            when(userService.getUser()).thenReturn(user);
-
-            List<CartItemDto> result = cartService.getCartItems();
-
+            List<CartItemDto> result = cartService.getCartItems(userId);
             assertEquals(3, result.size());
-            verify(userService).getUser();
         }
 
         @Test
         @DisplayName("Empty")
         void getCartItemsEmpty() {
-            User user = User.builder().id(1L).cartItems(Collections.emptyList()).build();
+            final long userId = 1;
 
-            when(userService.getUser()).thenReturn(user);
+            when(cartItemRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
-            List<CartItemDto> result = cartService.getCartItems();
-
+            List<CartItemDto> result = cartService.getCartItems(userId);
             assertTrue(result.isEmpty());
         }
     }
@@ -101,33 +96,34 @@ class CartServiceImplTest {
     @Nested
     @DisplayName("Update Quantity")
     class UpdateQuantity {
-
         @Test
         @DisplayName("Remove Item When Quantity Is Zero")
         void updateQuantityZero() {
-            User user = User.builder().id(1L).build();
+            final long userId = 1;
+            final long productId = 1;
 
-            when(userService.getUser()).thenReturn(user);
+            cartService.updateQuantity(userId, productId, 0);
 
-            cartService.updateQuantity(1L, 0);
-
-            verify(cartItemRepository).deleteById(new CartItem.Id(1L, 1L));
+            verify(cartItemRepository).deleteById(new CartItem.Id(userId, productId));
             verify(cartItemRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("Add New Item When Not In Cart")
+        @DisplayName("Add New Item")
         void updateQuantityNewItem() {
             User user = User.builder().id(1L).build();
             Product product = Product.builder().id(1L).build();
 
-            when(userService.getUser()).thenReturn(user);
-            when(cartItemRepository.findById(new CartItem.Id(1L, 1L))).thenReturn(Optional.empty());
-            when(productRepository.getReferenceById(1L)).thenReturn(product);
+            when(cartItemRepository.findById(new CartItem.Id(user.getId(), product.getId())))
+                .thenReturn(Optional.empty());
 
-            cartService.updateQuantity(1L, 3);
+            when(userRepository.getReferenceById(user.getId())).thenReturn(user);
+            when(productRepository.getReferenceById(product.getId())).thenReturn(product);
 
-            verify(cartItemRepository).save(any(CartItem.class));
+            final int quantity = 3;
+
+            cartService.updateQuantity(user.getId(), product.getId(), quantity);
+            verify(cartItemRepository).save(argThat(item -> item.getQuantity() == quantity));
         }
 
         @Test
@@ -142,11 +138,9 @@ class CartServiceImplTest {
                 .quantity(1)
                 .build();
 
-            when(userService.getUser()).thenReturn(user);
-            when(cartItemRepository.findById(new CartItem.Id(1L, 1L))).thenReturn(Optional.of(existingItem));
+            when(cartItemRepository.findById(existingItem.getId())).thenReturn(Optional.of(existingItem));
 
-            cartService.updateQuantity(1L, 5);
-
+            cartService.updateQuantity(user.getId(), 1L, 5);
             assertEquals(5, existingItem.getQuantity());
             verify(cartItemRepository).save(existingItem);
         }
@@ -159,13 +153,10 @@ class CartServiceImplTest {
         @Test
         @DisplayName("Clears All Items")
         void clear() {
-            User user = User.builder().id(1L).build();
-
-            when(userService.getUser()).thenReturn(user);
-
-            cartService.clear();
-
-            verify(cartItemRepository).deleteByUserId(1L);
+            final long userId = 1;
+            
+            cartService.clear(userId);
+            verify(cartItemRepository).deleteByUserId(userId);
         }
     }
 }

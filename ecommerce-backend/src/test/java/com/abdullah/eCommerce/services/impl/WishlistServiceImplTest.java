@@ -6,8 +6,8 @@ import com.abdullah.eCommerce.entities.WishlistItem;
 import com.abdullah.eCommerce.mappers.WishlistMapper;
 import com.abdullah.eCommerce.mappers.WishlistMapperImpl;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.repositories.WishlistItemRepository;
-import com.abdullah.eCommerce.services.UserService;
 import com.abdullah.eCommerce.services.WishlistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class WishlistServiceImplTest {
     private WishlistMapper wishlistMapper;
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Mock
     private WishlistItemRepository wishlistItemRepository;
@@ -51,7 +51,7 @@ class WishlistServiceImplTest {
     @BeforeEach
     void setUp() {
         wishlistService = new WishlistServiceImpl(
-            userService,
+            userRepository,
             wishlistItemRepository,
             productRepository,
             wishlistMapper
@@ -68,10 +68,10 @@ class WishlistServiceImplTest {
             User user = User.builder().id(1L).build();
             Product product = Product.builder().id(1L).build();
 
-            when(userService.getUser()).thenReturn(user);
+            when(userRepository.getReferenceById(1L)).thenReturn(user);
             when(productRepository.getReferenceById(1L)).thenReturn(product);
 
-            wishlistService.wishlist(1L);
+            wishlistService.wishlist(1L, 1L);
 
             verify(wishlistItemRepository).save(any(WishlistItem.class));
         }
@@ -79,11 +79,7 @@ class WishlistServiceImplTest {
         @Test
         @DisplayName("Remove From Wishlist")
         void unWishlist() {
-            User user = User.builder().id(1L).build();
-
-            when(userService.getUser()).thenReturn(user);
-
-            wishlistService.unWishlist(1L);
+            wishlistService.unWishlist(1L, 1L);
 
             verify(wishlistItemRepository).deleteById(new WishlistItem.Id(1L, 1L));
         }
@@ -106,10 +102,9 @@ class WishlistServiceImplTest {
                     .build())
                 .toList();
 
-            when(userService.getUser()).thenReturn(user);
             when(wishlistItemRepository.findByUserId(1L)).thenReturn(wishlistItems);
 
-            List<Long> result = wishlistService.getWishlist();
+            List<Long> result = wishlistService.getWishlist(1L);
 
             assertEquals(5, result.size());
             assertEquals(List.of(1L, 2L, 3L, 4L, 5L), result);
@@ -120,12 +115,9 @@ class WishlistServiceImplTest {
         @Test
         @DisplayName("Empty")
         void getWishlistEmpty() {
-            User user = User.builder().id(1L).build();
-
-            when(userService.getUser()).thenReturn(user);
             when(wishlistItemRepository.findByUserId(1L)).thenReturn(Collections.emptyList());
 
-            List<Long> result = wishlistService.getWishlist();
+            List<Long> result = wishlistService.getWishlist(1L);
 
             assertTrue(result.isEmpty());
 

@@ -4,10 +4,7 @@ import com.abdullah.eCommerce.dtos.ProductDto;
 import com.abdullah.eCommerce.dtos.SellerProductDto;
 import com.abdullah.eCommerce.dtos.requests.CreateProductRequest;
 import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
-import com.abdullah.eCommerce.entities.Category;
-import com.abdullah.eCommerce.entities.Product;
-import com.abdullah.eCommerce.entities.ProductImage;
-import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.*;
 import com.abdullah.eCommerce.exceptions.CategoryNotFoundException;
 import com.abdullah.eCommerce.exceptions.ProductNotFoundException;
 import com.abdullah.eCommerce.mappers.CategoryMapperImpl;
@@ -16,8 +13,8 @@ import com.abdullah.eCommerce.mappers.ProductMapperImpl;
 import com.abdullah.eCommerce.repositories.CategoryRepository;
 import com.abdullah.eCommerce.repositories.ProductImageRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.ProductService;
-import com.abdullah.eCommerce.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -61,7 +58,7 @@ class ProductServiceImplTest {
     private ProductImageRepository productImageRepository;
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     private ProductService productService;
 
@@ -71,7 +68,7 @@ class ProductServiceImplTest {
             productRepository,
             categoryRepository,
             productImageRepository,
-            userService,
+            userRepository,
             productMapper
         );
     }
@@ -223,9 +220,9 @@ class ProductServiceImplTest {
             User user = User.builder().id(1L).name("Seller").build();
 
             when(categoryRepository.findByName("Electronics")).thenReturn(Optional.of(category));
-            when(userService.getUser()).thenReturn(user);
+            when(userRepository.getReferenceById(user.getId())).thenReturn(user);
 
-            productService.createProduct(request);
+            productService.createProduct(user.getId(), request);
 
             verify(productRepository).save(any(Product.class));
             verify(productImageRepository, never()).saveAll(any());
@@ -242,9 +239,9 @@ class ProductServiceImplTest {
             User user = User.builder().id(1L).name("Seller").build();
 
             when(categoryRepository.findByName("Electronics")).thenReturn(Optional.of(category));
-            when(userService.getUser()).thenReturn(user);
+            when(userRepository.getReferenceById(user.getId())).thenReturn(user);
 
-            productService.createProduct(request);
+            productService.createProduct(user.getId(), request);
 
             verify(productRepository).save(any(Product.class));
             verify(productImageRepository, never()).saveAll(any());
@@ -262,9 +259,9 @@ class ProductServiceImplTest {
             User user = User.builder().id(1L).name("Seller").build();
 
             when(categoryRepository.findByName("Electronics")).thenReturn(Optional.of(category));
-            when(userService.getUser()).thenReturn(user);
+            when(userRepository.getReferenceById(user.getId())).thenReturn(user);
 
-            productService.createProduct(request);
+            productService.createProduct(user.getId(), request);
 
             verify(productRepository).save(any(Product.class));
             verify(productImageRepository).saveAll(any());
@@ -280,7 +277,10 @@ class ProductServiceImplTest {
 
             when(categoryRepository.findByName("Electronics")).thenReturn(Optional.empty());
 
-            assertThrows(CategoryNotFoundException.class, () -> productService.createProduct(request));
+            assertThrows(
+                CategoryNotFoundException.class,
+                () -> productService.createProduct(1L, request)
+            );
 
             verify(productRepository, never()).save(any());
         }
@@ -290,14 +290,25 @@ class ProductServiceImplTest {
     @DisplayName("Delete Product")
     class DeleteProduct {
         @Test
-        @DisplayName("By Id")
-        void deleteProduct() {
-            User user = User.builder().id(1L).build();
-            when(userService.getUser()).thenReturn(user);
+        @DisplayName("should delete by id and seller id when user is seller")
+        void deleteProduct_asSeller() {
+            User seller = User.builder().id(1L).role(UserRole.Seller).build();
 
-            productService.deleteProduct(1L);
+            productService.deleteProduct(seller, 1L);
 
             verify(productRepository).deleteByIdAndSellerId(1L, 1L);
+            verifyNoMoreInteractions(productRepository);
+        }
+
+        @Test
+        @DisplayName("should delete by id only when user is admin")
+        void deleteProduct_asAdmin() {
+            User admin = User.builder().id(1L).role(UserRole.Admin).build();
+
+            productService.deleteProduct(admin, 1L);
+
+            verify(productRepository).deleteById(1L);
+            verifyNoMoreInteractions(productRepository);
         }
     }
 
@@ -307,6 +318,7 @@ class ProductServiceImplTest {
         @Test
         @DisplayName("Same Category")
         void updateProductSameCategory() {
+            final long userId = 1L;
             CreateProductRequest request = new CreateProductRequest(
                 "Updated Laptop", "Updated Desc",
                 new BigDecimal("1099.99"), "Electronics", List.of("img1.jpg")
@@ -326,10 +338,9 @@ class ProductServiceImplTest {
                 .images(new ArrayList<>(List.of(image)))
                 .build();
 
-            when(userService.getUser()).thenReturn(user);
             when(productRepository.findByIdAndSellerId(1L, 1L)).thenReturn(Optional.of(product));
 
-            productService.updateProduct(1L, request);
+            productService.updateProduct(userId, 1L, request);
 
             verify(productRepository).save(product);
             verify(categoryRepository, never()).findByName(any());
@@ -339,6 +350,8 @@ class ProductServiceImplTest {
         @Test
         @DisplayName("Different Category")
         void updateProductDifferentCategory() {
+            final long userId = 1L;
+
             CreateProductRequest request = new CreateProductRequest(
                 "Updated Laptop", "Updated Desc", new BigDecimal("1099.99"),
                 "Phones", List.of("img1.jpg")
@@ -359,11 +372,10 @@ class ProductServiceImplTest {
                 .images(new ArrayList<>(List.of(image)))
                 .build();
 
-            when(userService.getUser()).thenReturn(user);
             when(productRepository.findByIdAndSellerId(1L, 1L)).thenReturn(Optional.of(product));
             when(categoryRepository.findByName("Phones")).thenReturn(Optional.of(newCategory));
 
-            productService.updateProduct(1L, request);
+            productService.updateProduct(userId, 1L, request);
 
             verify(categoryRepository).findByName("Phones");
             verify(productRepository).save(product);
@@ -373,6 +385,8 @@ class ProductServiceImplTest {
         @Test
         @DisplayName("Different Images")
         void updateProductDifferentImages() {
+            final long userId = 1L;
+
             CreateProductRequest request = new CreateProductRequest(
                 "Laptop", "Desc", new BigDecimal("999.99"),
                 "Electronics", List.of("new-img.jpg")
@@ -392,10 +406,9 @@ class ProductServiceImplTest {
                 .images(new ArrayList<>(List.of(image)))
                 .build();
 
-            when(userService.getUser()).thenReturn(user);
             when(productRepository.findByIdAndSellerId(1L, 1L)).thenReturn(Optional.of(product));
 
-            productService.updateProduct(1L, request);
+            productService.updateProduct(userId, 1L, request);
 
             verify(productImageRepository).deleteByProductId(1L);
             verify(productImageRepository).saveAll(any());
@@ -404,16 +417,19 @@ class ProductServiceImplTest {
         @Test
         @DisplayName("Product Not Found")
         void updateProductNotFound() {
+            final long userId = 1L;
+
             CreateProductRequest request = new CreateProductRequest(
                 "Laptop", "Desc", new BigDecimal("999.99"),
                 "Electronics", null
             );
 
-            User user = User.builder().id(1L).build();
-            when(userService.getUser()).thenReturn(user);
             when(productRepository.findByIdAndSellerId(1L, 1L)).thenReturn(Optional.empty());
 
-            assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(1L, request));
+            assertThrows(
+                ProductNotFoundException.class,
+                () -> productService.updateProduct(userId, 1L, request)
+            );
 
             verify(productRepository, never()).save(any());
         }
@@ -438,10 +454,9 @@ class ProductServiceImplTest {
                     .build())
                 .toList();
 
-            when(userService.getUser()).thenReturn(user);
             when(productRepository.findBySellerId(1L)).thenReturn(products);
 
-            List<SellerProductDto> result = productService.getUserProducts();
+            List<SellerProductDto> result = productService.getUserProducts(user.getId());
 
             assertEquals(5, result.size());
             verify(productRepository).findBySellerId(1L);

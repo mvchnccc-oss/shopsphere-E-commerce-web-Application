@@ -2,6 +2,7 @@ package com.abdullah.eCommerce.security;
 
 import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.entities.UserRole;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class UserPrincipal implements UserDetails {
+    @Getter
     private final User user;
 
     public Long getId() {

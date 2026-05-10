@@ -6,10 +6,7 @@ import com.abdullah.eCommerce.dtos.responses.GetAdminDashboardStatsResponse;
 import com.abdullah.eCommerce.dtos.responses.GetAllOrdersResponse;
 import com.abdullah.eCommerce.entities.Order;
 import com.abdullah.eCommerce.entities.UserRole;
-import com.abdullah.eCommerce.mappers.AddressMapperImpl;
-import com.abdullah.eCommerce.mappers.OrderItemMapperImpl;
-import com.abdullah.eCommerce.mappers.OrderMapper;
-import com.abdullah.eCommerce.mappers.OrderMapperImpl;
+import com.abdullah.eCommerce.mappers.*;
 import com.abdullah.eCommerce.repositories.OrderItemRepository;
 import com.abdullah.eCommerce.repositories.OrderRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
@@ -41,11 +38,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@Import({OrderMapperImpl.class, OrderItemMapperImpl.class, AddressMapperImpl.class})
+@Import({UserMapperImpl.class, OrderMapperImpl.class, OrderItemMapperImpl.class, AddressMapperImpl.class})
 class AdminServiceImplTest {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Mock
     private UserRepository userRepository;
@@ -68,7 +68,8 @@ class AdminServiceImplTest {
             productRepository,
             orderItemRepository,
             orderRepository,
-            orderMapper
+            orderMapper,
+            userMapper
         );
     }
 

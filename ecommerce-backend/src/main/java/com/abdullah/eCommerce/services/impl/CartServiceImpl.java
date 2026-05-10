@@ -2,12 +2,11 @@ package com.abdullah.eCommerce.services.impl;
 
 import com.abdullah.eCommerce.dtos.CartItemDto;
 import com.abdullah.eCommerce.entities.CartItem;
-import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.mappers.CartItemMapper;
 import com.abdullah.eCommerce.repositories.CartItemRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
+import com.abdullah.eCommerce.repositories.UserRepository;
 import com.abdullah.eCommerce.services.CartService;
-import com.abdullah.eCommerce.services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,39 +17,37 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
+
     private final CartItemMapper cartItemMapper;
 
     @Override
-    public List<CartItemDto> getCartItems() {
-        List<CartItem> cartItems = userService.getUser().getCartItems();
+    public List<CartItemDto> getCartItems(Long userId) {
+        List<CartItem> cartItems = cartItemRepository.findByUserId(userId);
 
         return cartItemMapper.toDtoList(cartItems);
     }
 
     @Override
     @Transactional
-    public void updateQuantity(Long productId, int quantity) {
-        User user = userService.getUser();
-
+    public void updateQuantity(Long userId, Long productId, int quantity) {
+        CartItem.Id itemId = new CartItem.Id(userId, productId);
         if (quantity == 0) {
-            cartItemRepository.deleteById(new CartItem.Id(user.getId(), productId));
+            cartItemRepository.deleteById(itemId);
             return;
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findById(
-                new CartItem.Id(user.getId(), productId)
-        );
+        Optional<CartItem> cartItem = cartItemRepository.findById(itemId);
 
         if (cartItem.isEmpty()) {
             CartItem item = CartItem.builder()
-                    .id(new CartItem.Id(user.getId(), productId))
-                    .product(productRepository.getReferenceById(productId))
-                    .user(user)
-                    .quantity(quantity)
-                    .build();
+                .id(itemId)
+                .product(productRepository.getReferenceById(productId))
+                .user(userRepository.getReferenceById(userId))
+                .quantity(quantity)
+                .build();
 
             cartItemRepository.save(item);
             return;
@@ -62,7 +59,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void clear() {
-        cartItemRepository.deleteByUserId(userService.getUser().getId());
+    public void clear(Long userId) {
+        cartItemRepository.deleteByUserId(userId);
     }
 }
