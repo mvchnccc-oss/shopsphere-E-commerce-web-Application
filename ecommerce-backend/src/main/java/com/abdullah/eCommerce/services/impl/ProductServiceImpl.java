@@ -4,10 +4,7 @@ import com.abdullah.eCommerce.dtos.ProductDto;
 import com.abdullah.eCommerce.dtos.SellerProductDto;
 import com.abdullah.eCommerce.dtos.requests.CreateProductRequest;
 import com.abdullah.eCommerce.dtos.responses.GetProductsResponse;
-import com.abdullah.eCommerce.entities.Category;
-import com.abdullah.eCommerce.entities.Product;
-import com.abdullah.eCommerce.entities.ProductImage;
-import com.abdullah.eCommerce.entities.User;
+import com.abdullah.eCommerce.entities.*;
 import com.abdullah.eCommerce.exceptions.CategoryNotFoundException;
 import com.abdullah.eCommerce.exceptions.ProductNotFoundException;
 import com.abdullah.eCommerce.mappers.ProductMapper;
@@ -44,11 +41,11 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
 
         return new GetProductsResponse(
-                products,
-                productPage.getNumber(),
-                productPage.getTotalPages(),
-                productPage.getTotalElements(),
-                productPage.getSize()
+            products,
+            productPage.getNumber(),
+            productPage.getTotalPages(),
+            productPage.getTotalElements(),
+            productPage.getSize()
         );
     }
 
@@ -60,11 +57,11 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
 
         return new GetProductsResponse(
-                products,
-                productPage.getNumber(),
-                productPage.getTotalPages(),
-                productPage.getTotalElements(),
-                productPage.getSize()
+            products,
+            productPage.getNumber(),
+            productPage.getTotalPages(),
+            productPage.getTotalElements(),
+            productPage.getSize()
         );
     }
 
@@ -76,19 +73,19 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDto> products = productMapper.toDtoList(productPage.getContent());
 
         return new GetProductsResponse(
-                products,
-                productPage.getNumber(),
-                productPage.getTotalPages(),
-                productPage.getTotalElements(),
-                productPage.getSize()
+            products,
+            productPage.getNumber(),
+            productPage.getTotalPages(),
+            productPage.getTotalElements(),
+            productPage.getSize()
         );
     }
 
     @Override
     public ProductDto getProduct(Long id) {
         Product product = productRepository
-                .findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+            .findById(id)
+            .orElseThrow(() -> new ProductNotFoundException(id));
 
         return productMapper.toDto(product);
     }
@@ -96,25 +93,25 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void createProduct(CreateProductRequest body) {
         Category category = categoryRepository.findByName(body.category)
-                .orElseThrow(() -> new CategoryNotFoundException(0L));
+            .orElseThrow(() -> new CategoryNotFoundException(0L));
 
         User user = userService.getUser();
 
         Product product = Product.builder()
-                .category(category)
-                .price(body.price)
-                .description(body.description)
-                .title(body.title)
-                .seller(user)
-                .build();
+            .category(category)
+            .price(body.price)
+            .description(body.description)
+            .title(body.title)
+            .seller(user)
+            .build();
         productRepository.save(product);
 
         if (body.images != null && !body.images.isEmpty()) {
             List<ProductImage> productImages = body.images.stream().map(item ->
-                    ProductImage.builder()
-                            .product(product)
-                            .id(new ProductImage.Id(product.getId(), item))
-                            .build()
+                ProductImage.builder()
+                    .product(product)
+                    .id(new ProductImage.Id(product.getId(), item))
+                    .build()
             ).collect(Collectors.toList());
 
             productImageRepository.saveAll(productImages);
@@ -125,6 +122,12 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         User user = userService.getUser();
+
+        if (user.getRole() == UserRole.Admin) {
+            productRepository.deleteById(id);
+            return;
+        }
+
         productRepository.deleteByIdAndSellerId(id, user.getId());
     }
 
@@ -133,11 +136,11 @@ public class ProductServiceImpl implements ProductService {
     public void updateProduct(Long id, CreateProductRequest body) {
         User user = userService.getUser();
         Product product = productRepository.findByIdAndSellerId(id, user.getId())
-                .orElseThrow(() -> new ProductNotFoundException(id));
+            .orElseThrow(() -> new ProductNotFoundException(id));
 
         if (!body.category.equals(product.getCategory().getName())) {
             Category category = categoryRepository.findByName(body.category)
-                    .orElseThrow(() -> new CategoryNotFoundException(0L));
+                .orElseThrow(() -> new CategoryNotFoundException(0L));
             product.setCategory(category);
         }
 
@@ -146,10 +149,10 @@ public class ProductServiceImpl implements ProductService {
             productImageRepository.deleteByProductId(product.getId());
 
             var newImages = body.images.stream().map(item ->
-                    ProductImage.builder()
-                            .product(product)
-                            .id(new ProductImage.Id(product.getId(), item))
-                            .build()
+                ProductImage.builder()
+                    .product(product)
+                    .id(new ProductImage.Id(product.getId(), item))
+                    .build()
             ).collect(Collectors.toList());
 
             productImageRepository.saveAll(newImages);
