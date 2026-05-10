@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LayoutDashboardIcon, PackageIcon, User, ShoppingBagIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const navItems = [
   { path: "/dashboard", label: "Overview", icon: LayoutDashboardIcon },
@@ -13,22 +13,11 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isSeller = (session as any)?.role === "ROLE_SELLER";
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/auth/login");
-    } else if (status === "authenticated" && !isSeller) {
-      router.replace("/profile");
-    }
-  }, [status, isSeller]);
-
   // Loading state while session resolves
-  if (status === "loading" || (status === "authenticated" && !isSeller)) {
+  if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-muted-foreground text-sm">Loading...</div>

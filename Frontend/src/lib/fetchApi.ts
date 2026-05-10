@@ -23,12 +23,20 @@ export default async function fetchApi(
   options: FetchApiOptions,
 ): Promise<FetchApiResult> {
   const session = await getServerSession(authOptions);
-  if (!session && options.includeToken) return { status: "Unauthorized" };
+  if (!session && options.includeToken) {
+    console.error("No session found for API request");
+    return { status: "Unauthorized" };
+  }
 
   const headers: Record<string, string> = { "Content-Type": "application/json" };
 
-  if (options.includeToken) {
-    headers["Authorization"] = `Bearer ${session!.token}`;
+  if (options.includeToken && session) {
+    const token = (session as any).token;
+    if (!token) {
+      console.error("No token in session:", { role: (session as any).role, user: session.user });
+      return { status: "Unauthorized" };
+    }
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const fetchOptions: RequestInit & { next?: { revalidate?: number | false } } = {

@@ -6,7 +6,6 @@ import { getSellerOrdersAction, getSellerProductsAction } from "@/lib/actions/se
 import { SellerOrder } from "@/lib/interfaces/seller.interface";
 import { InvoiceModal } from "@/components/InvoiceModal";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 function formatDate(iso: string) {
   try {
@@ -17,29 +16,12 @@ function formatDate(iso: string) {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { status } = useSession();
   const [orders, setOrders] = useState<SellerOrder[]>([]);
   const [productCount, setProductCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session || (session as any).role !== "ROLE_SELLER") {
-      router.push("/auth/login");
-      return;
-    }
-  }, [session, status, router]);
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (!session || (session as any).role !== "ROLE_SELLER") {
-    return null; // Will redirect
-  }
 
   useEffect(() => {
     async function fetchData() {

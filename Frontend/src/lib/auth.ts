@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         const payload = await response.json();
-        console.log(payload);
+        console.log("API Payload:", payload)
         
         if (response.ok && payload.token) {
           return {

@@ -12,13 +12,20 @@ export default async function middleware(req: NextRequest) {
   });
 
   const { pathname } = req.nextUrl;
+
   const role = (token as any)?.role ?? "ROLE_CUSTOMER";
-  const isSeller = role === "ROLE_SELLER";
-  const isAdmin = role === "ROLE_ADMIN";
+
+
+  const isSeller = role === "Seller" || role === "ROLE_SELLER";
+  const isAdmin = role === "Admin" || role === "ROLE_ADMIN";
   const isAuthenticated = !!token;
 
   // مش متسجل → روح login
-  if (!isAuthenticated && !authRoutes.includes(pathname) && !publicRoutes.includes(pathname)) {
+  if (
+    !isAuthenticated &&
+    !authRoutes.includes(pathname) &&
+    !publicRoutes.includes(pathname)
+  ) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
@@ -29,7 +36,6 @@ export default async function middleware(req: NextRequest) {
 
   // ── Seller ───────────────────────────────────────────────
   if (isSeller) {
-
     const sellerAllowed =
       pathname === "/profile" || pathname.startsWith("/dashboard");
 
@@ -40,7 +46,6 @@ export default async function middleware(req: NextRequest) {
 
   // ── Admin ───────────────────────────────────────────────
   if (isAdmin) {
-    
     const adminAllowed =
       pathname === "/profile" || pathname.startsWith("/admin");
 
