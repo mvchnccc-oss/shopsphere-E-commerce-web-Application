@@ -1,185 +1,218 @@
 "use server";
+
 import fetchApi from "../fetchApi";
+import { revalidatePath } from "next/cache";
+import type {
+  AdminStats,
+  AdminOrders,
+  AdminUser,
+  AdminProduct,
+  AdminProductPage,
+  GetAllUsersResponse,
+} from "../interfaces/admin.interface";
 
-// ── Interfaces ────────────────────────────────────────────
+// Re-export types so pages/components can import them from here
+export type { AdminProduct, AdminProductPage, AdminUser, AdminStats, AdminOrders } from "../interfaces/admin.interface";
 
-export interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  createdAt?: string;
-}
+// ─── Helper ──────────────────────────────────────────────────────────────────
 
-export interface AdminProduct {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  images: string[];
-  seller?: string;
-}
-
-export interface AdminOrder {
-  id: number;
-  orderedAt: string;
-  totalAmount: number;
-  itemCount: number;
-  customerName: string;
-  city: string;
-  orderItems: {
-    productTitle: string;
-    quantity: number;
-    pricePerUnit: number;
-  }[];
-}
-
-export interface AdminStats {
-  totalUsers: number;
-  totalSellers: number;
-  totalCustomers: number;
-  totalProducts: number;
-  totalOrders: number;
-  totalRevenue: number;
-  recentOrders: AdminOrder[];
-}
-
-export type AdminResult<T = null> =
+type ActionResult<T> =
   | { success: true; data: T }
-  | { success: false; message: string };
+  | { success: false; error: string };
 
-// ── Stats ─────────────────────────────────────────────────
+// ─── Stats ───────────────────────────────────────────────────────────────────
 
-export async function getAdminStatsAction(): Promise<AdminResult<AdminStats>> {
-  const [usersRes, productsRes, ordersRes] = await Promise.all([
-    fetchApi("admin/users", "GET", { includeToken: true }),
-    fetchApi("admin/products", "GET", { includeToken: true }),
-    fetchApi("admin/orders", "GET", { includeToken: true }),
-  ]);
+/**
+ * GET /api/v1/admin/stats
+ */
+export async function getAdminStatsAction(): Promise<ActionResult<AdminStats>> {
+  const result = await fetchApi("admin/stats", "GET", {
+    includeToken: true,
+    cache: "no-store",
+  });
 
-  const users: any[] = usersRes.status === "Success" ? (usersRes.data?.users ?? usersRes.data ?? []) : [];
-  const products: any[] = productsRes.status === "Success" ? (productsRes.data?.products ?? productsRes.data ?? []) : [];
-  const orders: any[] = ordersRes.status === "Success" ? (ordersRes.data?.orders ?? ordersRes.data ?? []) : [];
+  if (result.status === "Success" && result.data) {
+    return { success: true, data: result.data as AdminStats };
+  }
 
-  const sellers = users.filter((u) => u.role === "Seller");
-  const customers = users.filter((u) => u.role === "Customer");
-
-  const totalRevenue = orders.reduce((sum: number, order: any) => {
-    return sum + (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.pricePerUnit * item.quantity, 0
-    );
-  }, 0);
-
-  const recentOrders: AdminOrder[] = orders.slice(0, 8).map((order: any) => ({
-    id: order.id,
-    orderedAt: order.orderedAt,
-    totalAmount: (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.pricePerUnit * item.quantity, 0
-    ),
-    itemCount: (order.orderItems ?? []).reduce(
-      (s: number, item: any) => s + item.quantity, 0
-    ),
-    customerName: order.firstname ? `${order.firstname} ${order.lastname ?? ""}`.trim() : "—",
-    city: order.address?.city ?? order.city ?? "—",
-    orderItems: (order.orderItems ?? []).map((item: any) => ({
-      productTitle: item.productTitle,
-      quantity: item.quantity,
-      pricePerUnit: item.pricePerUnit,
-    })),
-  }));
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to view admin stats.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Bad request when fetching stats.",
+    Unknown: "An unexpected error occurred while fetching stats.",
+  };
 
   return {
-    success: true,
-    data: {
-      totalUsers: users.length,
-      totalSellers: sellers.length,
-      totalCustomers: customers.length,
-      totalProducts: products.length,
-      totalOrders: orders.length,
-      totalRevenue,
-      recentOrders,
-    },
+    success: false,
+    error: errorMap[result.status] ?? "Failed to fetch admin stats.",
   };
 }
 
-// ── Users ─────────────────────────────────────────────────
+// ─── Orders ──────────────────────────────────────────────────────────────────
 
-export async function getAdminUsersAction(): Promise<AdminResult<AdminUser[]>> {
-  const res = await fetchApi("admin/users", "GET", { includeToken: true });
-  if (res.status !== "Success") return { success: false, message: "Failed to load users" };
+/**
+ * GET /api/v1/admin/orders?page=&size=
+ */
+export async function getAdminOrdersAction(
+  page: number = 0,
+  size: number = 10
+): Promise<ActionResult<AdminOrders>> {
+  const result = await fetchApi(`admin/orders?page=${page}&size=${size}`, "GET", {
+    includeToken: true,
+    cache: "no-store",
+  });
 
-  const raw: any[] = res.data?.users ?? res.data ?? [];
+  if (result.status === "Success" && result.data) {
+    return { success: true, data: result.data as AdminOrders };
+  }
+
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to view orders.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Bad request when fetching orders.",
+    Unknown: "An unexpected error occurred while fetching orders.",
+  };
+
   return {
-    success: true,
-    data: raw.map((u) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      role: u.role ?? "Customer",
-      createdAt: u.createdAt,
-    })),
+    success: false,
+    error: errorMap[result.status] ?? "Failed to fetch orders.",
   };
 }
 
-export async function deleteAdminUserAction(id: number): Promise<AdminResult> {
-  const res = await fetchApi(`admin/users/${id}`, "DELETE", { includeToken: true });
-  if (res.status === "Success") return { success: true, data: null };
-  return { success: false, message: "Failed to delete user" };
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/v1/admin/users
+ */
+export async function getAdminUsersAction(): Promise<ActionResult<AdminUser[]>> {
+  const result = await fetchApi("admin/users", "GET", {
+    includeToken: true,
+    cache: "no-store",
+  });
+
+  if (result.status === "Success" && result.data) {
+    const response = result.data as GetAllUsersResponse;
+    return { success: true, data: response.users ?? [] };
+  }
+
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to view users.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Bad request when fetching users.",
+    Unknown: "An unexpected error occurred while fetching users.",
+  };
+
+  return {
+    success: false,
+    error: errorMap[result.status] ?? "Failed to fetch users.",
+  };
 }
 
-// ── Products ──────────────────────────────────────────────
+/**
+ * POST /api/v1/admin/users/lock
+ */
+export async function lockAdminUserAction(
+  userId: number,
+  lock: boolean
+): Promise<ActionResult<null>> {
+  const result = await fetchApi("admin/users/lock", "POST", {
+    includeToken: true,
+    body: { userId, lock },
+  });
 
-export async function getAdminProductsAction(): Promise<AdminResult<AdminProduct[]>> {
-  const res = await fetchApi("admin/products", "GET", { includeToken: true });
-  if (res.status !== "Success") return { success: false, message: "Failed to load products" };
+  if (result.status === "Success") {
+    revalidatePath("/admin/users");
+    return { success: true, data: null };
+  }
 
-  const raw: any[] = res.data?.products ?? res.data ?? [];
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to lock/unlock users.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Invalid request. Check the user ID and lock value.",
+    Unknown: "An unexpected error occurred.",
+  };
+
   return {
-    success: true,
-    data: raw.map((p) => ({
+    success: false,
+    error: errorMap[result.status] ?? "Failed to update user lock status.",
+  };
+}
+
+// ─── Products ─────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/v1/products?page=0&size=200
+ */
+export async function getAdminProductsAction(
+  page: number = 0,
+  size: number = 200
+): Promise<ActionResult<AdminProductPage>> {
+  const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
+    includeToken: true,
+    cache: "no-store",
+  });
+
+  if (result.status === "Success" && result.data) {
+    const data: any = result.data;
+    const raw: any[] = data.products ?? [];
+    const products: AdminProduct[] = raw.map((p) => ({
       id: p.id,
       title: p.title,
-      price: p.price,
-      description: p.description,
-      category: p.category?.name ?? p.category ?? "—",
-      images: p.images ?? [],
-      seller: p.seller ?? "—",
-    })),
+      price: typeof p.price === "number" ? p.price : Number(p.price),
+      images: Array.isArray(p.images) ? p.images : [],
+      seller: p.seller ?? null,
+      category: p.category?.name ?? "—",
+    }));
+
+    return {
+      success: true,
+      data: {
+        products,
+        currentPage: data.currentPage ?? page,
+        totalPages: data.totalPages ?? 0,
+        totalElements: data.totalElements ?? products.length,
+        pageSize: data.pageSize ?? size,
+      },
+    };
+  }
+
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to view products.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Bad request when fetching products.",
+    Unknown: "An unexpected error occurred while fetching products.",
+  };
+
+  return {
+    success: false,
+    error: errorMap[result.status] ?? "Failed to fetch products.",
   };
 }
 
-export async function deleteAdminProductAction(id: number): Promise<AdminResult> {
-  const res = await fetchApi(`admin/products/${id}`, "DELETE", { includeToken: true });
-  if (res.status === "Success") return { success: true, data: null };
-  return { success: false, message: "Failed to delete product" };
-}
+/**
+ * DELETE /api/v1/products/{id}
+ */
+export async function deleteAdminProductAction(
+  productId: number
+): Promise<ActionResult<null>> {
+  const result = await fetchApi(`products/${productId}`, "DELETE", {
+    includeToken: true,
+  });
 
-// ── Orders ────────────────────────────────────────────────
+  if (result.status === "Success") {
+    revalidatePath("/admin/products");
+    return { success: true, data: null };
+  }
 
-export async function getAdminOrdersAction(): Promise<AdminResult<AdminOrder[]>> {
-  const res = await fetchApi("admin/orders", "GET", { includeToken: true });
-  if (res.status !== "Success") return { success: false, message: "Failed to load orders" };
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to delete products.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Product not found or invalid ID.",
+    Unknown: "An unexpected error occurred.",
+  };
 
-  const raw: any[] = res.data?.orders ?? res.data ?? [];
   return {
-    success: true,
-    data: raw.map((order: any) => ({
-      id: order.id,
-      orderedAt: order.orderedAt,
-      totalAmount: (order.orderItems ?? []).reduce(
-        (s: number, item: any) => s + item.pricePerUnit * item.quantity, 0
-      ),
-      itemCount: (order.orderItems ?? []).reduce(
-        (s: number, item: any) => s + item.quantity, 0
-      ),
-      customerName: order.firstname ? `${order.firstname} ${order.lastname ?? ""}`.trim() : "—",
-      city: order.address?.city ?? order.city ?? "—",
-      orderItems: (order.orderItems ?? []).map((item: any) => ({
-        productTitle: item.productTitle,
-        quantity: item.quantity,
-        pricePerUnit: item.pricePerUnit,
-      })),
-    })),
+    success: false,
+    error: errorMap[result.status] ?? "Failed to delete product.",
   };
 }
