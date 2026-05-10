@@ -16,5 +16,8 @@ public interface UserMapper {
     @Mapping(source = "user.role", target = "role")
     User toUser(UpdateUserRequest user);
 
+    @Mapping(source = "user.locked", target = "isLocked")
+    AdminDashboardUserDto toAdminDashboardUserDto(User user);
+
     List<AdminDashboardUserDto> toUserDto(List<User> users);
 }

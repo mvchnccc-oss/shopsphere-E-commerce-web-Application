@@ -1,90 +1,39 @@
 "use client";
-
-import { useState, useTransition } from "react";
-import {
-  SearchIcon, LockIcon, UnlockIcon, UsersIcon,
-  UserCheckIcon, UserIcon, LoaderIcon, CheckCircle2Icon,
-  XCircleIcon,
-} from "lucide-react";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { lockAdminUserAction } from "@/lib/actions/admin.action";
 import type { AdminUser, UserRole } from "@/lib/interfaces/admin.interface";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
-
-// ─── Toast ───────────────────────────────────────────────────────────────────
-
-interface ToastState {
-  message: string;
-  type: "success" | "error";
-}
-
-// ─── Confirm Modal ───────────────────────────────────────────────────────────
-
-function ConfirmModal({
-  user,
-  nextLockState,
-  onConfirm,
-  onCancel,
-  isPending,
-}: {
-  user: AdminUser;
-  nextLockState: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isPending: boolean;
-}) {
-  const action = nextLockState ? "Lock" : "Unlock";
-  const actionColor = nextLockState ? "bg-amber-600 hover:bg-amber-700" : "bg-emerald-600 hover:bg-emerald-700";
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="bg-[#0d1424] border border-white/10 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
-        <h2 className="text-lg font-bold text-center text-white mb-2">
-          {action} User?
-        </h2>
-        <p className="text-slate-400 text-sm text-center mb-1">
-          You're about to {action.toLowerCase()}
-        </p>
-        <p className="text-sm font-semibold text-center text-white mb-6">
-          {user.name}
-        </p>
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={isPending}
-            className="flex-1 py-2.5 rounded-lg border border-white/10 text-slate-300 text-sm font-medium hover:bg-white/5 transition-colors disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isPending}
-            className={`flex-1 py-2.5 rounded-lg text-white text-sm font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 ${actionColor}`}
-          >
-            {isPending ? (
-              <><LoaderIcon className="size-4 animate-spin" /> Working...</>
-            ) : (
-              <>{nextLockState ? <LockIcon className="size-4" /> : <UnlockIcon className="size-4" />} {action}</>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
+import {
+  CheckCircle2Icon,
+  LockIcon,
+  SearchIcon,
+  UnlockIcon,
+  UsersIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import ConfirmModal from "./confirm-modal";
 
 export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] }) {
   const [users, setUsers] = useState<AdminUser[]>(initialUsers);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "seller" | "customer">("all");
   const [lockTarget, setLockTarget] = useState<{ user: AdminUser; lock: boolean } | null>(null);
-  const [toast, setToast] = useState<ToastState | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function showToast(message: string, type: ToastState["type"]) {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
+  function showToast(message: string, error: boolean) {
+    toast(message, {
+      icon: error ? (
+        <XCircleIcon className="size-4 text-red-400 shrink-0" />
+      ) : (
+        <CheckCircle2Icon className="size-4 text-emerald-400 shrink-0" />
+      ),
+      style: error
+        ? { background: "#1a0d0d", border: "1px solid rgb(239 68 68 / 0.2)", color: "white" }
+        : { background: "#0d1424", border: "1px solid rgb(255 255 255 / 0.1)", color: "white" },
+
+      position: "top-center",
+    });
   }
 
   const filtered = users.filter((u) => {
@@ -111,45 +60,22 @@ export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] 
 
       if (result.success) {
         // Optimistic update — flip isLocked in local state
-        setUsers((prev) =>
-          prev.map((u) => (u.id === user.id ? { ...u, isLocked: lock } : u))
-        );
-        showToast(
-          `${user.name} has been ${lock ? "locked" : "unlocked"}.`,
-          "success"
-        );
+        setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, isLocked: lock } : u)));
+        showToast(`${user.name} has been ${lock ? "locked" : "unlocked"}.`, false);
       } else {
-        showToast(result.error, "error");
+        showToast(result.error, false);
       }
     });
   }
 
   const roleBadge: Record<UserRole, string> = {
-    Seller:   "bg-violet-500/15 text-violet-400",
-    Customer: "bg-emerald-500/15 text-emerald-400",
-    Admin:    "bg-amber-500/15 text-amber-400",
+    ROLE_SELLER: "bg-violet-500/15 text-violet-400",
+    ROLE_CUSTOMER: "bg-emerald-500/15 text-emerald-400",
+    ROLE_ADMIN: "bg-amber-500/15 text-amber-400",
   };
 
   return (
     <>
-      {/* Toast */}
-      {toast && (
-        <div
-          className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 border rounded-xl px-4 py-3 shadow-lg text-sm text-white animate-in fade-in slide-in-from-bottom-3 duration-300 ${
-            toast.type === "success"
-              ? "bg-[#0d1424] border-white/10"
-              : "bg-[#1a0d0d] border-red-500/20"
-          }`}
-        >
-          {toast.type === "success" ? (
-            <CheckCircle2Icon className="size-4 text-emerald-400 shrink-0" />
-          ) : (
-            <XCircleIcon className="size-4 text-red-400 shrink-0" />
-          )}
-          {toast.message}
-        </div>
-      )}
-
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
@@ -181,7 +107,9 @@ export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] 
         {filtered.length === 0 ? (
           <div className="p-12 flex flex-col items-center gap-3 text-slate-500">
             <UsersIcon className="size-8 opacity-30" />
-            <span className="text-sm">{search ? "No users match your search." : "No users found."}</span>
+            <span className="text-sm">
+              {search ? "No users match your search." : "No users found."}
+            </span>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -209,15 +137,19 @@ export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] 
                       >
                         {user.name.substring(0, 2).toUpperCase()}
                       </div>
-                      <span className={`font-medium ${user.isLocked ? "text-slate-500 line-through" : "text-white"}`}>
+                      <span
+                        className={`font-medium ${user.isLocked ? "text-slate-500 line-through" : "text-white"}`}
+                      >
                         {user.name}
                       </span>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-slate-400 hidden sm:table-cell">{user.email}</td>
                   <td className="px-5 py-3.5">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${roleBadge[user.role] ?? "bg-white/5 text-slate-400"}`}>
-                      {user.role}
+                    <span
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${roleBadge[user.role] ?? "bg-white/5 text-slate-400"}`}
+                    >
+                      {user.role.substring(5, 6) + user.role.substring(6).toLowerCase()}
                     </span>
                   </td>
                   <td className="px-5 py-3.5 hidden md:table-cell">
@@ -241,7 +173,11 @@ export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] 
                           : "hover:bg-amber-500/10 text-slate-500 hover:text-amber-400"
                       }`}
                     >
-                      {user.isLocked ? <UnlockIcon className="size-4" /> : <LockIcon className="size-4" />}
+                      {user.isLocked ? (
+                        <UnlockIcon className="size-4" />
+                      ) : (
+                        <LockIcon className="size-4" />
+                      )}
                     </button>
                   </td>
                 </tr>

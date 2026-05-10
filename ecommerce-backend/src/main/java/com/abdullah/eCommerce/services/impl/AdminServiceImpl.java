@@ -87,7 +87,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<AdminDashboardUserDto> getUsers(Long currentUserId) {
-        List<User> users = userRepository.findByIdNot(currentUserId);
+        List<User> users = userRepository.findByIdNotOrderByName(currentUserId);
 
         return userMapper.toUserDto(users);
     }

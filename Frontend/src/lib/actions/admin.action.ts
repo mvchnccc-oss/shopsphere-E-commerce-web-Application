@@ -1,24 +1,28 @@
 "use server";
 
-import fetchApi from "../fetchApi";
 import { revalidatePath } from "next/cache";
+import fetchApi from "../fetchApi";
 import type {
-  AdminStats,
   AdminOrders,
-  AdminUser,
   AdminProduct,
   AdminProductPage,
+  AdminStats,
+  AdminUser,
   GetAllUsersResponse,
 } from "../interfaces/admin.interface";
 
 // Re-export types so pages/components can import them from here
-export type { AdminProduct, AdminProductPage, AdminUser, AdminStats, AdminOrders } from "../interfaces/admin.interface";
+export type {
+  AdminOrders,
+  AdminProduct,
+  AdminProductPage,
+  AdminStats,
+  AdminUser,
+} from "../interfaces/admin.interface";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
-type ActionResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
+type ActionResult<T> = { success: true; data: T } | { success: false; error: string };
 
 // ─── Stats ───────────────────────────────────────────────────────────────────
 
@@ -55,7 +59,7 @@ export async function getAdminStatsAction(): Promise<ActionResult<AdminStats>> {
  */
 export async function getAdminOrdersAction(
   page: number = 0,
-  size: number = 10
+  size: number = 10,
 ): Promise<ActionResult<AdminOrders>> {
   const result = await fetchApi(`admin/orders?page=${page}&size=${size}`, "GET", {
     includeToken: true,
@@ -113,7 +117,7 @@ export async function getAdminUsersAction(): Promise<ActionResult<AdminUser[]>> 
  */
 export async function lockAdminUserAction(
   userId: number,
-  lock: boolean
+  lock: boolean,
 ): Promise<ActionResult<null>> {
   const result = await fetchApi("admin/users/lock", "POST", {
     includeToken: true,
@@ -145,7 +149,7 @@ export async function lockAdminUserAction(
  */
 export async function getAdminProductsAction(
   page: number = 0,
-  size: number = 200
+  size: number = 200,
 ): Promise<ActionResult<AdminProductPage>> {
   const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
     includeToken: true,
@@ -192,9 +196,7 @@ export async function getAdminProductsAction(
 /**
  * DELETE /api/v1/products/{id}
  */
-export async function deleteAdminProductAction(
-  productId: number
-): Promise<ActionResult<null>> {
+export async function deleteAdminProductAction(productId: number): Promise<ActionResult<null>> {
   const result = await fetchApi(`products/${productId}`, "DELETE", {
     includeToken: true,
   });

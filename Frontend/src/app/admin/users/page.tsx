@@ -1,6 +1,6 @@
+import UsersList from "@/components/admin/UsersList";
 import { getAdminUsersAction } from "@/lib/actions/admin.action";
-import UsersList from "@/components/UsersList";
-import { UsersIcon, UserCheckIcon, UserIcon } from "lucide-react";
+import { UserCheckIcon, UserIcon, UsersIcon } from "lucide-react";
 
 export default async function AdminUsersPage() {
   const result = await getAdminUsersAction();
@@ -24,21 +24,22 @@ export default async function AdminUsersPage() {
       label: "Total",
       value: users.length,
       icon: UsersIcon,
-      color: "text-violet-400"
+      color: "text-violet-400",
     },
     {
       label: "Sellers",
       value: users.filter((u) => u.role === "ROLE_SELLER").length,
       icon: UserCheckIcon,
-      color: "text-blue-400"
+      color: "text-blue-400",
     },
     {
       label: "Customers",
       value: users.filter((u) => u.role === "ROLE_CUSTOMER").length,
       icon: UserIcon,
-      color: "text-emerald-400"
+      color: "text-emerald-400",
     },
   ];
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -48,7 +49,10 @@ export default async function AdminUsersPage() {
 
       <div className="grid grid-cols-3 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="border border-white/5 rounded-xl p-4 bg-white/[0.02] flex items-center gap-3">
+          <div
+            key={s.label}
+            className="border border-white/5 rounded-xl p-4 bg-white/[0.02] flex items-center gap-3"
+          >
             <s.icon className={`size-4 ${s.color}`} />
             <div>
               <p className="text-xs text-slate-500">{s.label}</p>
