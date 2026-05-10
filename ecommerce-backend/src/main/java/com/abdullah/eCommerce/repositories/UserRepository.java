@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.role AS role, COUNT(u) AS count FROM User u GROUP BY u.role")
     List<UserRoleCount> countGroupedByRole();
+
+    List<User> findByIdNot(Long id);
 }

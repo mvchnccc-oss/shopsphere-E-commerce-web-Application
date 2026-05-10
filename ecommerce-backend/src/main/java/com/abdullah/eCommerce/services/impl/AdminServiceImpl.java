@@ -1,13 +1,16 @@
 package com.abdullah.eCommerce.services.impl;
 
+import com.abdullah.eCommerce.dtos.AdminDashboardUserDto;
 import com.abdullah.eCommerce.dtos.OrderDto;
 import com.abdullah.eCommerce.dtos.OrderMonthlyRevenue;
 import com.abdullah.eCommerce.dtos.UserRoleCount;
 import com.abdullah.eCommerce.dtos.responses.GetAdminDashboardStatsResponse;
 import com.abdullah.eCommerce.dtos.responses.GetAllOrdersResponse;
 import com.abdullah.eCommerce.entities.Order;
+import com.abdullah.eCommerce.entities.User;
 import com.abdullah.eCommerce.entities.UserRole;
 import com.abdullah.eCommerce.mappers.OrderMapper;
+import com.abdullah.eCommerce.mappers.UserMapper;
 import com.abdullah.eCommerce.repositories.OrderItemRepository;
 import com.abdullah.eCommerce.repositories.OrderRepository;
 import com.abdullah.eCommerce.repositories.ProductRepository;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
     private final OrderRepository orderRepository;
 
     private final OrderMapper orderMapper;
+    private final UserMapper userMapper;
 
     @Override
     public GetAdminDashboardStatsResponse getAdminDashboardStats() {
@@ -78,5 +83,22 @@ public class AdminServiceImpl implements AdminService {
             ordersPage.getTotalElements(),
             ordersPage.getSize()
         );
+    }
+
+    @Override
+    public List<AdminDashboardUserDto> getUsers(Long currentUserId) {
+        List<User> users = userRepository.findByIdNot(currentUserId);
+
+        return userMapper.toUserDto(users);
+    }
+
+    @Override
+    public void lockUser(Long id, boolean lock) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) return;
+
+        user.get().setLocked(lock);
+        userRepository.save(user.get());
     }
 }

@@ -1,12 +1,10 @@
 package com.abdullah.eCommerce.dtos.responses;
 
-import com.abdullah.eCommerce.dtos.OrderDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -20,6 +18,4 @@ public class GetAdminDashboardStatsResponse {
     private Long numberOfUsers;
     private Long numberOfCustomers;
     private Long numberOfSellers;
-
-    private List<OrderDto> orders;
 }
