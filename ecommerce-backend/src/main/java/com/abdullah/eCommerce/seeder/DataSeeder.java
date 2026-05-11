@@ -99,7 +99,7 @@ public class DataSeeder implements ApplicationRunner {
                         User.builder()
                             .name(dto.getSeller().getName())
                             .email(dto.getSeller().getEmail())
-                            .password(dto.getSeller().getPassword())
+                            .password(passwordEncoder.encode(dto.getSeller().getPassword()))
                             .role(UserRole.Seller)
                             .build()
                     ))
