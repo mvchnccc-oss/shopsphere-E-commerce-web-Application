@@ -1,17 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  SearchIcon, ShoppingCartIcon, CalendarIcon,
-  MapPinIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon,
-} from "lucide-react";
-import type { AdminOrders } from "@/lib/interfaces/admin.interface";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import type { AdminOrders } from "@/lib/interfaces/admin.interface";
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  MapPinIcon,
+  SearchIcon,
+  ShoppingCartIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  year: "numeric", month: "short", day: "numeric",
-  hour: "2-digit", minute: "2-digit",
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
 });
 
 interface Props {
@@ -19,7 +25,7 @@ interface Props {
   currentPage: number;
 }
 
-export default function OrdersList({ initialData, currentPage }: Props) {
+export default function OrdersList({ initialData, currentPage }: Readonly<Props>) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -29,7 +35,7 @@ export default function OrdersList({ initialData, currentPage }: Props) {
       String(o.id).includes(search) ||
       o.address.firstname.toLowerCase().includes(search.toLowerCase()) ||
       o.address.lastname.toLowerCase().includes(search.toLowerCase()) ||
-      o.address.city.toLowerCase().includes(search.toLowerCase())
+      o.address.city.toLowerCase().includes(search.toLowerCase()),
   );
 
   function goToPage(page: number) {
@@ -44,7 +50,10 @@ export default function OrdersList({ initialData, currentPage }: Props) {
         <input
           placeholder="Search orders, customers, cities..."
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setExpanded(null); }}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setExpanded(null);
+          }}
           className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 transition-colors"
         />
       </div>
@@ -62,7 +71,7 @@ export default function OrdersList({ initialData, currentPage }: Props) {
           filtered.map((order) => {
             const total = order.orderItems.reduce(
               (acc, item) => acc + item.pricePerUnit * item.quantity,
-              0
+              0,
             );
 
             return (
@@ -71,15 +80,11 @@ export default function OrdersList({ initialData, currentPage }: Props) {
                 className="border border-white/5 rounded-xl bg-white/2 overflow-hidden"
               >
                 <button
-                  onClick={() =>
-                    setExpanded(expanded === order.id ? null : order.id)
-                  }
+                  onClick={() => setExpanded(expanded === order.id ? null : order.id)}
                   className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/2 transition-colors text-left"
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <span className="font-mono text-xs text-slate-500 shrink-0">
-                      #{order.id}
-                    </span>
+                    <span className="font-mono text-xs text-slate-500 shrink-0">#{order.id}</span>
                     <span className="font-medium text-white truncate">
                       {order.address.firstname} {order.address.lastname}
                     </span>
@@ -93,9 +98,7 @@ export default function OrdersList({ initialData, currentPage }: Props) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 ml-4 shrink-0">
-                    <span className="font-semibold text-white">
-                      EGP {total.toLocaleString()}
-                    </span>
+                    <span className="font-semibold text-white">EGP {total.toLocaleString()}</span>
                     <ChevronDownIcon
                       className={`size-4 text-slate-500 transition-transform ${
                         expanded === order.id ? "rotate-180" : ""
@@ -109,7 +112,8 @@ export default function OrdersList({ initialData, currentPage }: Props) {
                     {/* Mobile: city + date */}
                     <div className="sm:hidden px-5 py-2 flex gap-4 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
-                        <MapPinIcon className="size-3" />{order.address.city}
+                        <MapPinIcon className="size-3" />
+                        {order.address.city}
                       </span>
                       <span className="flex items-center gap-1">
                         <CalendarIcon className="size-3" />
@@ -169,7 +173,8 @@ export default function OrdersList({ initialData, currentPage }: Props) {
             </div>
           )}
           <p className="text-xs text-slate-500">
-            Page {currentPage + 1} of {initialData.totalPages} — {initialData.totalElements} total orders
+            Page {currentPage + 1} of {initialData.totalPages} — {initialData.totalElements} total
+            orders
           </p>
         </div>
       )}

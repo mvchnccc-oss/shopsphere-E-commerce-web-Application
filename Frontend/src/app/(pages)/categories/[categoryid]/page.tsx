@@ -11,12 +11,12 @@ interface CategoryPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: Readonly<CategoryPageProps>) {
   const { categoryid } = await params;
   const { page } = await searchParams;
 
-  const categoryId = parseInt(categoryid);
-  const currentPage = Math.max(0, parseInt(page ?? "0") || 0);
+  const categoryId = Number.parseInt(categoryid);
+  const currentPage = Math.max(0, Number.parseInt(page ?? "0") || 0);
 
   const [category, { products, totalPages }] = await Promise.all([
     getCategoryById(categoryId),
@@ -28,9 +28,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       <h2 className="text-2xl font-bold mb-6">{category?.name} Products</h2>
 
       {products.length === 0 ? (
-        <p className="text-center text-gray-500 mt-10">
-          No products found in this category.
-        </p>
+        <p className="text-center text-gray-500 mt-10">No products found in this category.</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

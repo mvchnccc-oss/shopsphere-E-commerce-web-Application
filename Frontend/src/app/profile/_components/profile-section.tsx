@@ -15,21 +15,21 @@ import { GetProfileResponse } from "@/lib/interfaces/profile.interface";
 import { UpdateProfileForm, updateProfileSchema } from "@/lib/validations/profile.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  MailIcon,
-  UserIcon,
-  StoreIcon,
-  CheckCircle2Icon,
+  AlertCircleIcon,
   ArrowRightIcon,
+  CheckCircle2Icon,
+  MailIcon,
   PackageIcon,
-  TrendingUpIcon,
   ShieldCheckIcon,
-  AlertCircleIcon, // ضفت أيقونة للتنبيه
-  XIcon,           // أيقونة قفل
+  StoreIcon,
+  TrendingUpIcon,
+  UserIcon, // ضفت أيقونة للتنبيه
+  XIcon, // أيقونة قفل
 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import ProfileField from "./profile-field";
 
 interface ProfileSectionProps {
@@ -56,7 +56,7 @@ const sellerPerks = [
   },
 ];
 
-export default function ProfileSection(props: ProfileSectionProps) {
+export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
   const [data, setData] = useState(props.data);
   const [activeTab, setActiveTab] = useState<Tab>("profile");
   const [isEditMode, setEditMode] = useState(false);
@@ -64,7 +64,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
   const [isBecomingPending, setBecomingPending] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>();
   const [sellerSuccess, setSellerSuccess] = useState(false);
-  
+
   // --- ضيف الـ State دي هنا ---
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -92,7 +92,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
         return;
       }
       setEditMode(false);
-      setData((prev) => prev ? { ...prev, ...formData } : prev);
+      setData((prev) => (prev ? { ...prev, ...formData } : prev));
       setServerError(undefined);
     } catch {
     } finally {
@@ -110,8 +110,12 @@ export default function ProfileSection(props: ProfileSectionProps) {
         setServerError(result.message);
         return;
       }
-      await updateSession({ role: "Seller", token: result.token, accessTokenExpires: result.accessTokenExpires });
-      setData((prev) => prev ? { ...prev, role: "Seller" } : prev);
+      await updateSession({
+        role: "Seller",
+        token: result.token,
+        accessTokenExpires: result.accessTokenExpires,
+      });
+      setData((prev) => (prev ? { ...prev, role: "Seller" } : prev));
       setSellerSuccess(true);
       setTimeout(() => router.push("/dashboard"), 1800);
     } catch {
@@ -190,7 +194,11 @@ export default function ProfileSection(props: ProfileSectionProps) {
                     <ProfileField
                       id="name-field"
                       isEdit={isEditMode}
-                      label={<><UserIcon /> Name</>}
+                      label={
+                        <>
+                          <UserIcon /> Name
+                        </>
+                      }
                       registeration={form.register("name")}
                       textValue={data.name}
                       error={form.formState.errors["name"]?.message}
@@ -198,7 +206,11 @@ export default function ProfileSection(props: ProfileSectionProps) {
                     <ProfileField
                       id="email-field"
                       isEdit={isEditMode}
-                      label={<><MailIcon /> Email</>}
+                      label={
+                        <>
+                          <MailIcon /> Email
+                        </>
+                      }
                       registeration={form.register("email")}
                       textValue={data.email}
                       error={form.formState.errors["email"]?.message}
@@ -230,9 +242,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
             <CardHeader className="flex flex-col items-center text-center">
               <div
                 className={`p-3 rounded-xl mb-2 shadow-md ${
-                  isSeller
-                    ? "bg-emerald-100 dark:bg-emerald-900"
-                    : "bg-accent"
+                  isSeller ? "bg-emerald-100 dark:bg-emerald-900" : "bg-accent"
                 }`}
               >
                 <StoreIcon
@@ -298,7 +308,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
                     // --- عدلنا الزرار هنا عشان يفتح المودال ---
                     <Button
                       className="w-full flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
-                      onClick={() => setShowConfirmModal(true)} 
+                      onClick={() => setShowConfirmModal(true)}
                       disabled={isBecomingPending}
                     >
                       <StoreIcon className="size-4" />
@@ -320,7 +330,7 @@ export default function ProfileSection(props: ProfileSectionProps) {
                   <div className="p-2 bg-amber-100 dark:bg-amber-950 rounded-lg">
                     <AlertCircleIcon className="size-6 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <button 
+                  <button
                     onClick={() => setShowConfirmModal(false)}
                     className="p-1 hover:bg-muted rounded-md transition-colors"
                   >
@@ -330,19 +340,20 @@ export default function ProfileSection(props: ProfileSectionProps) {
 
                 <h3 className="text-lg font-bold mb-2">Become a Seller?</h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Are you sure you want to activate seller mode? You'll be able to list products and manage your own store.
+                  Are you sure you want to activate seller mode? You'll be able to list products and
+                  manage your own store.
                 </p>
 
                 <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
+                  <Button
+                    variant="outline"
+                    className="flex-1"
                     onClick={() => setShowConfirmModal(false)}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" 
+                  <Button
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                     onClick={handleBecomeSeller}
                   >
                     Yes, Activate

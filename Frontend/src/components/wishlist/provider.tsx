@@ -7,7 +7,7 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import { WishlistContext } from "./context";
 
-export default function WishlistProvider({ children }: { children: ReactNode }) {
+export default function WishlistProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +40,9 @@ export default function WishlistProvider({ children }: { children: ReactNode }) 
   }
 
   return (
-    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, isLoading, error }}>
+    <WishlistContext.Provider
+      value={{ wishlist, addToWishlist, removeFromWishlist, isLoading, error }}
+    >
       {children}
     </WishlistContext.Provider>
   );

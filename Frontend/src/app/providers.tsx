@@ -6,7 +6,7 @@ import WishlistProvider from "@/components/wishlist/provider";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SessionProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

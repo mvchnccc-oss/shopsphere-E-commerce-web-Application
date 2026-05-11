@@ -5,7 +5,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-function CategoryContainer(props: { categories: Categories }) {
+function CategoryContainer(props: Readonly<{ categories: Categories }>) {
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState(props.categories);
   console.log(search);

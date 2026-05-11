@@ -26,7 +26,7 @@ export type FetchApiResult =
 export default async function fetchApi(
   api: string,
   method: string,
-  options: FetchApiOptions
+  options: FetchApiOptions,
 ): Promise<FetchApiResult> {
   // ── Auth guard ──
   const session = await getServerSession(authOptions);
@@ -58,7 +58,7 @@ export default async function fetchApi(
   const fetchOptions: RequestInit & { next?: { revalidate?: number | false } } = {
     method,
     headers,
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+    body: options.body === undefined ? undefined : JSON.stringify(options.body),
     signal: controller.signal,
   };
 
@@ -81,9 +81,7 @@ export default async function fetchApi(
       const contentType = res.headers.get("content-type") ?? "";
       const contentLength = res.headers.get("content-length");
 
-      const hasBody =
-        contentLength !== "0" &&
-        contentType.includes("application/json");
+      const hasBody = contentLength !== "0" && contentType.includes("application/json");
 
       if (hasBody) {
         try {
@@ -102,18 +100,18 @@ export default async function fetchApi(
     let errorBody = "(no body)";
     try {
       errorBody = await res.text();
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
-    console.error(
-      `[fetchApi] ${method} ${api} → HTTP ${res.status}: ${errorBody}`
-    );
+    console.error(`[fetchApi] ${method} ${api} → HTTP ${res.status}: ${errorBody}`);
 
-    if (res.status === 401 || res.status === 403) return { status: "Unauthorized",  message: errorBody };
-    if (res.status === 400)                        return { status: "BadRequest",    message: errorBody };
-    if (res.status === 404)                        return { status: "NotFound",      message: errorBody };
+    if (res.status === 401 || res.status === 403)
+      return { status: "Unauthorized", message: errorBody };
+    if (res.status === 400) return { status: "BadRequest", message: errorBody };
+    if (res.status === 404) return { status: "NotFound", message: errorBody };
 
     return { status: "Unknown", message: errorBody };
-
   } catch (e: unknown) {
     clearTimeout(timeoutId);
 
@@ -123,9 +121,7 @@ export default async function fetchApi(
     console.error(`[fetchApi] ${label} for ${method} ${api}:`, e);
     return {
       status: "ServerNotFound",
-      message: isTimeout
-        ? `Request timed out after ${timeout}ms`
-        : String(e),
+      message: isTimeout ? `Request timed out after ${timeout}ms` : String(e),
     };
   }
 }

@@ -10,21 +10,18 @@ export const authOptions: NextAuthOptions = {
         password: { label: "enter your password", type: "password" },
       },
       async authorize(data) {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              email: data?.email,
-              password: data?.password,
-            }),
-            headers: { "Content-Type": "application/json" },
-          },
-        );
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: data?.email,
+            password: data?.password,
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
 
         const payload = await response.json();
-        console.log("API Payload:", payload)
-        
+        console.log("API Payload:", payload);
+
         if (response.ok && payload.token) {
           return {
             id: data?.email as string,
@@ -49,12 +46,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.user = (user as any).user;
-        token.token = (user as any).token;
-        token.role = (user as any).role;
+        token.user = user.user;
+        token.token = user.token;
+        token.role = user.role;
         token.accessTokenExpires = (user as any).expiresAt;
       }
-
 
       if (trigger === "update" && session?.role !== undefined) {
         token.role = session.role;

@@ -64,7 +64,7 @@ export default async function OrdersPage() {
         {orders.map((order) => {
           const total = order.orderItems.reduce((s, i) => s + i.quantity * i.pricePerUnit, 0);
           return (
-            <details key={order.id} className="border rounded-xl overflow-hidden group">
+            <details key={`order-${order.id}`} className="border rounded-xl overflow-hidden group">
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
                 <div className="flex items-center gap-3">
                   <span className="font-medium">Order #{order.id}</span>

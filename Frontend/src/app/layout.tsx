@@ -23,15 +23,11 @@ export default function RootLayout({
     <html lang="en" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <body>
         <Providers>
-          {/* Navbar */}
-
-          {/* Main App */}
           <div className=" min-h-screen">
             <Navbar />
             {children}
             <Toaster />
           </div>
-          {/* Footer */}
           <Footer />
         </Providers>
       </body>

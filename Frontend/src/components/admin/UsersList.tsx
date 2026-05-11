@@ -14,7 +14,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import ConfirmModal from "./confirm-modal";
 
-export default function UsersList({ initialUsers }: { initialUsers: AdminUser[] }) {
+export default function UsersList({ initialUsers }: Readonly<{ initialUsers: AdminUser[] }>) {
   const [users, setUsers] = useState<AdminUser[]>(initialUsers);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "seller" | "customer">("all");

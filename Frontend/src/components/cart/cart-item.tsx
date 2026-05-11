@@ -10,7 +10,7 @@ interface CardItemProps {
   dark?: boolean;
 }
 
-export default function CartItem({ product, onClick, dark }: CardItemProps) {
+export default function CartItem({ product, onClick, dark }: Readonly<CardItemProps>) {
   return (
     <Link key={product.id} href={`/products/${product.id}`} onClick={onClick}>
       <div className="flex items-center gap-2">

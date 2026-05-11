@@ -1,11 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon, LockIcon } from "lucide-react";
 import { useState } from "react";
@@ -23,7 +19,7 @@ export default function PasswordInput({
   label = "Password",
   registration,
   error,
-}: PasswordInputProps) {
+}: Readonly<PasswordInputProps>) {
   const [isVisible, setVisible] = useState(false);
 
   return (
@@ -40,11 +36,7 @@ export default function PasswordInput({
           {...registration}
         />
         <InputGroupAddon align="inline-end">
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => setVisible(!isVisible)}
-          >
+          <Button variant="ghost" type="button" onClick={() => setVisible(!isVisible)}>
             {isVisible ? <EyeOffIcon /> : <EyeIcon />}
           </Button>
         </InputGroupAddon>

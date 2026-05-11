@@ -1,11 +1,11 @@
 import Pagination from "@/components/pagination";
+import SearchBar from "@/components/search-bar";
 import { getPaginatedCategories } from "@/lib/actions/category.action";
 import { searchProducts } from "@/lib/actions/products.actions";
-import { Suspense } from "react";
-import ProductContainer from "./_components/product-container";
-import ProductCard from "./_components/product-card";
-import SearchBar from "@/components/search-bar";
 import { AlertCircle, Search } from "lucide-react";
+import { Suspense } from "react";
+import ProductCard from "./_components/product-card";
+import ProductContainer from "./_components/product-container";
 
 const CATEGORIES_PER_PAGE = 3;
 
@@ -13,9 +13,9 @@ interface AllProductsPageProps {
   searchParams: Promise<{ page?: string; search?: string }>;
 }
 
-export default async function AllProductsPage({ searchParams }: AllProductsPageProps) {
+export default async function AllProductsPage({ searchParams }: Readonly<AllProductsPageProps>) {
   const { page, search } = await searchParams;
-  const currentPage = Math.max(0, parseInt(page ?? "0") || 0);
+  const currentPage = Math.max(0, Number.parseInt(page ?? "0") || 0);
   const searchQuery = search?.trim() ?? "";
 
   if (searchQuery) {

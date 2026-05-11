@@ -1,8 +1,16 @@
 "use client";
+import {
+  LayoutDashboardIcon,
+  LogOutIcon,
+  MenuIcon,
+  PackageIcon,
+  ShoppingBagIcon,
+  User,
+  XIcon,
+} from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboardIcon, PackageIcon, User, ShoppingBagIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 const navItems = [
@@ -11,7 +19,7 @@ const navItems = [
   { path: "/profile", label: "Profile", icon: User },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
   const { status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -36,7 +44,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <span>ShopSphere</span>
       </Link>
 
-      <p className="text-[10px] uppercase font-semibold text-muted-foreground px-2 mb-1 tracking-widest">Menu</p>
+      <p className="text-[10px] uppercase font-semibold text-muted-foreground px-2 mb-1 tracking-widest">
+        Menu
+      </p>
 
       {navItems.map(({ path, label, icon: Icon }) => (
         <Link
@@ -103,7 +113,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             <MenuIcon className="size-5" />
           </button>
-          <Link href="/" className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-extrabold text-lg">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-extrabold text-lg"
+          >
             <ShoppingBagIcon className="size-5" />
             <span>ShopSphere</span>
           </Link>

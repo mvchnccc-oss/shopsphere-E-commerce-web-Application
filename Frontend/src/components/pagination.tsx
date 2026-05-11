@@ -8,7 +8,7 @@ interface PaginationProps {
   totalPages: number;
 }
 
-export default function Pagination({ currentPage, totalPages }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages }: Readonly<PaginationProps>) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -81,7 +81,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
           >
             {page + 1}
           </Button>
-        )
+        ),
       )}
 
       <Button

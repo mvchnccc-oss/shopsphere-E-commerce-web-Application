@@ -1,10 +1,20 @@
 "use client";
-import Swal from "sweetalert2";
-import React, { useState } from "react";
-import { Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Clock, Truck, ArrowLeft, Package } from "lucide-react";
-import Link from "next/link";
 import { useCart } from "@/components/cart/context";
 import LoadingImage from "@/components/loading-image";
+import {
+  ArrowLeft,
+  Clock,
+  Minus,
+  Package,
+  Plus,
+  ShieldCheck,
+  ShoppingBag,
+  Trash2,
+  Truck,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 const CartPage = () => {
   const { cartProducts, updateCartItem, clearCart, isLoading, error } = useCart();
@@ -12,7 +22,9 @@ const CartPage = () => {
   const [removing, setRemoving] = useState<string | null>(null);
 
   let subtotal = 0;
-  productsArray.forEach(([, p]) => { subtotal += p.price * p.quantity; });
+  productsArray.forEach(([, p]) => {
+    subtotal += p.price * p.quantity;
+  });
 
   const handleUpdateQuantity = (id: string, newQty: number) => {
     if (newQty < 1) return;
@@ -88,17 +100,19 @@ const CartPage = () => {
   return (
     <div className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 py-8">
-
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <Link href="/products" className="flex items-center gap-1.5 text-sm text-gray-200 hover:text-emerald-600 transition-colors mb-2">
+            <Link
+              href="/products"
+              className="flex items-center gap-1.5 text-sm text-gray-200 hover:text-emerald-600 transition-colors mb-2"
+            >
               <ArrowLeft size={14} /> Continue shopping
             </Link>
             <h1 className="text-2xl font-bold text-gray-100">
               Shopping Cart
               <span className="ml-2 text-base font-normal text-gray-400">
-                ({productsArray.length} {productsArray.length === 1 ? "item" : "items"})
+                ({`${productsArray.length} ${productsArray.length === 1 ? "item" : "items"}`})
               </span>
             </h1>
           </div>
@@ -111,7 +125,6 @@ const CartPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
-
           {/* Cart Items */}
           <div className="flex flex-col gap-3">
             {productsArray.map(([id, product]) => {
@@ -122,7 +135,9 @@ const CartPage = () => {
                 <div
                   key={id}
                   className={`bg-white rounded-2xl p-4 border border-gray-100 shadow-sm transition-all duration-300 ${
-                    isRemoving ? "opacity-40 pointer-events-none scale-[0.98]" : "hover:shadow-md hover:border-emerald-100"
+                    isRemoving
+                      ? "opacity-40 pointer-events-none scale-[0.98]"
+                      : "hover:shadow-md hover:border-emerald-100"
                   }`}
                 >
                   <div className="flex gap-4 items-center">
@@ -155,17 +170,30 @@ const CartPage = () => {
                       {/* Mobile controls */}
                       <div className="flex items-center justify-between mt-3 md:hidden">
                         <div className="flex items-center gap-1 bg-gray-50 rounded-xl p-1 border border-gray-100">
-                          <button onClick={() => handleUpdateQuantity(id, product.quantity - 1)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90">
+                          <button
+                            onClick={() => handleUpdateQuantity(id, product.quantity - 1)}
+                            className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90"
+                          >
                             <Minus size={12} />
                           </button>
-                          <span className="w-8 text-center text-sm font-bold text-gray-800">{product.quantity}</span>
-                          <button onClick={() => handleUpdateQuantity(id, product.quantity + 1)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90">
+                          <span className="w-8 text-center text-sm font-bold text-gray-800">
+                            {product.quantity}
+                          </span>
+                          <button
+                            onClick={() => handleUpdateQuantity(id, product.quantity + 1)}
+                            className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90"
+                          >
                             <Plus size={12} />
                           </button>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-gray-800">EGP {lineTotal.toLocaleString()}</span>
-                          <button onClick={() => handleRemove(id)} className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all">
+                          <span className="text-sm font-bold text-gray-800">
+                            EGP {lineTotal.toLocaleString()}
+                          </span>
+                          <button
+                            onClick={() => handleRemove(id)}
+                            className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all"
+                          >
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -174,19 +202,32 @@ const CartPage = () => {
 
                     {/* Desktop quantity */}
                     <div className="hidden md:flex items-center gap-1 bg-gray-50 rounded-xl p-1 border border-gray-100">
-                      <button onClick={() => handleUpdateQuantity(id, product.quantity - 1)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90">
+                      <button
+                        onClick={() => handleUpdateQuantity(id, product.quantity - 1)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90"
+                      >
                         <Minus size={13} />
                       </button>
-                      <span className="w-9 text-center text-sm font-bold text-gray-800">{product.quantity}</span>
-                      <button onClick={() => handleUpdateQuantity(id, product.quantity + 1)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90">
+                      <span className="w-9 text-center text-sm font-bold text-gray-800">
+                        {product.quantity}
+                      </span>
+                      <button
+                        onClick={() => handleUpdateQuantity(id, product.quantity + 1)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white hover:shadow-sm transition-all text-gray-600 active:scale-90"
+                      >
                         <Plus size={13} />
                       </button>
                     </div>
 
                     {/* Desktop total + remove */}
-                    <div className="hidden md:flex flex-col items-end gap-2 min-w-[90px]">
-                      <span className="text-sm font-bold text-gray-900">EGP {lineTotal.toLocaleString()}</span>
-                      <button onClick={() => handleRemove(id)} className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all">
+                    <div className="hidden md:flex flex-col items-end gap-2 min-w-22.5">
+                      <span className="text-sm font-bold text-gray-900">
+                        EGP {lineTotal.toLocaleString()}
+                      </span>
+                      <button
+                        onClick={() => handleRemove(id)}
+                        className="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all"
+                      >
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -205,7 +246,10 @@ const CartPage = () => {
 
               <div className="p-5 flex flex-col gap-3 text-sm">
                 <div className="flex justify-between text-gray-500">
-                  <span>Subtotal ({productsArray.length} items)</span>
+                  <span>
+                    Subtotal (
+                    {`${productsArray.length} ${productsArray.length === 1 ? "item" : "items"}`})
+                  </span>
                   <span className="font-medium text-gray-800">EGP {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-gray-500">
@@ -229,9 +273,9 @@ const CartPage = () => {
 
               <div className="px-5 pb-5 flex flex-col gap-2">
                 {[
-                  { icon: Truck,       text: "Free delivery on all orders" },
+                  { icon: Truck, text: "Free delivery on all orders" },
                   { icon: ShieldCheck, text: "Secure SSL checkout" },
-                  { icon: Clock,       text: "Delivered in 3–7 business days" },
+                  { icon: Clock, text: "Delivered in 3–7 business days" },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-2 text-xs text-gray-400">
                     <Icon size={12} className="text-emerald-500 shrink-0" />

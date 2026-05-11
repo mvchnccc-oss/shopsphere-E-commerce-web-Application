@@ -1,10 +1,10 @@
 "use client";
-import { getCartAction, updateCartItemAction, clearCartAction } from "@/lib/actions/cart.actions";
+import { clearCartAction, getCartAction, updateCartItemAction } from "@/lib/actions/cart.actions";
 import { CartProduct } from "@/lib/interfaces/cart.interface";
 import { ReactNode, useEffect, useState } from "react";
 import { CartContext } from "./context";
 
-export default function CartProvider({ children }: { children: ReactNode }) {
+export default function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [cartProducts, setCartProducts] = useState<Record<string, CartProduct>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,13 +17,15 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const products = cart.items.map(({ product: { id, title, price, images }, quantity }: any) => ({
-        id,
-        title,
-        image: images[0],
-        quantity,
-        price,
-      }));
+      const products = cart.items.map(
+        ({ product: { id, title, price, images }, quantity }: any) => ({
+          id,
+          title,
+          image: images[0],
+          quantity,
+          price,
+        }),
+      );
 
       const cartProduct = products.reduce<Record<string, CartProduct>>((acc, item) => {
         acc[item.id] = item;
@@ -58,17 +60,19 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   }
 
   async function clearCart() {
-    const res = await clearCartAction(); 
+    const res = await clearCartAction();
 
     if (res.success) {
-      setCartProducts({}); 
+      setCartProducts({});
     } else {
       console.error(res.message);
     }
   }
 
   return (
-    <CartContext.Provider value={{ cartProducts, updateCartItem, addCartItem, clearCart, isLoading, error }}>
+    <CartContext.Provider
+      value={{ cartProducts, updateCartItem, addCartItem, clearCart, isLoading, error }}
+    >
       {children}
     </CartContext.Provider>
   );

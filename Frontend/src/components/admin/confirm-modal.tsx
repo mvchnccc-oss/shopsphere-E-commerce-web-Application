@@ -16,7 +16,7 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
   isPending,
-}: ConfirmModalProps) {
+}: Readonly<ConfirmModalProps>) {
   const action = nextLockState ? "Lock" : "Unlock";
   const actionColor = nextLockState
     ? "bg-amber-600 hover:bg-amber-700"

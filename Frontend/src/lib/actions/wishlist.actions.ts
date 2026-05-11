@@ -1,6 +1,5 @@
 "use server";
 import fetchApi from "../fetchApi";
-import { GetWishlist } from "../interfaces/wishlist.interface";
 
 export type GetWishlistActionResult =
   | { success: true; products: number[] }

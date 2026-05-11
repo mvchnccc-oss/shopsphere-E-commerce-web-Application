@@ -60,7 +60,9 @@ export default function RegisterPage() {
     if (signInResult?.error) return;
 
     router.push(redirectUrl);
-    setTimeout(() => window.location.reload(), 100);
+    if (typeof window !== "undefined") {
+      setTimeout(() => window.location.reload(), 100);
+    }
   };
 
   return (

@@ -1,8 +1,8 @@
 import { authOptions } from "@/lib/auth";
 import { GetProfileResponse } from "@/lib/interfaces/profile.interface";
+import { AlertCircle } from "lucide-react";
 import { getServerSession } from "next-auth";
 import ProfileSection from "./_components/profile-section";
-import { AlertCircle } from "lucide-react";
 
 function normalizeRole(role?: string | null): "Seller" | "Admin" | "Customer" {
   if (!role) return "Customer";

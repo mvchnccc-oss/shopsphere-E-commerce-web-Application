@@ -1,11 +1,11 @@
-import { getAdminOrdersAction } from "@/lib/actions/admin.action";
 import OrdersList from "@/components/OrdersList";
+import { getAdminOrdersAction } from "@/lib/actions/admin.action";
 
 interface Props {
   searchParams?: { page?: string };
 }
 
-export default async function AdminOrdersPage({ searchParams }: Props) {
+export default async function AdminOrdersPage({ searchParams }: Readonly<Props>) {
   const page = Math.max(0, Number(searchParams?.page ?? 0));
   const size = 20;
 
@@ -28,13 +28,12 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
 
   const totalItems = data.orders.reduce(
     (sum, order) => sum + order.orderItems.reduce((s, i) => s + i.quantity, 0),
-    0
+    0,
   );
 
   const totalRevenue = data.orders.reduce(
-    (sum, order) =>
-      sum + order.orderItems.reduce((s, i) => s + i.pricePerUnit * i.quantity, 0),
-    0
+    (sum, order) => sum + order.orderItems.reduce((s, i) => s + i.pricePerUnit * i.quantity, 0),
+    0,
   );
 
   return (
@@ -47,9 +46,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: "Total Orders",  value: data.totalElements,                       color: "text-violet-400"  },
-          { label: "Total Items",   value: totalItems,                                color: "text-blue-400"    },
-          { label: "Total Revenue", value: `EGP ${totalRevenue.toLocaleString()}`,    color: "text-emerald-400" },
+          { label: "Total Orders", value: data.totalElements, color: "text-violet-400" },
+          { label: "Total Items", value: totalItems, color: "text-blue-400" },
+          {
+            label: "Total Revenue",
+            value: `EGP ${totalRevenue.toLocaleString()}`,
+            color: "text-emerald-400",
+          },
         ].map((card) => (
           <div key={card.label} className="border border-white/5 rounded-xl p-4 bg-white/[0.02]">
             <p className="text-xs text-slate-500 mb-1">{card.label}</p>

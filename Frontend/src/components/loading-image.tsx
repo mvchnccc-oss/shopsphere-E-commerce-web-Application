@@ -22,8 +22,8 @@ export default function LoadingImage({
   alt,
   className,
   fill,
-  sizes
-}: LoadingImageProps) {
+  sizes,
+}: Readonly<LoadingImageProps>) {
   const [isLoading, setLoading] = useState(true);
   const [isError, setError] = useState(false);
 
@@ -34,7 +34,6 @@ export default function LoadingImage({
     return (
       <div className="flex flex-col items-center rounded-lg justify-center w-full h-full bg-gray-100">
         <ImageIcon className="text-gray-400 rounded-lg" />
-       
       </div>
     );
 
@@ -56,7 +55,7 @@ export default function LoadingImage({
           isLoading ? "opacity-0" : "opacity-100",
           fill ? "object-cover" : "",
         )}
-       sizes={sizes || (fill ? "(max-width: 768px) 100vw, 33vw" : undefined)}
+        sizes={sizes || (fill ? "(max-width: 768px) 100vw, 33vw" : undefined)}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">

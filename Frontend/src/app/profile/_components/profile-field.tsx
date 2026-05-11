@@ -12,7 +12,7 @@ interface ProfileFieldProps {
   error?: string;
 }
 
-export default function ProfileField(props: ProfileFieldProps) {
+export default function ProfileField(props: Readonly<ProfileFieldProps>) {
   return (
     <div className="grid gap-2">
       <Label className="text-muted-foreground" htmlFor="name-field">

@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { AlertCircle, Loader2, ShoppingCart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { useCart } from "./context";
 import QuantityField from "./quantity-field";
-import { AlertCircle, Loader2, ShoppingCart } from "lucide-react";
-import toast from "react-hot-toast";
 
 interface AddToCartButtonProps {
   id: string;
@@ -16,7 +16,13 @@ interface AddToCartButtonProps {
   dark?: boolean;
 }
 
-export default function AddToCartButton({ id, title, price, image, dark }: AddToCartButtonProps) {
+export default function AddToCartButton({
+  id,
+  title,
+  price,
+  image,
+  dark,
+}: Readonly<AddToCartButtonProps>) {
   const { cartProducts, addCartItem } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter();

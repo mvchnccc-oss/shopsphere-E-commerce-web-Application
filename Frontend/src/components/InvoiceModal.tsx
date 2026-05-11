@@ -19,7 +19,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   minute: "2-digit",
 });
 
-export function InvoiceModal({ order, total }: { order: any; total: number }) {
+export function InvoiceModal({ order, total }: Readonly<{ order: any; total: number }>) {
   return (
     <Dialog>
       <DialogTrigger asChild>
