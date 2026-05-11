@@ -8,7 +8,8 @@ This document lists all the features available in the ShopSphere E-Commerce web 
 
 ## Backend API
 
-![backend API](docs/Swagger.png)
+![backend API](docs/swagger-1.png)
+![backend API](docs/swagger-2.png)
 
 ## Frontend Actions
 
