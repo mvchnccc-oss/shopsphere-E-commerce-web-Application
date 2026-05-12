@@ -1,4 +1,5 @@
-import { NextAuthOptions } from "next-auth";
+import { promises } from "dns";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
@@ -9,7 +10,7 @@ export const authOptions: NextAuthOptions = {
         email: { placeholder: "ahmed@gmail.com", type: "email" },
         password: { label: "enter your password", type: "password" },
       },
-      async authorize(data) {
+      async authorize(data): Promise<User | null> {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
           {
@@ -39,7 +40,7 @@ export const authOptions: NextAuthOptions = {
             token: payload.token,
             expiresAt: Date.now() + payload.expiresAt,
             role: payload.role,
-          };
+          } as User;
         }
 
         if (response.status === 403) {
