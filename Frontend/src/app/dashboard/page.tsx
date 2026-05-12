@@ -1,5 +1,4 @@
 "use client";
-import DeletedProductCard from "@/components/DeletedProductCard";
 import { InvoiceModal } from "@/components/InvoiceModal";
 import { getSellerOrdersAction, getSellerProductsAction } from "@/lib/actions/seller.actions";
 import { SellerOrder } from "@/lib/interfaces/seller.interface";
@@ -297,14 +296,13 @@ export default function DashboardPage() {
                                       {order.orderItems.map((item, i) => (
                                         <tr key={i}>
                                           <td className="p-3 font-medium">
-                                            {item.product === null ? (
-                                              <DeletedProductCard
-                                                title={item.productTitle}
-                                                price={item.pricePerUnit}
-                                                quantity={item.quantity}
-                                                subtotal={item.quantity * item.pricePerUnit}
-                                                variant="compact"
-                                              />
+                                            {item.productTitle === null ? (
+                                              <span className="inline-flex items-center gap-1.5">
+                                                <span className="text-muted-foreground italic">Unavailable</span>
+                                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                                                  Deleted
+                                                </span>
+                                              </span>
                                             ) : (
                                               item.productTitle
                                             )}
