@@ -75,7 +75,10 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
             <tbody>
               {order.orderItems.map((item: any, i: number) => (
                 <tr key={i} className="border-b border-dashed last:border-b-0">
-                  <td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>
+                  {item.productTitle === null ? (
+                    <td className="text-slate-500 italic">Unavailable</td>
+                  ) : 
+                  (<td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>)}
                   <td className="py-2 text-center text-xs">{item.quantity}</td>
                   <td className="py-2 text-right text-xs">
                     EGP {(item.quantity * item.pricePerUnit).toFixed(2)}
