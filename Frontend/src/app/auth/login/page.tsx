@@ -64,65 +64,68 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm absolute top-[50vh] left-[50vw] -translate-1/2">
-      <CardHeader className="flex flex-col items-center">
-        <div className="bg-accent p-2 shadow-md rounded-lg mb-2">
-          <LogInIcon className="size-10" />
-        </div>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
+    <div className="min-h-screen flex items-center justify-center px-4 py-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader className="flex flex-col items-center">
+          <div className="bg-accent p-2 shadow-md rounded-lg mb-2">
+            <LogInIcon className="size-10" />
+          </div>
+          <CardTitle>Welcome back</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+        </CardHeader>
 
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="flex flex-col gap-6">
-            {/* Server Error */}
-            {serverError && (
-              <p className="text-sm text-destructive text-center bg-destructive/10 py-2 px-3 rounded-md">
-                {serverError}
-              </p>
-            )}
-
-            {/* Email */}
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <InputGroup>
-                <InputGroupAddon align="inline-start">
-                  <MailIcon />
-                </InputGroupAddon>
-                <InputGroupInput
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  {...register("email")}
-                  aria-invalid={!!errors.email}
-                />
-              </InputGroup>
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className="flex flex-col gap-6">
+              {/* Server Error */}
+              {serverError && (
+                <p className="text-sm text-destructive text-center bg-destructive/10 py-2 px-3 rounded-md">
+                  {serverError}
+                </p>
               )}
+
+              {/* Email */}
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <InputGroup>
+                  <InputGroupAddon align="inline-start">
+                    <MailIcon />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...register("email")}
+                    aria-invalid={!!errors.email}
+                  />
+                </InputGroup>
+                {errors.email && (
+                  <p className="text-xs text-destructive">{errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Password */}
+              <PasswordInput
+                registration={register("password")}
+                error={errors.password?.message}
+              />
             </div>
 
-            {/* Password */}
-            <PasswordInput
-              registration={register("password")}
-              error={errors.password?.message}
-            />
-          </div>
+            {/* Submit inside form */}
+            <CardFooter className="flex-col gap-4 px-0 pt-6">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Signing in..." : "Login"}
+              </Button>
+              <Link href="/auth/register" className="text-muted-foreground text-sm  hover:text-blue-500 duration-300">
+                Create a new account instead
+              </Link>
+            </CardFooter>
+          </form>
+        </CardContent>
+      </Card>
 
-          {/* Submit inside form */}
-          <CardFooter className="flex-col gap-4 px-0 pt-6">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Signing in..." : "Login"}
-            </Button>
-            <Link href="/auth/register" className="text-muted-foreground text-sm  hover:text-blue-500 duration-300">
-              Create a new account instead
-            </Link>
-          </CardFooter>
-        </form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -194,6 +194,62 @@ export async function getAdminProductsAction(
 }
 
 /**
+ * GET /api/v1/products?search=&page=0&size=200
+ */
+export async function searchAdminProductsAction(
+  search: string,
+  page: number = 0,
+  size: number = 200,
+): Promise<ActionResult<AdminProductPage>> {
+  const params = new URLSearchParams({
+    search,
+    page: String(page),
+    size: String(size),
+  });
+
+  const result = await fetchApi(`products?${params.toString()}`, "GET", {
+    includeToken: true,
+    cache: "no-store",
+  });
+
+  if (result.status === "Success" && result.data) {
+    const data: any = result.data;
+    const raw: any[] = data.products ?? [];
+    const products: AdminProduct[] = raw.map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: typeof p.price === "number" ? p.price : Number(p.price),
+      images: Array.isArray(p.images) ? p.images : [],
+      seller: p.seller ?? null,
+      category: p.category?.name ?? "—",
+    }));
+
+    return {
+      success: true,
+      data: {
+        products,
+        currentPage: data.currentPage ?? page,
+        totalPages: data.totalPages ?? 0,
+        totalElements: data.totalElements ?? products.length,
+        pageSize: data.pageSize ?? size,
+      },
+    };
+  }
+
+  const errorMap: Record<string, string> = {
+    Unauthorized: "You are not authorised to search products.",
+    ServerNotFound: "Cannot reach the server. Please check your connection.",
+    BadRequest: "Bad request when searching products.",
+    Unknown: "An unexpected error occurred while searching products.",
+  };
+
+  return {
+    success: false,
+    error: errorMap[result.status] ?? "Failed to search products.",
+  };
+}
+
+/**
  * DELETE /api/v1/products/{id}
  */
 export async function deleteAdminProductAction(productId: number): Promise<ActionResult<null>> {

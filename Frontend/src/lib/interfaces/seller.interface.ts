@@ -25,6 +25,11 @@ export interface OrderItem {
   productTitle: string;
   quantity: number;
   pricePerUnit: number;
+  product?: {
+    id?: number;
+    title: string | null;
+    images?: string[];
+  } | null;
 }
 
 export interface OrderAddress {

@@ -51,7 +51,7 @@ export default async function AdminUsersPage() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="border border-white/5 rounded-xl p-4 bg-white/[0.02] flex items-center gap-3"
+            className="border border-white/5 rounded-xl p-4 bg-white/2 flex items-center gap-3"
           >
             <s.icon className={`size-4 ${s.color}`} />
             <div>
