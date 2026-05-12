@@ -14,10 +14,11 @@ export default function DeletedProductCard({
   quantity,
   subtotal,
   variant = "orders",
-}: Readonly<DeletedProductCardProps>) {
+}: DeletedProductCardProps) {
   const compact = variant === "compact";
   return (
     <div className={`flex ${compact ? "flex-col gap-3" : "items-center gap-4"} py-3 w-full`}>
+
       <div className="shrink-0">
         <div className="w-16 h-16 rounded-lg bg-linear-to-br from-red-500/10 to-red-600/5 border border-red-500/20 flex items-center justify-center">
           <Trash2 className="w-6 h-6 text-red-400/60" />
@@ -50,14 +51,12 @@ export default function DeletedProductCard({
 
           <div className="flex flex-col">
             <span className="text-slate-600">Subtotal</span>
-            <span className="text-slate-300 font-medium">
-              EGP {Number(subtotal).toLocaleString()}
-            </span>
+            <span className="text-slate-300 font-medium">EGP {Number(subtotal).toLocaleString()}</span>
           </div>
         </div>
       </div>
 
-      <div className={`${compact ? "self-start" : "hidden sm:flex"} flex-col items-end gap-1`}>
+      <div className={`${compact ? "self-start" : "hidden sm:flex"} flex-col items-end gap-1`}> 
         <div className="px-2.5 py-1 rounded-lg bg-red-500/5 border border-red-500/10">
           <span className="text-xs text-red-400 font-medium">Removed</span>
         </div>

@@ -100,7 +100,7 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   {...register("firstName")}
-                  className={`w-full p-2.5 border rounded-lg text-sm ${errors.firstName ? "border-red-500" : "border-gray-200"}`}
+                  className={`w-full p-2.5 text-gray-700 border rounded-lg placeholder:text-gray-500 text-sm ${errors.firstName ? "border-red-500" : "border-gray-200"}`}
                   placeholder="John"
                   id="first-name-input"
                 />
@@ -115,7 +115,7 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   {...register("lastName")}
-                  className={`w-full p-2.5 border rounded-lg text-sm ${errors.lastName ? "border-red-500" : "border-gray-200"}`}
+                  className={`w-full p-2.5 border text-gray-700 rounded-lg placeholder:text-gray-500 text-sm ${errors.lastName ? "border-red-500" : "border-gray-200"}`}
                   placeholder="Smith"
                   id="last-name-input"
                 />
@@ -131,7 +131,7 @@ const CheckoutPage = () => {
               </label>
               <input
                 {...register("city")}
-                className={`w-full p-2.5 border rounded-lg text-sm ${errors.city ? "border-red-500" : "border-gray-200"}`}
+                className={`w-full p-2.5 border rounded-lg text-gray-700 placeholder:text-gray-500 text-sm ${errors.city ? "border-red-500" : "border-gray-200"}`}
                 placeholder="New York"
                 id="city-input"
               />
@@ -144,7 +144,7 @@ const CheckoutPage = () => {
               </label>
               <input
                 {...register("street")}
-                className={`w-full p-2.5 border rounded-lg text-sm ${errors.street ? "border-red-500" : "border-gray-200"}`}
+                className={`w-full p-2.5 border rounded-lg text-gray-700 placeholder:text-gray-500 text-sm ${errors.street ? "border-red-500" : "border-gray-200"}`}
                 placeholder="123 Main Street"
                 id="street-input"
               />
