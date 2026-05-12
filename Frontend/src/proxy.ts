@@ -5,6 +5,12 @@ import { NextResponse } from "next/server";
 const authRoutes = ["/auth/login", "/auth/register"];
 const publicRoutes = ["/", "/products", "/categories"];
 
+function isPublicRoute(pathname: string) {
+  return publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
 export default async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
@@ -24,7 +30,7 @@ export default async function middleware(req: NextRequest) {
   if (
     !isAuthenticated &&
     !authRoutes.includes(pathname) &&
-    !publicRoutes.includes(pathname)
+    !isPublicRoute(pathname)
   ) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }

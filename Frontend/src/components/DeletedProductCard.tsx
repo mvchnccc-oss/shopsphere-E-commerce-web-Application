@@ -27,17 +27,15 @@ export default function DeletedProductCard({
 
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-2 mb-1">
-          <h3 className="text-sm font-medium text-slate-400 truncate">
-            {title ? `${title} (deleted)` : "Product Deleted"}
-          </h3>
+          <h3 className="text-sm font-medium text-slate-400 truncate">Unavailable</h3>
           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20">
             <AlertCircle className="w-3 h-3 text-red-400" />
-            <span className="text-xs text-red-400 font-medium">Unavailable</span>
+            <span className="text-xs text-red-400 font-medium">Deleted</span>
           </div>
         </div>
 
         <p className="text-xs text-slate-500 mb-2">
-          This product is no longer available.
+          {title ? `Previous product: ${title}` : "This product is no longer available."}
         </p>
 
         <div className={`flex ${compact ? "flex-col gap-2" : "gap-3"} text-xs`}>
