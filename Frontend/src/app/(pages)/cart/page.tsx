@@ -144,15 +144,13 @@ const CartPage = () => {
                     {/* Image */}
                     <Link href={`/products/${id}`} className="shrink-0">
                       <div className="w-20 h-20 bg-gray-50 rounded-xl relative overflow-hidden border border-gray-100 hover:border-emerald-200 transition-colors">
-                        {product.image && (
-                          <LoadingImage
-                            src={product.image}
-                            fill
-                            alt={product.title}
-                            sizes="80px"
-                            className="object-contain p-1"
-                          />
-                        )}
+                        <LoadingImage
+                          src={product.image ?? ""}
+                          fill
+                          alt={product.title}
+                          sizes="80px"
+                          className="object-contain p-1"
+                        />
                       </div>
                     </Link>
 
