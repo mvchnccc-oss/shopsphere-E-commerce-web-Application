@@ -1,9 +1,16 @@
 "use server";
 
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth.schema";
+import fetchApi from "../fetchApi";
+
 export type ActionResult<T = null> =
   | { success: true; data: T; message?: string }
   | { success: false; errors?: Partial<Record<string, string[]>>; message?: string };
+
+export async function checkSessionAction(): Promise<{ valid: boolean }> {
+  const result = await fetchApi("auth/me", "GET", { includeToken: true });
+  return { valid: result.status !== "Unauthorized" };
+}
 
 export async function registerAction(formData: RegisterFormData): Promise<ActionResult> {
   // Validate input against schema
