@@ -65,10 +65,11 @@ export const authOptions: NextAuthOptions = {
       return { ...token, error: "AccessTokenError" };
     },
     async session({ session, token }) {
-      session.user = token.user as any;
-      (session as any).token = token.token;
-      (session as any).role = token.role;
+      session.user = token.user;
+      session.token = token.token;
+      session.role = token.role;
       (session as any).error = token.error;
+
       return session;
     },
   },

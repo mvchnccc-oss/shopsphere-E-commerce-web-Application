@@ -9,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,15 +48,13 @@ export default function LoginPage() {
     if (result?.error) {
       // Map NextAuth generic error to a user-friendly message
       setServerError(
-        result.error === "CredentialsSignin"
-          ? "Invalid email or password."
-          : result.error
+        result.error === "CredentialsSignin" ? "Invalid email or password." : result.error,
       );
       return;
     }
 
     router.push(redirectUrl);
-    setTimeout(() => window.location.reload(), 100);
+    setTimeout(() => globalThis.window.location.reload(), 100);
   };
 
   return (
@@ -71,9 +65,7 @@ export default function LoginPage() {
             <LogInIcon className="size-10" />
           </div>
           <CardTitle>Welcome back</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+          <CardDescription>Enter your email below to login to your account</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -101,16 +93,11 @@ export default function LoginPage() {
                     aria-invalid={!!errors.email}
                   />
                 </InputGroup>
-                {errors.email && (
-                  <p className="text-xs text-destructive">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
               </div>
 
               {/* Password */}
-              <PasswordInput
-                registration={register("password")}
-                error={errors.password?.message}
-              />
+              <PasswordInput registration={register("password")} error={errors.password?.message} />
             </div>
 
             {/* Submit inside form */}
@@ -118,14 +105,16 @@ export default function LoginPage() {
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Signing in..." : "Login"}
               </Button>
-              <Link href="/auth/register" className="text-muted-foreground text-sm  hover:text-blue-500 duration-300">
+              <Link
+                href="/auth/register"
+                className="text-muted-foreground text-sm  hover:text-blue-500 duration-300"
+              >
                 Create a new account instead
               </Link>
             </CardFooter>
           </form>
         </CardContent>
       </Card>
-
     </div>
   );
 }

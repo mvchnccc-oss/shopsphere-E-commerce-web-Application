@@ -8,7 +8,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-export default function ProductCarousel({ images, title }: { images: string[]; title: string }) {
+export default function ProductCarousel({
+  images,
+  title,
+}: Readonly<{ images: string[]; title: string }>) {
   return (
     <Carousel className="w-full">
       <CarouselContent>

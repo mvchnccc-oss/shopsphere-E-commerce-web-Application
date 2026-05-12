@@ -110,7 +110,7 @@ const CartPage = () => {
               <ArrowLeft size={14} /> Continue shopping
             </Link>
             <h1 className="text-2xl font-bold text-gray-100">
-              Shopping Cart
+              Shopping Cart{" "}
               <span className="ml-2 text-base font-normal text-gray-400">
                 ({`${productsArray.length} ${productsArray.length === 1 ? "item" : "items"}`})
               </span>

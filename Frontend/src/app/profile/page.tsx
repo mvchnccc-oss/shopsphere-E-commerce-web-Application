@@ -39,6 +39,8 @@ export default async function Profile() {
 
     return <ProfileSection data={data} />;
   } catch (error) {
+    console.error(error);
+
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
         <AlertCircle className="w-16 h-16 mb-4 text-red-500" />

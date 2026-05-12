@@ -1,6 +1,6 @@
 "use client";
-import { InvoiceModal } from "@/components/InvoiceModal";
 import DeletedProductCard from "@/components/DeletedProductCard";
+import { InvoiceModal } from "@/components/InvoiceModal";
 import { getSellerOrdersAction, getSellerProductsAction } from "@/lib/actions/seller.actions";
 import { SellerOrder } from "@/lib/interfaces/seller.interface";
 import {
@@ -86,24 +86,21 @@ export default function DashboardPage() {
   }, 0);
 
   const chartData = Object.values(
-    orders.reduce(
-      (acc, order) => {
-        const date = new Date(order.orderedAt);
-        const day = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    orders.reduce((acc: Record<string, { month: string; sales: number }>, order) => {
+      const date = new Date(order.orderedAt);
+      const day = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-        const orderTotal = order.orderItems.reduce(
-          (s, item) => s + item.pricePerUnit * item.quantity,
-          0,
-        );
+      const orderTotal = order.orderItems.reduce(
+        (s, item) => s + item.pricePerUnit * item.quantity,
+        0,
+      );
 
-        if (!acc[day]) {
-          acc[day] = { month: day, sales: 0 };
-        }
-        acc[day].sales += orderTotal;
-        return acc;
-      },
-      {} as Record<string, { month: string; sales: number }>,
-    ),
+      if (!acc[day]) {
+        acc[day] = { month: day, sales: 0 };
+      }
+      acc[day].sales += orderTotal;
+      return acc;
+    }, {}),
   ).sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 
   const statCards = [
