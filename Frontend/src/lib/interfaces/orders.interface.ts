@@ -15,4 +15,9 @@ export interface OrderItem {
   productId: number;
   quantity: number;
   pricePerUnit: number;
+  product?: {
+    id?: number;
+    title: string | null;
+    images?: string[];
+  } | null;
 }

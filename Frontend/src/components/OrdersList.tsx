@@ -1,6 +1,7 @@
 "use client";
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import DeletedProductCard from "@/components/DeletedProductCard";
 import type { AdminOrders } from "@/lib/interfaces/admin.interface";
 import {
   CalendarIcon,
@@ -131,7 +132,19 @@ export default function OrdersList({ initialData, currentPage }: Readonly<Props>
                       <tbody>
                         {order.orderItems.map((item, i) => (
                           <tr key={i} className="border-t border-white/5">
-                            <td className="px-5 py-3 text-slate-300">{item.productTitle}</td>
+                            <td className="px-5 py-3 text-slate-300">
+                              {item.product === null ? (
+                                <DeletedProductCard
+                                  title={item.productTitle}
+                                  price={item.pricePerUnit}
+                                  quantity={item.quantity}
+                                  subtotal={item.quantity * item.pricePerUnit}
+                                  variant="compact"
+                                />
+                              ) : (
+                                item.productTitle
+                              )}
+                            </td>
                             <td className="px-5 py-3 text-slate-400">{item.quantity}</td>
                             <td className="px-5 py-3 text-right text-white font-medium">
                               EGP {(item.quantity * item.pricePerUnit).toLocaleString()}

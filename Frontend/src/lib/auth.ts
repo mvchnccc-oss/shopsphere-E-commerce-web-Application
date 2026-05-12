@@ -20,7 +20,6 @@ export const authOptions: NextAuthOptions = {
         });
 
         const payload = await response.json();
-        console.log("API Payload:", payload);
 
         if (response.ok && payload.token) {
           return {
@@ -63,8 +62,6 @@ export const authOptions: NextAuthOptions = {
       if (currentTime < (token.accessTokenExpires as number)) {
         return token;
       }
-
-      console.log("Token expired, triggering redirect...");
       return { ...token, error: "AccessTokenError" };
     },
     async session({ session, token }) {

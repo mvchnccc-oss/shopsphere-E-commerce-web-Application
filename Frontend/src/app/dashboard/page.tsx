@@ -1,5 +1,6 @@
 "use client";
 import { InvoiceModal } from "@/components/InvoiceModal";
+import DeletedProductCard from "@/components/DeletedProductCard";
 import { getSellerOrdersAction, getSellerProductsAction } from "@/lib/actions/seller.actions";
 import { SellerOrder } from "@/lib/interfaces/seller.interface";
 import {
@@ -298,7 +299,19 @@ export default function DashboardPage() {
                                     <tbody className="divide-y divide-border">
                                       {order.orderItems.map((item, i) => (
                                         <tr key={i}>
-                                          <td className="p-3 font-medium">{item.productTitle}</td>
+                                          <td className="p-3 font-medium">
+                                            {item.product === null ? (
+                                              <DeletedProductCard
+                                                title={item.productTitle}
+                                                price={item.pricePerUnit}
+                                                quantity={item.quantity}
+                                                subtotal={item.quantity * item.pricePerUnit}
+                                                variant="compact"
+                                              />
+                                            ) : (
+                                              item.productTitle
+                                            )}
+                                          </td>
                                           <td className="p-3">{item.quantity}</td>
                                           <td className="p-3">
                                             EGP {item.pricePerUnit.toLocaleString()}
