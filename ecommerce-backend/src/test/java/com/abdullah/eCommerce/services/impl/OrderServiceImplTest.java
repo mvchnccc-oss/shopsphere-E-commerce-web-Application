@@ -170,7 +170,6 @@ class OrderServiceImplTest {
 
             List<OrderItem> orderItems = IntStream.rangeClosed(1, 3)
                 .mapToObj(i -> OrderItem.builder()
-                    .id(new OrderItem.Id((long) i, (long) i))
                     .order(order)
                     .product(Product.builder()
                         .id((long) i)
