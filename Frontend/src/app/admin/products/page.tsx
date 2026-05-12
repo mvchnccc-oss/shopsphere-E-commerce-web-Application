@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import {
   getAdminProductsAction,
+  searchAdminProductsAction,
   deleteAdminProductAction,
   type AdminProduct,
 } from "@/lib/actions/admin.action";
@@ -116,7 +117,9 @@ export default function AdminProductsPage() {
       setLoadingMore(true);
     }
 
-    const res = await getAdminProductsAction(page, PAGE_SIZE);
+    const res = search
+      ? await searchAdminProductsAction(search, page, PAGE_SIZE)
+      : await getAdminProductsAction(page, PAGE_SIZE);
 
     if (res.success) {
       setProducts((prev) => (append ? [...prev, ...res.data.products] : res.data.products));
@@ -132,6 +135,14 @@ export default function AdminProductsPage() {
   }
 
   useEffect(() => { loadPage(0); }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadPage(0);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   async function handleDelete() {
     if (!deleteTarget) return;
@@ -149,7 +160,7 @@ export default function AdminProductsPage() {
     }
   }
 
-  const filtered = products.filter(
+  const filtered = search.trim() ? products : products.filter(
     (p) =>
       p.title.toLowerCase().includes(search.toLowerCase()) ||
       p.category.toLowerCase().includes(search.toLowerCase())
