@@ -30,7 +30,7 @@ export default function Navbar() {
 
   async function handleLogout() {
     await signOut();
-    window.location.reload();
+    globalThis.window.location.reload();
   }
 
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return <></>;

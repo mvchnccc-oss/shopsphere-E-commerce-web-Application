@@ -5,7 +5,7 @@ interface ProductContainerProps {
   categories: Category[];
 }
 
-export default function ProductContainer({ categories }: ProductContainerProps) {
+export default function ProductContainer({ categories }: Readonly<ProductContainerProps>) {
   return (
     <div className="py-7">
       <ProductCategories categories={categories} />

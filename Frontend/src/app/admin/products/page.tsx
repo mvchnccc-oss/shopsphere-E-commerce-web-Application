@@ -1,32 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 import {
-  SearchIcon, Trash2Icon, LoaderIcon, PackageIcon,
-  AlertTriangleIcon, CheckCircle2Icon, XCircleIcon,
-} from "lucide-react";
-import {
+  deleteAdminProductAction,
   getAdminProductsAction,
   searchAdminProductsAction,
-  deleteAdminProductAction,
   type AdminProduct,
 } from "@/lib/actions/admin.action";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
+import {
+  AlertTriangleIcon,
+  CheckCircle2Icon,
+  LoaderIcon,
+  PackageIcon,
+  SearchIcon,
+  Trash2Icon,
+  XCircleIcon,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 
-interface ToastState { message: string; type: "success" | "error" }
+interface ToastState {
+  message: string;
+  type: "success" | "error";
+}
 
 // ─── Delete Confirm Modal ─────────────────────────────────────────────────────
 
 function ConfirmDeleteModal({
-  product, onConfirm, onCancel, isPending,
-}: {
+  product,
+  onConfirm,
+  onCancel,
+  isPending,
+}: Readonly<{
   product: AdminProduct;
   onConfirm: () => void;
   onCancel: () => void;
   isPending: boolean;
-}) {
+}>) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="bg-[#0d1424] border border-white/10 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
@@ -55,9 +66,13 @@ function ConfirmDeleteModal({
             className="flex-1 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-red-700 transition-colors disabled:opacity-50"
           >
             {isPending ? (
-              <><LoaderIcon className="size-4 animate-spin" /> Deleting...</>
+              <>
+                <LoaderIcon className="size-4 animate-spin" /> Deleting...
+              </>
             ) : (
-              <><Trash2Icon className="size-4" /> Delete</>
+              <>
+                <Trash2Icon className="size-4" /> Delete
+              </>
             )}
           </button>
         </div>
@@ -68,7 +83,7 @@ function ConfirmDeleteModal({
 
 // ─── Product Image ────────────────────────────────────────────────────────────
 
-function ProductImage({ src, title }: { src?: string; title: string }) {
+function ProductImage({ src, title }: Readonly<{ src?: string; title: string }>) {
   const [error, setError] = useState(false);
   if (error || !src) {
     return (
@@ -134,7 +149,9 @@ export default function AdminProductsPage() {
     setLoadingMore(false);
   }
 
-  useEffect(() => { loadPage(0); }, []);
+  useEffect(() => {
+    loadPage(0);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -160,11 +177,13 @@ export default function AdminProductsPage() {
     }
   }
 
-  const filtered = search.trim() ? products : products.filter(
-    (p) =>
-      p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = search.trim()
+    ? products
+    : products.filter(
+        (p) =>
+          p.title.toLowerCase().includes(search.toLowerCase()) ||
+          p.category.toLowerCase().includes(search.toLowerCase()),
+      );
 
   function handleLoadMore() {
     if (currentPage >= totalPages - 1) return;

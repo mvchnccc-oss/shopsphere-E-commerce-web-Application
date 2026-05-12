@@ -43,8 +43,8 @@ export default function Pagination({ currentPage, totalPages }: Readonly<Paginat
 
     pages.push(...range);
 
-    if (range[range.length - 1] < totalPages - 1) {
-      if (range[range.length - 1] < totalPages - 2) pages.push("...");
+    if (range.at(-1)! < totalPages - 1) {
+      if (range.at(-1)! < totalPages - 2) pages.push("...");
       pages.push(totalPages - 1);
     }
 

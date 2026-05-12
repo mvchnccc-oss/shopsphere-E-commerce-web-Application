@@ -8,17 +8,16 @@ interface ProductCategoriesProps {
 
 const INITIAL_PRODUCTS_PER_CATEGORY = 10;
 
-export default async function ProductCategories({ categories }: ProductCategoriesProps) {
-
+export default async function ProductCategories({ categories }: Readonly<ProductCategoriesProps>) {
   const categoriesWithProducts = await Promise.all(
     categories.map(async (category) => {
       const { products, totalPages } = await getProductsByCategory(
         category.id,
         0,
-        INITIAL_PRODUCTS_PER_CATEGORY
+        INITIAL_PRODUCTS_PER_CATEGORY,
       );
       return { category, products, hasMore: totalPages > 1 };
-    })
+    }),
   );
 
   return (

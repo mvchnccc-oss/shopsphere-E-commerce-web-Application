@@ -4,7 +4,7 @@ import AddToWishlistButton from "@/components/wishlist/add-button-whishlist";
 import type { Product } from "@/lib/interfaces/products.interface";
 import Link from "next/link";
 
-export default function ProductCard({ product: prod }: { product: Product }) {
+export default function ProductCard({ product: prod }: Readonly<{ product: Product }>) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-lg hover:border-gray-300 hover:-translate-y-1">
       <Link href={`/products/${prod.id}`}>

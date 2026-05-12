@@ -1,12 +1,18 @@
 "use client";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboardIcon, PackageIcon, ShoppingBagIcon,
-  LogOutIcon, MenuIcon, XIcon, UsersIcon, ShoppingCartIcon, ShieldIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  MenuIcon,
+  PackageIcon,
+  ShieldIcon,
+  ShoppingCartIcon,
+  UsersIcon,
+  XIcon,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navItems = [
   { path: "/admin", label: "Overview", icon: LayoutDashboardIcon },
@@ -15,11 +21,10 @@ const navItems = [
   { path: "/admin/orders", label: "Orders", icon: ShoppingCartIcon },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full py-6 px-3 gap-1">
@@ -34,7 +39,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <div>
           <p className="text-white font-bold text-sm leading-none">ShopSphere</p>
-          <p className="text-violet-400 text-[10px] font-medium tracking-widest uppercase">Admin Panel</p>
+          <p className="text-violet-400 text-[10px] font-medium tracking-widest uppercase">
+            Admin Panel
+          </p>
         </div>
       </Link>
 
@@ -49,10 +56,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             key={path}
             href={path}
             onClick={() => setSidebarOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-              ? "bg-violet-600 text-white shadow-lg shadow-violet-600/25"
-              : "text-slate-400 hover:bg-white/5 hover:text-white"
-              }`}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              isActive
+                ? "bg-violet-600 text-white shadow-lg shadow-violet-600/25"
+                : "text-slate-400 hover:bg-white/5 hover:text-white"
+            }`}
           >
             <Icon className="size-4 shrink-0" />
             {label}
@@ -62,7 +70,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <div className="mt-auto pt-4 border-t border-white/5">
         <div className="px-3 py-2 mb-2">
-          <p className="text-xs font-medium text-white truncate">{session?.user?.name ?? "Admin"}</p>
+          <p className="text-xs font-medium text-white truncate">
+            {session?.user?.name ?? "Admin"}
+          </p>
           <p className="text-[11px] text-slate-500 truncate">{session?.user?.email ?? ""}</p>
         </div>
         <button
@@ -85,11 +95,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/70 md:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 z-40 bg-black/70 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-56 bg-[#0d1424] border-r border-white/5 transform transition-transform duration-300 md:hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`fixed top-0 left-0 z-50 h-full w-56 bg-[#0d1424] border-r border-white/5 transform transition-transform duration-300 md:hidden ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <button
           onClick={() => setSidebarOpen(false)}

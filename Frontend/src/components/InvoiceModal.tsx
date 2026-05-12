@@ -91,7 +91,11 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
           </div>
         </div>
 
-        <Button onClick={() => window.print()} variant="secondary" className="w-full gap-2 mt-4">
+        <Button
+          onClick={() => globalThis.window.print()}
+          variant="secondary"
+          className="w-full gap-2 mt-4"
+        >
           <Printer size={16} /> Print Invoice
         </Button>
       </DialogContent>

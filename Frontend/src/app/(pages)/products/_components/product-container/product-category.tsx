@@ -26,7 +26,7 @@ export default function ProductCategory({
   category,
   initialProducts,
   hasMore: initialHasMore,
-}: ProductCategoryProps) {
+}: Readonly<ProductCategoryProps>) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(initialHasMore);

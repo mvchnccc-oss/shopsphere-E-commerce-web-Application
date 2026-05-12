@@ -40,7 +40,7 @@ export default function LoadingImage({
   return (
     <div
       className={cn("relative", fill ? "w-full h-full" : "")}
-      style={!fill ? { width, height } : undefined}
+      style={fill ? undefined : { width, height }}
     >
       <Image
         src={src}

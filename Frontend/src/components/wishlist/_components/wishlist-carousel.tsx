@@ -1,9 +1,6 @@
 "use client";
-import { getProductById } from "@/lib/actions/products.actions";
-import { Product } from "@/lib/interfaces/products.interface";
-import { useWishlist } from "@/components/wishlist/context";
-import { useEffect, useState } from "react";
 import ProductCard from "@/app/(pages)/products/_components/product-card";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -11,9 +8,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Heart, ArrowRightIcon } from "lucide-react";
+import { useWishlist } from "@/components/wishlist/context";
+import { getProductById } from "@/lib/actions/products.actions";
+import { Product } from "@/lib/interfaces/products.interface";
+import { ArrowRightIcon, Heart } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function WishlistCarousel() {
   const { wishlist, isLoading, error } = useWishlist();
@@ -39,7 +39,7 @@ export default function WishlistCarousel() {
   if (isLoading || loading) {
     return (
       <div className="flex gap-4 overflow-hidden">
-        {[...Array(4)].map((_, i) => (
+        {new Array(4).map((_, i) => (
           <div key={i} className="min-w-55 h-85 rounded-xl bg-muted animate-pulse" />
         ))}
       </div>
