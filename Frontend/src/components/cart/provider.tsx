@@ -10,33 +10,37 @@ export default function CartProvider({ children }: Readonly<{ children: ReactNod
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getCartAction().then((cart) => {
-      if (!cart.success) {
-        setError(cart.message ?? "Failed to load cart");
+    getCartAction()
+      .then((cart) => {
+        if (!cart.success) {
+          setError(cart.message ?? "Failed to load cart");
+          return;
+        }
+
+        const products = cart.items.map(
+          ({ product: { id, title, price, images }, quantity }: any) => ({
+            id,
+            title,
+            image: images[0],
+            quantity,
+            price,
+          }),
+        );
+
+        const cartProduct = products.reduce<Record<string, CartProduct>>((acc, item) => {
+          acc[item.id] = item;
+          return acc;
+        }, {});
+
+        setCartProducts(cartProduct);
+      })
+      .catch(() => {
+        setError("Network error. Please check your connection.");
+      })
+      .finally(() => {
         setIsLoading(false);
-        return;
-      }
-
-      const products = cart.items.map(
-        ({ product: { id, title, price, images }, quantity }: any) => ({
-          id,
-          title,
-          image: images[0],
-          quantity,
-          price,
-        }),
-      );
-
-      const cartProduct = products.reduce<Record<string, CartProduct>>((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-      }, {});
-
-      setCartProducts(cartProduct);
-      setIsLoading(false);
-    });
+      });
   }, []);
-
   async function updateCartItem(id: string, quantity: number) {
     const success = await updateCartItemAction(id, quantity);
     if (!success) return;
