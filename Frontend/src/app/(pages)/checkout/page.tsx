@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import * as z from "zod";
 
 const checkoutSchema = z.object({
@@ -52,7 +53,7 @@ const CheckoutPage = () => {
         alert("Failed to place order. Please try again.");
       }
     } catch (error) {
-      console.error("Order Error:", error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 

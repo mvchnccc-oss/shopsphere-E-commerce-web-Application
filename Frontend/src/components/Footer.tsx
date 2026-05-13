@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const { data: session } = useSession();
-  const isSeller = (session as any)?.role === "Seller";
+  const isSeller = (session as any)?.role === "ROLE_SELLER";
+  const isAdmin = (session as any)?.role === "ROLE_ADMIN";
   const pathname = usePathname();
 
   const shopLinks = [
@@ -16,7 +17,7 @@ export default function Footer() {
   ];
 
   const accountLinks = isSeller
-    ? [{ href: "/profile", label: "My Profile" }]
+    ? [{ href: "/profile", label: "My Profile" }, { href: "/dashboard", label: "My Dashboard" },]
     : [
         { href: "/profile", label: "My Profile" },
         { href: "/orders", label: "My Orders" },
@@ -33,7 +34,7 @@ export default function Footer() {
     { href: "#", label: "Contact us" },
   ];
 
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return <></>;
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin") ||  isAdmin) return <></>;
 
   return (
     <footer className="bg-[#085041] text-[#9FE1CB] mt-16 px-6 pt-12 pb-6">
@@ -172,8 +173,7 @@ export default function Footer() {
               <Link
                 key={label}
                 href="#"
-                className="text-xs text-[#5DCAA5] hover:text-[#E1F5EE] transition-colors"
-              >
+                className="text-xs text-[#5DCAA5] hover:text-[#E1F5EE] transition-colors">
                 {label}
               </Link>
             ))}

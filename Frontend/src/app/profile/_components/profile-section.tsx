@@ -18,13 +18,14 @@ import {
   AlertCircleIcon,
   ArrowRightIcon,
   CheckCircle2Icon,
+  LayoutDashboardIcon,
   MailIcon,
   PackageIcon,
   ShieldCheckIcon,
   StoreIcon,
   TrendingUpIcon,
-  UserIcon, // ضفت أيقونة للتنبيه
-  XIcon, // أيقونة قفل
+  UserIcon,
+  XIcon,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -64,12 +65,13 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
   const [isBecomingPending, setBecomingPending] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>();
   const [sellerSuccess, setSellerSuccess] = useState(false);
-
-  // --- ضيف الـ State دي هنا ---
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const { update: updateSession } = useSession();
+  const { data: session, update: updateSession } = useSession();
   const router = useRouter();
+
+  // ── Admin check ──
+  const isAdmin = (session as any)?.role === "ROLE_ADMIN";
 
   const form = useForm({
     resolver: zodResolver(updateProfileSchema),
@@ -103,7 +105,7 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
   async function handleBecomeSeller() {
     setBecomingPending(true);
     setServerError(undefined);
-    setShowConfirmModal(false); // اقفل المودال لما العملية تبدأ
+    setShowConfirmModal(false);
     try {
       const result = await becomeSellerAction();
       if (!result.success) {
@@ -130,7 +132,7 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
   return (
     <div className="p-4 min-h-[60vh]">
       <div className="mx-auto mt-5 w-full max-w-md">
-        {/* Tab Bar */}
+        {/* Tab Bar — Seller tab مخفي للأدمن */}
         <div className="flex rounded-xl border border-border bg-muted/40 p-1 mb-4">
           <button
             onClick={() => setActiveTab("profile")}
@@ -143,22 +145,26 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
             <UserIcon className="size-4" />
             Profile
           </button>
-          <button
-            onClick={() => setActiveTab("seller")}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === "seller"
-                ? "bg-background shadow text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <StoreIcon className="size-4" />
-            {isSeller ? "Seller" : "Become a Seller"}
-            {isSeller && (
-              <span className="ml-1 text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-semibold">
-                Active
-              </span>
-            )}
-          </button>
+
+          {/* ── Seller tab: مش بيظهر لو admin ── */}
+          {!isAdmin && (
+            <button
+              onClick={() => setActiveTab("seller")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === "seller"
+                  ? "bg-background shadow text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <StoreIcon className="size-4" />
+              {isSeller ? "Seller" : "Become a Seller"}
+              {isSeller && (
+                <span className="ml-1 text-[10px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-semibold">
+                  Active
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* ─── PROFILE TAB ─── */}
@@ -220,6 +226,20 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
                 {!data && <ErrorBox>User is unauthenticated</ErrorBox>}
                 {serverError && <ErrorBox>{serverError}</ErrorBox>}
               </form>
+
+              
+              {isAdmin && (
+                <div className="mt-6 pt-5 border-t border-border">
+                  <Button
+                    variant="outline"
+                    className="w-full flex items-center gap-2 border-violet-400 text-violet-600 hover:bg-violet-50 hover:text-violet-700 dark:border-violet-600 dark:text-violet-400 dark:hover:bg-violet-950"
+                    onClick={() => router.push("/overview")}
+                  >
+                    <LayoutDashboardIcon className="size-4" />
+                    Go to Overview Dashboard
+                  </Button>
+                </div>
+              )}
             </CardContent>
             <CardFooter className="ml-auto">
               {isEditMode && (
@@ -236,8 +256,8 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
           </Card>
         )}
 
-        {/* ─── SELLER TAB ─── */}
-        {activeTab === "seller" && (
+        {/* ─── SELLER TAB — مش بيظهر أصلاً للأدمن ─── */}
+        {activeTab === "seller" && !isAdmin && (
           <Card>
             <CardHeader className="flex flex-col items-center text-center">
               <div
@@ -305,7 +325,6 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
                       </p>
                     </div>
                   ) : (
-                    // --- عدلنا الزرار هنا عشان يفتح المودال ---
                     <Button
                       className="w-full flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
                       onClick={() => setShowConfirmModal(true)}

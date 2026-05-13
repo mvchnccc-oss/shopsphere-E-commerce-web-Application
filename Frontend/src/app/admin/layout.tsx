@@ -6,6 +6,7 @@ import {
   PackageIcon,
   ShieldIcon,
   ShoppingCartIcon,
+  User,
   UsersIcon,
   XIcon,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const navItems = [
   { path: "/admin/users", label: "Users", icon: UsersIcon },
   { path: "/admin/products", label: "Products", icon: PackageIcon },
   { path: "/admin/orders", label: "Orders", icon: ShoppingCartIcon },
+  { path: "/profile", label: "Profile", icon: User },
 ];
 
 export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {

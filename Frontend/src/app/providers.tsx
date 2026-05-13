@@ -28,7 +28,7 @@ function SessionChecker() {
     };
 
     check();
-    const interval = setInterval(check, 30_000);
+    const interval = setInterval(check, 60_000);
     return () => clearInterval(interval);
   }, [session?.token]);
 
