@@ -227,14 +227,12 @@ export default function ProfileSection(props: Readonly<ProfileSectionProps>) {
                 {serverError && <ErrorBox>{serverError}</ErrorBox>}
               </form>
 
-              
               {isAdmin && (
                 <div className="mt-6 pt-5 border-t border-border">
                   <Button
                     variant="outline"
                     className="w-full flex items-center gap-2 border-violet-400 text-violet-600 hover:bg-violet-50 hover:text-violet-700 dark:border-violet-600 dark:text-violet-400 dark:hover:bg-violet-950"
-                    onClick={() => router.push("/overview")}
-                  >
+                    onClick={() => router.push("/overview")}>
                     <LayoutDashboardIcon className="size-4" />
                     Go to Overview Dashboard
                   </Button>

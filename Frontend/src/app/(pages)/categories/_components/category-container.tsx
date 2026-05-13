@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 function CategoryContainer(props: Readonly<{ categories: Categories }>) {
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState(props.categories);
-  console.log(search);
   useEffect(() => {
     const filteredCategories = props.categories.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase()),
