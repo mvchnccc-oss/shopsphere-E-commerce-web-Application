@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { OrderItem } from "@/lib/interfaces/admin.interface";
 import { Printer, ReceiptText } from "lucide-react";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -18,7 +19,17 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "2-digit",
   minute: "2-digit",
 });
-
+interface InvoiceOrder {
+  id: number;
+  orderedAt: string;
+  orderItems: OrderItem[];
+  address: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    city: string;
+  };
+}
 export function InvoiceModal({ order, total }: Readonly<{ order: any; total: number }>) {
   return (
     <Dialog>
@@ -45,8 +56,8 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
               <div className="mt-2">
                 <p className="text-[10px] text-gray-400 uppercase font-bold">Customer</p>
                 <div className="flex gap-1 text-sm text-black font-medium">
-                  <span>{order.orderAddress?.firstname}</span>
-                  <span>{order.orderAddress?.lastname}</span>
+                  <span className="text-gray-800">{order.address?.firstname}</span>
+                  <span>{order.address.lastname}</span>
                 </div>
               </div>
             </div>
@@ -60,7 +71,7 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
           <div className="space-y-1">
             <p className="text-sm font-semibold">Shipping Address:</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {order.orderAddress?.street}, {order.orderAddress?.city}
+              {order.address?.street}, {order.address?.city}
             </p>
           </div>
 
@@ -75,7 +86,10 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
             <tbody>
               {order.orderItems.map((item: any, i: number) => (
                 <tr key={i} className="border-b border-dashed last:border-b-0">
-                  <td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>
+                  {item.productTitle === null ? (
+                    <td className="text-slate-500 italic">Unavailable</td>
+                  ) : 
+                  (<td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>)}
                   <td className="py-2 text-center text-xs">{item.quantity}</td>
                   <td className="py-2 text-right text-xs">
                     EGP {(item.quantity * item.pricePerUnit).toFixed(2)}

@@ -1,7 +1,6 @@
 "use client";
 
 import ScrollToTopButton from "@/components/ScrollToTopButton";
-import DeletedProductCard from "@/components/DeletedProductCard";
 import type { AdminOrders } from "@/lib/interfaces/admin.interface";
 import {
   CalendarIcon,
@@ -133,14 +132,13 @@ export default function OrdersList({ initialData, currentPage }: Readonly<Props>
                         {order.orderItems.map((item, i) => (
                           <tr key={i} className="border-t border-white/5">
                             <td className="px-5 py-3 text-slate-300">
-                              {item.product === null ? (
-                                <DeletedProductCard
-                                  title={item.productTitle}
-                                  price={item.pricePerUnit}
-                                  quantity={item.quantity}
-                                  subtotal={item.quantity * item.pricePerUnit}
-                                  variant="compact"
-                                />
+                              {item.productTitle === null ? (
+                                <span className="inline-flex items-center gap-1.5">
+                                  <span className="text-slate-500 italic">Unavailable</span>
+                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                                    Deleted
+                                  </span>
+                                </span>
                               ) : (
                                 item.productTitle
                               )}

@@ -1,5 +1,4 @@
 import { InvoiceModal } from "@/components/InvoiceModal";
-import DeletedProductCard from "@/components/DeletedProductCard";
 import { getOrdersAction } from "@/lib/actions/orders.action";
 import { Orders } from "@/lib/interfaces/orders.interface";
 import { Banknote, ClockIcon, MapPinIcon } from "lucide-react";
@@ -91,14 +90,13 @@ export default async function OrdersPage() {
                     {order.orderItems.map((item, i) => (
                       <tr key={i} className="border-t">
                         <td className="p-3">
-                          {item.product === null ? (
-                            <DeletedProductCard
-                              title={item.productTitle}
-                              price={item.pricePerUnit}
-                              quantity={item.quantity}
-                              subtotal={item.quantity * item.pricePerUnit}
-                              variant="compact"
-                            />
+                          {item.productTitle === null ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="text-muted-foreground italic">Unavailable</span>
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                                Deleted
+                              </span>
+                            </span>
                           ) : (
                             item.productTitle
                           )}

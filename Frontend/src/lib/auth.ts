@@ -1,4 +1,5 @@
-import { NextAuthOptions } from "next-auth";
+import { promises } from "dns";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
@@ -9,17 +10,25 @@ export const authOptions: NextAuthOptions = {
         email: { placeholder: "ahmed@gmail.com", type: "email" },
         password: { label: "enter your password", type: "password" },
       },
-      async authorize(data) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
-          method: "POST",
-          body: JSON.stringify({
-            email: data?.email,
-            password: data?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
+      async authorize(data): Promise<User | null> {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: data?.email,
+              password: data?.password,
+            }),
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
-        const payload = await response.json();
+        let payload: any = {};
+        try {
+          payload = await response.json();
+        } catch {
+          // no body
+        }
 
         if (response.ok && payload.token) {
           return {
@@ -31,10 +40,16 @@ export const authOptions: NextAuthOptions = {
             token: payload.token,
             expiresAt: Date.now() + payload.expiresAt,
             role: payload.role,
-          };
-        } else {
-          throw new Error(payload.message || "Invalid credentials");
+          } as User;
         }
+
+        if (response.status === 403) {
+          throw new Error(
+            "Your account has been suspended. Please contact support.",
+          );
+        }
+
+        throw new Error(payload?.message || "Invalid credentials");
       },
     }),
   ],
@@ -55,7 +70,8 @@ export const authOptions: NextAuthOptions = {
         token.role = session.role;
         if (session.token) token.token = session.token;
         if (session.user) token.user = session.user;
-        if (session.accessTokenExpires) token.accessTokenExpires = session.accessTokenExpires;
+        if (session.accessTokenExpires)
+          token.accessTokenExpires = session.accessTokenExpires;
       }
 
       const currentTime = Date.now();
