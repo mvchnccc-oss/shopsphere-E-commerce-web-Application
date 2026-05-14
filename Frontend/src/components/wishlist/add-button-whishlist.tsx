@@ -15,7 +15,7 @@ export default function AddToWishlistButton({ id, iconOnly }: Readonly<AddToWish
   const { wishlist, addToWishlist, removeFromWishlist, isLoading } = useWishlist();
   const router = useRouter();
   const session = useSession();
-const status = session.status;
+  const status = session.status;
   const isWishlisted = wishlist.includes(id);
 
   async function toggleWishlist(e: React.MouseEvent) {
@@ -67,8 +67,8 @@ const status = session.status;
     <Button
       variant="outline"
       className={`w-full px-4 py-3 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${isWishlisted
-          ? "border-rose-300 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950"
-          : "border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-700"
+        ? "border-rose-300 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950"
+        : "border-gray-200 text-gray-600 hover:border-rose-300 hover:text-rose-500 dark:hover:border-rose-700"
         }`}
       onClick={toggleWishlist}
       disabled={isLoading}
