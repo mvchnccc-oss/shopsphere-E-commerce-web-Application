@@ -16,7 +16,6 @@ export async function getAllProducts(
 ): Promise<PaginatedProducts> {
   const result = await fetchApi(`products?page=${page}&size=${size}`, "GET", {
     includeToken: false,
-    next: { revalidate: 60 },
   });
 
   if (result.status === "Success") {

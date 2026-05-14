@@ -18,7 +18,9 @@ import CartNavbarDropdown from "./cart/navbar-dropdown";
 
 export default function Navbar() {
   const { status, data: session } = useSession();
-  const isSeller = (session as any)?.role === "Seller";
+  const isSeller = (session as any)?.role === "ROLE_SELLER";
+  const isAdmin = (session as any)?.role === "ROLE_ADMIN";
+
   const pathname = usePathname();
   const [toggler, setToggler] = useState(false);
 
@@ -33,7 +35,7 @@ export default function Navbar() {
     globalThis.window.location.reload();
   }
 
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) return <></>;
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || isAdmin ) return <></>;
 
   return (
     <div className="bg-accent p-5 sticky top-0 z-10">
