@@ -6,13 +6,14 @@ import { Label } from "@/components/ui/label";
 import { getAllCategories } from "@/lib/actions/category.action";
 import {
   createProductAction,
-  CreateProductPayload,
+  type CreateProductPayload, 
   deleteProductAction,
   getSellerProductsAction,
-  SellerProduct,
+  type SellerProduct,        
   updateProductAction,
 } from "@/lib/actions/seller.actions";
 import { Category } from "@/lib/interfaces/categories.interface";
+
 import {
   AlertCircle,
   AlertTriangleIcon,

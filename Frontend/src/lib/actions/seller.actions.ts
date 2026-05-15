@@ -7,6 +7,12 @@ import {
   SellerOrder
 } from "../interfaces/seller.interface";
 
+export type { 
+  SellerProduct, 
+  CreateProductPayload, 
+  SellerActionResult, 
+  SellerOrder 
+} from "../interfaces/seller.interface";
 
 export async function getSellerProductsAction(): Promise<SellerActionResult<SellerProduct[]>> {
   const result = await fetchApi("seller/products", "GET", { includeToken: true });

@@ -7,6 +7,7 @@ declare module "next-auth" {
     token: string;
     role: string;
   }
+  
   interface User {
     user: UserInterface;
     token: string;
@@ -14,6 +15,7 @@ declare module "next-auth" {
     expiresAt: number;
   }
 }
+
 import { JWT } from "next-auth/jwt";
 
 declare module "next-auth/jwt" {
