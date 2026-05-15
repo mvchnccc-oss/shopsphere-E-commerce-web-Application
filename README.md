@@ -22,6 +22,10 @@ Add .env in backend folder with:
 - admin.password - the default admin's account password (e.g. 123456A)
 - frontend.url - the URL of the frontend for CORS, or leave it empty in local development
 
+## Dataset used
+
+https://www.kaggle.com/datasets/anvitkumar/shopping-dataset
+
 ## Database ERD
 
 ![database erd](docs/ERD.png)
