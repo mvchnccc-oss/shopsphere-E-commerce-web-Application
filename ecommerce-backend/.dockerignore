@@ -1,0 +1,43 @@
+# Build output — never send these to the Docker daemon
+target/
+
+# Maven local repo (if you ever mount it)
+.m2/
+
+# Version control
+.git/
+.gitignore
+
+# IDE / editor files
+.idea/
+*.iml
+.vscode/
+*.ipr
+*.iws
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Test reports
+**/surefire-reports/
+**/failsafe-reports/
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Secrets — never bake these into the image
+.env
+*.key
+*.pem
+*.p12
+*.jks
+
+# Docs
+*.md
+LICENSE
