@@ -47,7 +47,7 @@ export default async function OrdersPage() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-3 mb-6">
         {[
           { label: "Total orders", value: orders.length },
           { label: "Items purchased", value: totalItems },
@@ -67,9 +67,9 @@ export default async function OrdersPage() {
             <details key={`order-${order.id}`} className="border rounded-xl overflow-hidden group">
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="font-medium text-sm sm:text-base">Order #{order.id}</span>
+                  <span className="font-medium text-sm sm:text-base">#{order.id}</span>
                   <InvoiceModal order={order} total={total} />
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                  <span className="text-xs bg-green-100 sm:hidden md:block text-green-700 px-2 py-0.5 rounded">
                     {order.orderItems.length} items
                   </span>
                 </div>
