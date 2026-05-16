@@ -54,7 +54,7 @@ export default async function HomePage() {
               asChild
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10"
+              className="border-white dark:text-white dark:hover:bg-white/10 text-emerald-500 hover:bg-emerald-700 hover:text-white"
             >
               <Link href="/categories">Browse Categories</Link>
             </Button>

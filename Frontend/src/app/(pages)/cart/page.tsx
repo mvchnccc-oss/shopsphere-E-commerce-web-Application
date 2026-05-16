@@ -105,11 +105,11 @@ const CartPage = () => {
           <div>
             <Link
               href="/products"
-              className="flex items-center gap-1.5 text-sm text-gray-200 hover:text-emerald-600 transition-colors mb-2"
+              className="flex items-center gap-1.5 text-sm text-emerald-500 dark:text-gray-200 hover:text-emerald-600 transition-colors mb-2"
             >
               <ArrowLeft size={14} /> Continue shopping
             </Link>
-            <h1 className="text-2xl font-bold text-gray-100">
+            <h1 className="text-2xl font-bold text-gray-600 dark:text-gray-100">
               Shopping Cart{" "}
               <span className="ml-2 text-base font-normal text-gray-400">
                 ({`${productsArray.length} ${productsArray.length === 1 ? "item" : "items"}`})

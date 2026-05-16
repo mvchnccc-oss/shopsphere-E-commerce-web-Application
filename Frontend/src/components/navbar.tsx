@@ -38,7 +38,7 @@ export default function Navbar() {
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || isAdmin ) return <></>;
 
   return (
-    <div className="bg-accent p-5 sticky top-0 z-10">
+    <div className="bg-slate-50 dark:bg-mist-900 p-5 sticky top-0 z-10 shadow-lg">
       <div className="flex items-center gap-4">
         {/* Brand — لو seller مش بيبقى link */}
         {isSeller ? (
@@ -59,7 +59,7 @@ export default function Navbar() {
         {/* Middle links — مخفية لو seller */}
         {!isSeller && (
           <div className="flex-1 hidden sm:flex justify-center">
-            <ul className="py-2 px-15 bg-[#111] text-white rounded-full flex items-center gap-8">
+            <ul className="py-2 px-15 dark:bg-[#111] bg-[#555] text-white rounded-full flex items-center gap-8">
               {middleLinks.map((link) => (
                 <li key={link.path}>
                   <Link
