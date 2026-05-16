@@ -42,20 +42,20 @@ export default async function OrdersPage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="flex items-baseline justify-between mb-6">
-        <h1 className="text-2xl font-medium">My Orders</h1>
+        <h1 className="text-xl sm:text-2xl font-medium">My Orders</h1>
         <span className="text-sm text-muted-foreground">{orders.length} orders</span>
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
         {[
           { label: "Total orders", value: orders.length },
           { label: "Items purchased", value: totalItems },
           { label: "Total spent", value: `EGP ${totalSpent.toFixed(2)}` },
         ].map((stat) => (
-          <div key={stat.label} className="bg-muted rounded-lg p-4">
-            <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-            <p className="text-2xl font-medium">{stat.value}</p>
+          <div key={stat.label} className="bg-muted rounded-lg p-2 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">{stat.label}</p>
+            <p className="text-base sm:text-2xl font-medium truncate">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -66,50 +66,65 @@ export default async function OrdersPage() {
           return (
             <details key={`order-${order.id}`} className="border rounded-xl overflow-hidden group">
               <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted list-none">
-                <div className="flex items-center gap-3">
-                  <span className="font-medium">Order #{order.id}</span>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="font-medium text-sm sm:text-base">Order #{order.id}</span>
                   <InvoiceModal order={order} total={total} />
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
                     {order.orderItems.length} items
                   </span>
                 </div>
-                <span className="font-medium">EGP {total.toFixed(2)}</span>
+                <span className="font-medium text-sm sm:text-base">EGP {total.toFixed(2)}</span>
               </summary>
-
               <div className="border-t">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted text-xs text-muted-foreground uppercase">
-                    <tr>
-                      <th className="text-left p-3">Product</th>
-                      <th className="text-left p-3">Qty</th>
-                      <th className="text-left p-3">Unit price</th>
-                      <th className="text-right p-3">Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.orderItems.map((item, i) => (
-                      <tr key={i} className="border-t">
-                        <td className="p-3">
-                          {item.productTitle === null ? (
-                            <span className="inline-flex items-center gap-1.5">
-                              <span className="text-muted-foreground italic">Unavailable</span>
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-                                Deleted
-                              </span>
+                <div className="w-full text-sm">
+                  {/* Header - hidden on mobile */}
+                  <div className="hidden sm:grid sm:grid-cols-[2fr_1fr_1fr_1fr] bg-muted text-xs text-muted-foreground uppercase">
+                    <div className="p-3">Product</div>
+                    <div className="p-3">Qty</div>
+                    <div className="p-3">Unit price</div>
+                    <div className="p-3 text-right">Subtotal</div>
+                  </div>
+
+                  {/* Rows */}
+                  {order.orderItems.map((item, i) => (
+                    <div
+                      key={i}
+                      className="border-t grid grid-cols-2 sm:grid-cols-[2fr_1fr_1fr_1fr] gap-y-1 p-3 sm:p-0"
+                    >
+                      {/* Product */}
+                      <div className="col-span-2 sm:col-span-1 sm:p-3">
+                        {item.productTitle === null ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            <span className="text-muted-foreground italic">Unavailable</span>
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                              Deleted
                             </span>
-                          ) : (
-                            item.productTitle
-                          )}
-                        </td>
-                        <td className="p-3">{item.quantity}</td>
-                        <td className="p-3">EGP {item.pricePerUnit.toFixed(2)}</td>
-                        <td className="p-3 text-right font-medium">
-                          EGP {(item.quantity * item.pricePerUnit).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </span>
+                        ) : (
+                          item.productTitle
+                        )}
+                      </div>
+
+                      {/* Qty */}
+                      <div className="sm:p-3">
+                        <span className="text-xs text-muted-foreground sm:hidden">Qty: </span>
+                        {item.quantity}
+                      </div>
+
+                      {/* Unit price */}
+                      <div className="sm:p-3">
+                        <span className="text-xs text-muted-foreground sm:hidden">Price: </span>
+                        EGP {item.pricePerUnit.toFixed(2)}
+                      </div>
+
+                      {/* Subtotal */}
+                      <div className="col-span-2 sm:col-span-1 sm:p-3 sm:text-right font-medium">
+                        <span className="text-xs text-muted-foreground sm:hidden">Total: </span>
+                        EGP {(item.quantity * item.pricePerUnit).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <div className="flex flex-col p-3 bg-muted border-t">
                   <div className="flex items-center gap-2">
                     <span className="flex-none w-23.5 md:w-fit flex items-center gap-1 text-sm text-muted-foreground">
