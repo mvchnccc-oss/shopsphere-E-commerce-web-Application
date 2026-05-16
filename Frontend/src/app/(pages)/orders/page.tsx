@@ -69,7 +69,7 @@ export default async function OrdersPage() {
                 <div className="flex items-center gap-2 sm:gap-3">
                   <span className="font-medium text-sm sm:text-base">#{order.id}</span>
                   <InvoiceModal order={order} total={total} />
-                  <span className="text-xs bg-green-100 md:hidden lg:block text-green-700 px-2 py-0.5 rounded">
+                  <span className="text-xs bg-green-100 hidden lg:block text-green-700 px-2 py-0.5 rounded">
                     {order.orderItems.length} items
                   </span>
                 </div>
