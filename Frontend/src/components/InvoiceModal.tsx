@@ -88,8 +88,9 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
                 <tr key={i} className="border-b border-dashed last:border-b-0">
                   {item.productTitle === null ? (
                     <td className="text-slate-500 italic">Unavailable</td>
-                  ) : 
-                  (<td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>)}
+                  ) : (
+                    <td className="py-2 text-xs max-w-50 truncate">{item.productTitle}</td>
+                  )}
                   <td className="py-2 text-center text-xs">{item.quantity}</td>
                   <td className="py-2 text-right text-xs">
                     EGP {(item.quantity * item.pricePerUnit).toFixed(2)}
@@ -106,7 +107,75 @@ export function InvoiceModal({ order, total }: Readonly<{ order: any; total: num
         </div>
 
         <Button
-          onClick={() => globalThis.window.print()}
+          onClick={() => {
+            const el = document.getElementById(`invoice-${order.id}`);
+            if (!el) return;
+
+            const w = window.open("", "_blank");
+            if (!w) return;
+
+            w.document.write(`
+    <html>
+      <head>
+        <title>Invoice</title>
+        <style>
+          body { 
+            margin: 0; 
+            font-family: sans-serif;
+          }
+          #main-div {
+              position: absolute;
+              top: 50vh;
+              left: 50vw;
+              transform: translate(-50%, -50%);
+              width: fit;
+              border: 2px solid black;
+              padding: 8px;
+              border-radius: 10px;
+          }
+          table {
+              width: 100%;
+              border: 1px solid black;
+              padding: 4px;
+              margin-bottom: 10px;
+              border-radius: 10px;
+          }
+
+          tr {
+              text-align: center;
+              border: 2px solid black;
+          }
+          
+          .flex {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+          }
+          span {
+              margin-left: 4px;
+          }
+
+          .font-bold, .font-semibold {
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="main-div">
+          ${el.outerHTML}
+        </div>
+        <script>
+          window.onload = () => {
+            window.print();
+            window.onafterprint = () => window.close();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+            w.document.close();
+          }}
           variant="secondary"
           className="w-full gap-2 mt-4"
         >
