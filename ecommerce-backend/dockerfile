@@ -21,10 +21,7 @@ RUN groupadd --system appgroup && \
     useradd --system --gid appgroup --no-create-home appuser && \
     chown -R appuser:appgroup /app
 
-COPY --chown=appuser:appgroup --from=build /app/target/*.jar app.jar
-
-# Remove write permissions from the jar (owner, group, other)
-RUN chmod a-w app.jar
+COPY --chmod=444 --chown=appuser:appgroup --from=build /app/target/*.jar app.jar
 
 USER appuser
 
