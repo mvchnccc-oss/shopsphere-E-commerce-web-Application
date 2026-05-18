@@ -20,7 +20,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-background xl:pt-6">
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto relative overflow-hidden bg-emerald-600 dark:bg-emerald-700">
-        <div className="absolute top-0 -right-30 size-200">
+        <div className="absolute top-0 -right-30 size-200 opacity-85 dark:opacity-100 ">
           <Globe />
         </div>
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-emerald-500/40 dark:bg-emerald-600/40 blur-3xl" />
